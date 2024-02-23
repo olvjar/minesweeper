@@ -14,6 +14,7 @@
 
 // FUNCTIONS
 
+// GAME PROPER
 int main(){
 	int menuSelect;
 	int start = 0;
