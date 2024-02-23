@@ -86,7 +86,6 @@ int main()
 	
 	scanf("%d", &mines);
 	
-	
 	boardInitialize( board,  rows, cols, mines);
 	printf("\n");
 	printBoard(board, rows, cols);
