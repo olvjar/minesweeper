@@ -6,8 +6,9 @@
 	cknowledgments: <list of references used in the making of this project >
 */
 
-#include<stdio.h>
-#include<string.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 
 typedef char string20[21];
 
@@ -38,7 +39,7 @@ void play()
 
 void playClassic()
 {
-	int classicSelect;
+	int gameSelect;
 	int start = 0;
 	
 	do {
@@ -59,6 +60,29 @@ void playClassic()
 			printf("Invalid input. Try again.");
 	}
 	} while(!start);
+}
+
+void boardMaker(int board[][100], int row, int col, int bombs)
+{
+	int i, j, random, bombCount;
+	
+	do{
+	bombCount = 0;
+	for(i=0;i<row;i++)
+	{
+		for(j=0;j<col;j++)
+		{
+		random = rand() % 2;
+
+		if (random == 1 && bombCount < bombs)
+		{
+			board[i][j] = 1; // or 'X'
+			bombCount++;
+		}
+		else board[i][j] = 0; // or '.'
+		}
+	}
+	} while (bombCount != bombs);
 }
 
 void classicEasy()
@@ -101,8 +125,10 @@ void changeProfile(string20 profile[])
 int main(){
 	int menuSelect;
 	int start = 0;
-	string20 profile[10] = {"Empty", "Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"};
+	//string20 profile[10] = {"Empty", "Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty","Empty"};
 	
+	srand ( time (0)); // Initialize the seed for the random number generator
+
 	do {
 	
 	printf("Main Menu\n[1] PLAY\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT");
