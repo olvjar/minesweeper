@@ -1,0 +1,12 @@
+name
+
+[classic]
+games_won
+games_lost
+
+[custom]
+games_won
+games_lost
+
+[recent_games]
+snapshot
