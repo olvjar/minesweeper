@@ -3,18 +3,6 @@
 #include <string.h>
 #include <time.h>
 
-void printBoard(int board[][100], int rows, int cols){
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            
-			if(board[i][j] == 10)
-			printf(" X ");
-			else printf(" %d ", board[i][j]);
-        }
-        printf("\n");
-    }
-};
-
 void makeBoard(int board[][100], int rows, int cols, int mines){
     srand(time(0));
 	int minesCount;
@@ -34,8 +22,6 @@ void makeBoard(int board[][100], int rows, int cols, int mines){
             board[row][col] = 10;
         }
     }
-
-    printBoard(board, rows, cols);
 };
 
 void boardInitialize(int board[][100], int rows, int cols, int mines)
@@ -75,6 +61,18 @@ void boardInitialize(int board[][100], int rows, int cols, int mines)
 	}
 }
 
+void printBoard(int board[][100], int rows, int cols){
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            
+			if(board[i][j] == 10)
+			printf(" X ");
+			else printf(" %d ", board[i][j]);
+        }
+        printf("\n");
+    }
+};
+
 int main()
 {	
 	int rows, cols, mines;
@@ -89,7 +87,7 @@ int main()
 	scanf("%d", &mines);
 	
 	
-	boardInitialize(board,  rows, cols, mines);
+	boardInitialize( board,  rows, cols, mines);
 	printf("\n");
 	printBoard(board, rows, cols);
 }
