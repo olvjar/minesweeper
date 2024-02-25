@@ -33,7 +33,7 @@ typedef struct player{
 
 // FUNCTIONS
 void viewStats(profile *user){
-	FILE user = *fopen("/profiles/gem.txt", "r");
+	FILE user = *fopen("~/profiles/gem.txt", "r");
 	
 	// check file if it exists
 	if (user == NULL) {

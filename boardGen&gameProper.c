@@ -88,8 +88,36 @@ int mineCount(char board[][100], int rowIndex, int colIndex){
 	else return -1;
 }
 
+void forwardCascade(char board[][100], int gameBoard[][100], int i, int j, int rows, int cols){
+	int k, l, mine = 0;
+	
+	for(k = i; k < rows; k++){ //forward cascading
+		for(l = j; !mine && l < cols; l++){
+			if(mineCount(board, k, l) != -1){
+				gameBoard[k][l] = mineCount(board, k, l);
+			}
+			else mine = 1;
+		}	
+		mine = 0;
+	}
+}
+
+void backwardCascade(char board[][100], int gameBoard[][100], int i, int j, int rows, int cols){
+	int k, l, mine = 0;
+	
+	for(k = i; k >= 0; k--){ //backward cascading
+		for(l = j; !mine && l >= 0; l--){
+			if(mineCount(board, k, l) != -1){
+				gameBoard[k][l] = mineCount(board, k, l);
+			}
+			else mine = 1;
+		}
+		mine = 0;
+	}
+}
+
 void gameProper(char board[][100], int gameBoard[][100], int rows, int cols, int mines){
-	int i, j, k, l, alive = 1, mine = 0;
+	int i, j, alive = 1;
 
 	for(i = 0; i < rows; i++){
 		for (j = 0; j < cols; j++){
@@ -113,27 +141,15 @@ void gameProper(char board[][100], int gameBoard[][100], int rows, int cols, int
 			}
 			else {
 			gameBoard[i][j] = mineCount(board, i, j); //reveal chosen tile
-			for(k = i+1; i < rows; k++){ //forward cascading
-				for(l = j+1; j < cols; l++){
-					if(mineCount(board, i, j) != -1){
-						gameBoard[i][j] = mineCount(board, i, j);
-					}
-					else mine = 1;
-				}
-			}
-
-			for(k = i-1; i >= 0; i--){
-				for(l = j-1; j >= 0; j--){
-					if(mineCount(board, i, j) != -1){
-						gameBoard[i][j] = mineCount(board, i, j);
-				}
-			}
-			
+			forwardCascade(board, gameBoard, i, j, rows, cols);
+			backwardCascade(board, gameBoard, i, j, rows, cols);
 			}
 		}
 		else printf("Invalid input. Try again.\n");
 	}
 }
+
+
 
 int main()
 {	
