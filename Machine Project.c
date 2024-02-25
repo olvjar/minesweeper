@@ -11,13 +11,45 @@
 #include <time.h>
 
 // PREPROCESSOR DIRECTIVES
+typedef struct level{
+	int row;
+	int col;
+	int mines;
+	int board[][100];
+};
+
+typedef struct player{
+	char name[20];
+	int games_won_classic;
+	int games_lost_classic;
+	int games_won_custom;
+	int games_lost_custom;
+	struct recent_games{
+		char mode;
+		char outcome;
+		char snapshot[][100];
+	};
+} profile;
 
 // FUNCTIONS
+void viewStats(profile *user){
+	FILE user = *fopen("/profiles/gem.txt", "r");
+	
+	// check file if it exists
+	if (user == NULL) {
+        printf("Error opening file.\n");
+        return;
+    }
+	else{
+		printf("%s", "/profiles/gem.txt");
+	}
+}
 
 // GAME PROPER
 int main(){
 	int menuSelect;
 	int start = 0;
+	profile user;
 
     do {
 	printf("Main Menu\n[1] PLAY\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT");
@@ -26,19 +58,19 @@ int main(){
 	switch (menuSelect)
 	{
 		case 1: 
-			play();
+			//play();
 			start = 1;
 			break;
 		case 2:
-			levelEditor();
+			//levelEditor();
 			start = 1;
 			break;
 		case 3:
-			changeProfile();
+			//changeProfile(profile);
 			start = 1;
 			break;
 		case 4:
-			statistics();
+			viewStats(&user);
 			start = 1;
 			break;
 		default:
