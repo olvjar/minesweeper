@@ -1,0 +1,11 @@
+	/*
+	while(!validChoice){
+		printf("[1] PLACE mine\n[2]DELETE mine\nSelection: ");
+		scanf("%d", &choice);
+		if(choice == 1 || choice == 2){
+			validChoice = 1;
+		} else{
+			printf("Invalid input. Please try again.\n");
+		}
+	}
+	*/
