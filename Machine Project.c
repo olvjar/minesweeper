@@ -11,49 +11,73 @@
 #include <time.h>
 
 // PREPROCESSOR DIRECTIVES
-typedef struct level{
-	char filename[16];
-	char path[100];
-	int row;
-	int col;
+struct level{
+	int rows;
+	int cols;
 	int mines;
-	int board[100][100];
-} level;
+	int gameBoard[100][100];
+	char board[100][100];
+};
 
+typedef struct level game;
+
+struct recent_games{
+		char mode;
+		char outcome;
+		char snapshot[100][100];
+};
 typedef struct player{
 	char name[20];
 	int games_won_classic;
 	int games_lost_classic;
 	int games_won_custom;
 	int games_lost_custom;
-	struct recent_games{
-		char mode;
-		char outcome;
-		char snapshot[100][100];
-	};
-} profile;
+	struct recent_games recentgame;
+};
+
+typedef struct player profile;
 
 // FUNCTIONS
-/*
-void viewStats(profile *user){
-	FILE user = *fopen("~/profiles/gem.txt", "r");
+void play()
+{
+	int gameSelect;
+	int validChoice = 0;
 	
-	// check file if it exists
-	if (user == NULL) {
-        printf("Error opening file.\n");
-        return;
-    }
-	else{
-		printf("%s", "/profiles/gem.txt");
+	do {
+	printf("Game type selection\n[1] CLASSIC or [2] CUSTOM");
+	scanf(" %d", &gameSelect);
+	
+	switch (gameSelect)
+	{
+		case 1: 
+			playClassic();
+			validChoice = 1;
+			break;
+		case 2:
+			playCustom();
+			validChoice = 1;
+			break;
+		default:
+			printf("Invalid input. Try again.");
 	}
+	} while(!validChoice);
 }
-*/
+
+void playCustom(){
+	printf("Choose a level to play:")
+	
+}
 
 // GAME PROPER
 int main(){
+	// initalize variables
+	profile user;
+	game customLevel;
+	game level;
+
+	// start
 	int menuSelect;
 	int start = 0;
-	profile user;
 
     do {
 	printf("Main Menu\n[1] PLAY\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT");
@@ -62,19 +86,19 @@ int main(){
 	switch (menuSelect)
 	{
 		case 1: 
-			//play();
+			//play(game);
 			start = 1;
 			break;
 		case 2:
-			//levelEditor();
+			//levelEditor(&customLevel);
 			start = 1;
 			break;
 		case 3:
-			//changeProfile(profile);
+			//changeProfile(&user);
 			start = 1;
 			break;
 		case 4:
-			viewStats(&user);
+			//viewStats(&user);
 			start = 1;
 			break;
 		default:
