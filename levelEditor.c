@@ -20,25 +20,26 @@ void printBoardChar(customLevel *lvl){
 }
 
 int fileExists(char *filename){
-	FILE *level;
-	if((level = fopen(filename, "r")) == NULL){
+	FILE *level = fopen(filename, "r");
+	if(level){
 		fclose(level);
+		return 1;
+	} else{
 		return 0;
 	}
-	return 1;
 }
-/*
+
 void saveFile(FILE *file, customLevel *lvl){
-	fprintf(file, "%d %d", lvl->rows, lvl->cols);
+	fprintf(file, "%d %d\n", lvl->rows, lvl->cols);
 	
 	for (int i = 0; i < lvl->rows; i++) {
         for (int j = 0; j < lvl->cols; j++) {
-            fprintf(file, " %c ", lvl->board[i][j]);
+            fprintf(file, "%c", lvl->board[i][j]);
         }
         fprintf(file, "\n");
     }
 }
-*/
+
 
 void editLevel(customLevel *lvl){
 	int row, col, minesCount;
@@ -64,7 +65,7 @@ void editLevel(customLevel *lvl){
 }
 
 void levelEditor(customLevel *lvl){
- 	int rows, cols, mines;
+ 	//int rows, cols, mines;
 	char filename[16];
 	char path[] = "levels/";
 	FILE *level;
@@ -76,30 +77,28 @@ void levelEditor(customLevel *lvl){
 	printf("%s\n", filename);
 	printf("%s\n", path);
 	
-	if(fileExists(filename) == 0){
+	if(fileExists(filename)){
 			printf("Level cannot be created. File already exists.\n");
+			return;
 	} else {
 			printf("Level %s will be created.\n", filename);
 			level = fopen(path, "w");
 	
 
-	printf("Enter number of rows: ");
-	scanf("%d", &rows);
-	
-	printf("Enter number of columns: ");
-	scanf("%d", &cols);
+	printf("Enter number of rows and columns: ");
+	scanf("%d %d", &lvl->rows,& lvl->cols);
 
 	printf("Enter number of mines: ");
-	scanf("%d", &mines);
-
+	scanf("%d", &lvl->mines);
+	
+	/*
 	lvl->rows = rows;
 	lvl->cols = cols;
 	lvl->mines = mines;
-
-	editLevel(lvl);
+	*/
 	
-	fprintf(level, "%d %d", lvl->rows, lvl->cols);
-    
+	editLevel(lvl);
+	saveFile(level, lvl);
 	fclose(level);
 	printf("Level created successfully.\n");
 	}
