@@ -12,11 +12,13 @@
 
 // PREPROCESSOR DIRECTIVES
 typedef struct level{
+	char filename[16];
+	char path[100];
 	int row;
 	int col;
 	int mines;
-	int board[][100];
-};
+	int board[100][100];
+} level;
 
 typedef struct player{
 	char name[20];
@@ -27,11 +29,12 @@ typedef struct player{
 	struct recent_games{
 		char mode;
 		char outcome;
-		char snapshot[][100];
+		char snapshot[100][100];
 	};
 } profile;
 
 // FUNCTIONS
+/*
 void viewStats(profile *user){
 	FILE user = *fopen("~/profiles/gem.txt", "r");
 	
@@ -44,6 +47,7 @@ void viewStats(profile *user){
 		printf("%s", "/profiles/gem.txt");
 	}
 }
+*/
 
 // GAME PROPER
 int main(){
