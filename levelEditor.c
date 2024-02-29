@@ -90,18 +90,13 @@ int checkValidity(game *customLevel, int *minesCount){
 
 int editLevel(game *customLevel) {
     int minesCount = 0;
-    int save = 0;
+    int save;
+    int quit;
     int choice;
-    
-    for (int i = 0; i < customLevel->rows; i++) {
-        for (int j = 0; j < customLevel->cols; j++) {
-            customLevel->gameBoard[i][j] = '.';
-        }
-    }
     
     printBoardChar(customLevel);
     
-    while(!save){
+    while(save == 0 || quit == 0){
     	printf("%d\n", minesCount);
     	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection: ");
     	scanf("%d", &choice);
@@ -114,11 +109,13 @@ int editLevel(game *customLevel) {
                 deleteMine(customLevel, &minesCount);
                 break;
             case 3:
-            	if (checkValidity(customLevel, &minesCount) == 1) {
-            		save = 1;
-                } break;
+            	if(checkValidity(customLevel, &minesCount) == 1) {
+            	save = 1;
+                }
+                break;
             case 4:
-            	return -1;
+				quit = 1;
+				break;
         }
 	}
 	return save;
@@ -142,7 +139,7 @@ void levelEditor(game *customLevel) {
         level = fopen(path, "w");
 
 		int validNum = 0;
-			while(!validNum){
+		while(!validNum){
 				printf("Enter number of rows and columns: ");
         		scanf("%d %d", &customLevel->rows, &customLevel->cols);
         		
@@ -155,7 +152,14 @@ void levelEditor(game *customLevel) {
 				} else {
 					validNum = 1;
 				}
-			}
+		}
+		
+		for (int i = 0; i < customLevel->rows; i++) {
+        	for (int j = 0; j < customLevel->cols; j++) {
+            	customLevel->gameBoard[i][j] = '.';
+        	}
+    	}
+    	
         editLevel(customLevel);
     }
     
