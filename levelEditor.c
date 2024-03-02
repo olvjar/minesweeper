@@ -76,7 +76,7 @@ void deleteMine(game *customLevel, int *minesCount) {
 
 int checkValidity(game *customLevel, int *minesCount){
 	int cells = customLevel->rows * customLevel->cols;
-	
+
 	if(cells == *minesCount){
 		printf("Invalid level: Every cell contains a mine.\n");
 		return 0;
@@ -93,14 +93,14 @@ int editLevel(game *customLevel) {
     int save;
     int quit;
     int choice;
-    
+
     printBoardChar(customLevel);
-    
+
     while(save == 0 || quit == 0){
     	printf("%d\n", minesCount);
     	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection: ");
     	scanf("%d", &choice);
-    	
+
         switch (choice) {
             case 1:
                 placeMine(customLevel, &minesCount);
@@ -142,7 +142,7 @@ void levelEditor(game *customLevel) {
 		while(!validNum){
 				printf("Enter number of rows and columns: ");
         		scanf("%d %d", &customLevel->rows, &customLevel->cols);
-        		
+
 				if((customLevel->rows < 5 || customLevel->rows > 10) && (customLevel->cols < 5 || customLevel->cols > 15)){
         			printf("Invalid number of rows and columns.\n\n");
 				} else if (customLevel->rows < 5 || customLevel->rows > 10) {
@@ -153,21 +153,21 @@ void levelEditor(game *customLevel) {
 					validNum = 1;
 				}
 		}
-		
+
 		for (int i = 0; i < customLevel->rows; i++) {
         	for (int j = 0; j < customLevel->cols; j++) {
             	customLevel->gameBoard[i][j] = '.';
         	}
     	}
-    	
+
         editLevel(customLevel);
     }
-    
+
     if(editLevel(customLevel) == 1){
     	saveFile(level, customLevel);
         printf("Level created successfully.\n");
 	}
-	
+
 	fclose(level);
 }
 
