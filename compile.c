@@ -3,7 +3,7 @@
 	Author: GRINO, Mary Eunice E. and TAMONDONG, Mariel M.
 	Section: S17B
 	Last Modified: February 07, 2024
-	cknowledgments: <list of references used in the making of this project >
+	Acknowledgments: Thomas Tiam-Lee
 */
 #include <stdio.h>
 #include <stdlib.h>
