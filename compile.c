@@ -44,7 +44,7 @@ typedef struct player profile;
 
 /* board */
 
-void printBoard(game level){
+rd(game level){
     int i, j;
     
     printf("\n");
@@ -61,6 +61,7 @@ void printBoard(game level){
 			if (j == -1){
 				iSetColor(I_COLOR_PURPLE);
 				printf(" %d ", i);
+				iSetColor(I_COLOR_WHITE);
 				}
 			else if (level.gameBoard[i][j] == 10){ //not revealed
 				iSetColor(I_COLOR_WHITE);
@@ -69,10 +70,12 @@ void printBoard(game level){
 			else if (level.gameBoard[i][j] == 100){ //flag
 				iSetColor(I_COLOR_RED);
 				printf(" F ");
+				iSetColor(I_COLOR_WHITE);
 			}
 			else{
 				iSetColor(I_COLOR_GREEN);
 				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
+				iSetColor(I_COLOR_WHITE);
 			}
 				
         }
