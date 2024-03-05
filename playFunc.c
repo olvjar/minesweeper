@@ -221,7 +221,7 @@ void gameProper(game level){
     }
     
     makeBoard(&level);
-    printBoardChar(level);
+    printBoardChar(level); // test
 	
 	while(alive){
 		printBoard(level);
@@ -433,7 +433,7 @@ void playCustom(game *customLevel){
 	scanf("%s", filename);
     strcat(filename, ".txt");
     strcat(path, filename);
-    printf("%s", path);
+    printf("%s\n", path);
     
     
     if(fileExists(path) == 0) {
@@ -441,6 +441,9 @@ void playCustom(game *customLevel){
         return;
     } else {
     	chosenLevel = fopen(path, "r");
+    	fscanf(chosenLevel, "%d %d", &row, &col);
+    	customLevel->rows = row;
+    	customLevel->cols = col;
     	/*
     	do{
     		fscanf(chosenLevel, "%d %d", &row, &col);
@@ -455,36 +458,12 @@ void playCustom(game *customLevel){
 			}
     	}
     	*/
+    	fprintf(stdout, "%d %d\n", customLevel->rows, customLevel->cols);
     	fclose(chosenLevel);
     	// printBoardCharEdit(customLevel);
 	}	
 }
 
-void play(profile user, game level, game customLevel)
-{
-	int gameSelect;
-	int validChoice = 0;
-
-	do {
-	printf("\nGame type selection\n[1] CLASSIC or [2] CUSTOM\n\nSELECTION: ");
-	scanf("%d", &gameSelect);
-
-	switch (gameSelect)
-	{
-		case 1:
-			// playClassic(&level);
-			validChoice = 1;
-			break;
-		case 2:
-			playCustom(&customLevel);
-			validChoice = 1;
-			break;
-		default:
-			printf("Invalid input. Try again.");
-	}
-	} while(!validChoice);
-}
-/*
 void playClassic(game level)
 {
 	int gameSelect;
@@ -514,7 +493,32 @@ void playClassic(game level)
 	}
 	} while(!start);
 }
-*/
+
+void play(profile user, game level, game customLevel)
+{
+	int gameSelect;
+	int validChoice = 0;
+
+	do {
+	printf("\nGame type selection\n[1] CLASSIC or [2] CUSTOM\n\nSELECTION: ");
+	scanf("%d", &gameSelect);
+
+	switch (gameSelect)
+	{
+		case 1:
+			playClassic(level);
+			validChoice = 1;
+			break;
+		case 2:
+			playCustom(&customLevel);
+			validChoice = 1;
+			break;
+		default:
+			printf("Invalid input. Try again.");
+	}
+	} while(!validChoice);
+}
+
 
 // GAME PROPER
 int main(){
