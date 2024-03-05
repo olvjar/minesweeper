@@ -44,7 +44,7 @@ typedef struct player profile;
 
 /* board */
 
-rd(game level){
+void printBoard(game level){
     int i, j;
     
     printf("\n");
@@ -444,7 +444,7 @@ void levelEditor(game *customLevel) {
 
 void playCustom(game *customLevel){
 	int row, col;
-	char filename[20], ch;
+	char filename[20];
     char path[] = "levels/";
 	FILE *chosenLevel;
 
