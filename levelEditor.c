@@ -13,7 +13,7 @@ struct level {
 
 typedef struct level game;
 
-void printBoardChar(game *customLevel) {
+void printBoardCharEdit(game *customLevel) {
     for (int i = 0; i < customLevel->rows; i++) {
         for (int j = 0; j < customLevel->cols; j++) {
             printf(" %c ", customLevel->gameBoard[i][j]);
@@ -51,7 +51,7 @@ void placeMine(game *customLevel, int *minesCount) {
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->gameBoard[row][col] == '.') {
         customLevel->gameBoard[row][col] = 'X'; // Place mine
         (*minesCount)++;
-        printBoardChar(customLevel);
+        printBoardCharEdit(customLevel);
         printf("\n");
     } else {
         printf("Invalid position. Mine not placed.\n\n");
@@ -67,7 +67,7 @@ void deleteMine(game *customLevel, int *minesCount) {
         customLevel->gameBoard[row][col] == 'X') {
         customLevel->gameBoard[row][col] = '.'; // Delete mine
         (*minesCount)--;
-        printBoardChar(customLevel);
+        printBoardCharEdit(customLevel);
         printf("\n");
     } else {
         printf("Invalid position. There is no mine.\n\n");
@@ -94,10 +94,10 @@ int editLevel(game *customLevel) {
     int quit;
     int choice;
 
-    printBoardChar(customLevel);
+    printBoardCharEdit(customLevel);
 
     while(save == 0 || quit == 0){
-    	printf("%d\n", minesCount);
+    	printf("MINES: %d\n", minesCount);
     	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection: ");
     	scanf("%d", &choice);
 
