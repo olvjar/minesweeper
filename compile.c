@@ -10,6 +10,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "interface.c"
+
 // PREPROCESSOR DIRECTIVES
 struct level{
 	int rows;
@@ -48,6 +50,7 @@ void printBoard(game level){
     printf("\n");
 	printf("   ");
 	for (i = 0; i < level.cols; i++) {
+		iSetColor(I_COLOR_PURPLE);
     	printf(" %d ", i);
     }
 	
@@ -55,14 +58,23 @@ void printBoard(game level){
 	
 	for (i = 0; i < level.rows; i++) {
         for (j = -1; j < level.cols; j++) {
-			if (j == -1)
+			if (j == -1){
+				iSetColor(I_COLOR_PURPLE);
 				printf(" %d ", i);
-			else if (level.gameBoard[i][j] == 10) //not revealed
+				}
+			else if (level.gameBoard[i][j] == 10){ //not revealed
+				iSetColor(I_COLOR_WHITE);
 				printf(" . ");
-			else if (level.gameBoard[i][j] == 100) //flag
+			}
+			else if (level.gameBoard[i][j] == 100){ //flag
+				iSetColor(I_COLOR_RED);
 				printf(" F ");
-			else
-				printf(" %d ", level.gameBoard[i][j]);
+			}
+			else{
+				iSetColor(I_COLOR_GREEN);
+				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
+			}
+				
         }
         printf("\n");
     }
@@ -135,8 +147,7 @@ void forwardCascade(game *level, int i, int j){
 				level->gameBoard[k][l] = mineCount(*level, k, l);
 			}
 			else mine = 1;
-		}	
-		mine = 0;
+		}
 	}
 }
 
@@ -150,11 +161,10 @@ void backwardCascade(game *level, int i, int j){
 			}
 			else mine = 1;
 		}
-		mine = 0;
 	}
 }
 
-void placeFlag(int gameBoard[][100]){
+void placeFlag(game *level){
 	int i, j;
 	
 	printf("\nEnter row to flag: ");
@@ -162,15 +172,17 @@ void placeFlag(int gameBoard[][100]){
 	printf("Enter column to flag: ");
 	scanf(" %d", &j);
 	
-	if(gameBoard[i][j] == 10){
-		gameBoard[i][j] = 100;
+	if(level->gameBoard[i][j] == 10){
+		level->gameBoard[i][j] = 100;
 	}
-	else if (gameBoard[i][j] == 100)
+	else if (level->gameBoard[i][j] == 100)
 		printf("Tile is already flagged. Try again.\n");
+	else if (i >= level->rows || j >= level->cols)
+		printf("Input is out of bounds\n");
 	else printf("Tile is already revealed. Try again.\n");
 }
 
-void removeFlag(int gameBoard[][100]){
+void removeFlag(game *level){
 	int i, j;
 	
 	printf("\nEnter row to remove flag: ");
@@ -178,9 +190,11 @@ void removeFlag(int gameBoard[][100]){
 	printf("Enter column to remove flag: ");
 	scanf(" %d", &j);
 	
-	if(gameBoard[i][j] == 100){
-	gameBoard[i][j] = 10;
+	if(level->gameBoard[i][j] == 100){
+		level->gameBoard[i][j] = 10;
 	}
+	else if (i >= level->rows || j >= level->cols)
+		printf("Input is out of bounds\n");
 	else printf("Tile is not flagged. Try again.\n");
 }
 
@@ -220,10 +234,12 @@ void gameProper(game level){
         }
     }
     
+    
     makeBoard(&level);
-    printBoardChar(level); // test
+    printBoardChar(level);
 	
 	while(alive){
+		iClear(0, 0, level.cols*3, level.rows*3);
 		printBoard(level);
 		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n\nSelection: ");
 		scanf(" %d", &choice);
@@ -233,10 +249,10 @@ void gameProper(game level){
 				alive = inspectBoard(&level);
 				break;
 			case 2:
-				placeFlag(level.gameBoard);
+				placeFlag(&level);
 				break;
 			case 3:
-				removeFlag(level.gameBoard);
+				removeFlag(&level);
 				break;
 			default:
 				printf("Invalid input. Please try again.\n");
@@ -464,34 +480,35 @@ void playCustom(game *customLevel){
 	}	
 }
 
-void playClassic(game level)
-{
-	int gameSelect;
-	int start = 0;
+void playClassic(game *level){
+	int classicSelect;
+	int validChoice = 0;
 	
-	do {
-	printf("Difficulty\n[1] EASY or [2] DIFFICULT");
-	scanf(" %d", &gameSelect);
+	while(!validChoice){
+	printf("\nChoose difficulty\n[1] EASY or [2] DIFFICULT\n\n");
+	printf("Selection: ");
+	scanf(" %d", &classicSelect);
 	
-	switch (gameSelect)
+	switch (classicSelect)
 	{
 		case 1: 
-			level.rows = level.cols = 8;
-			level.mines = 10;
-			gameProper(level);
-			start = 1;
+			level->cols = 8;
+			level->rows = 8;
+			level->mines = 10;
+			gameProper(*level);
+			validChoice = 1;
 			break;
 		case 2:
-			level.rows = 15;
-			level.cols = 10;
-			level.mines = 10;
-			gameProper(level);
-			start = 1;
+			level->cols = 10;
+			level->rows = 15;
+			level->mines = 35;
+			gameProper(*level);
+			validChoice = 1;
 			break;
 		default:
 			printf("Invalid input. Try again.");
 	}
-	} while(!start);
+	}
 }
 
 void play(profile user, game level, game customLevel)
@@ -506,7 +523,7 @@ void play(profile user, game level, game customLevel)
 	switch (gameSelect)
 	{
 		case 1:
-			playClassic(level);
+			playClassic(&level);
 			validChoice = 1;
 			break;
 		case 2:
