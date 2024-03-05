@@ -10,6 +10,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "gameProper.c"
+
 // PREPROCESSOR DIRECTIVES
 struct level{
 	int rows;
@@ -38,23 +40,23 @@ typedef struct player{
 typedef struct player profile;
 
 // FUNCTIONS
-void play()
+void play(profile user, game level, game customLevel)
 {
 	int gameSelect;
 	int validChoice = 0;
-	
+
 	do {
 	printf("Game type selection\n[1] CLASSIC or [2] CUSTOM");
 	scanf(" %d", &gameSelect);
-	
+
 	switch (gameSelect)
 	{
-		case 1: 
-			playClassic();
+		case 1:
+			playClassic(level);
 			validChoice = 1;
 			break;
 		case 2:
-			playCustom();
+			playCustom(&customLevel);
 			validChoice = 1;
 			break;
 		default:
@@ -63,9 +65,43 @@ void play()
 	} while(!validChoice);
 }
 
-void playCustom(){
-	printf("Choose a level to play:")
+void playClassic(game level)
+{
+	int gameSelect;
+	int start = 0;
 	
+	do {
+	printf("Difficulty\n[1] EASY or [2] DIFFICULT");
+	scanf(" %d", &gameSelect);
+	
+	switch (gameSelect)
+	{
+		case 1: 
+			level.rows = level.cols = 8;
+			level.mines = 10;
+			gameProper(level);
+			start = 1;
+			break;
+		case 2:
+			level.rows = 15;
+			level.cols = 10;
+			level.mines = 10;
+			gameProper(level);
+			start = 1;
+			break;
+		default:
+			printf("Invalid input. Try again.");
+	}
+	} while(!start);
+}
+
+void playCustom(game *customLevel){
+	char filename[20];
+    char path[] = "levels/";
+	FILE *chosenLevel;
+
+	printf("Choose a level to play:");
+	prinft("");
 }
 
 // GAME PROPER
@@ -82,10 +118,10 @@ int main(){
     do {
 	printf("Main Menu\n[1] PLAY\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT");
 	scanf(" %d", &menuSelect);
-	
+
 	switch (menuSelect)
 	{
-		case 1: 
+		case 1:
 			//play(game);
 			start = 1;
 			break;
@@ -114,7 +150,7 @@ int main(){
 	myself. The program was run, tested, and debugged by my own efforts.
 	I further certify that I have not copied in part or whole or otherwise
 	plagiarized the work of other students and/or persons.
-	
+
 	GRINO, MARY EUNICE E., DLSU ID# 12325872
 	TAMONDONG, MARIEL M., DLSU ID# 12308323
 */
