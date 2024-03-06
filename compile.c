@@ -231,18 +231,16 @@ void gameProper(game level){
 	int totalSquares = (level.rows*level.cols)-level.mines;
 	int revealedCount;
 
+	//PLAYER BOARD
 	for(i = 0; i < level.rows; i++){
 		for (j = 0; j < level.cols; j++){
-            level.gameBoard[i][j] = 10;
+            level.gameBoard[i][j] = 10; // 10 == HIDDEN
         }
     }
     
-    
-    makeBoard(&level);
-    printBoardChar(level);
+    printBoardChar(level); // FOR TESTING
 	
 	while(alive){
-		iClear(0, 0, level.cols*3, level.rows*3);
 		printBoard(level);
 		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n\nSelection: ");
 		scanf(" %d", &choice);
@@ -348,9 +346,11 @@ int checkValidity(game *customLevel, int *minesCount){
 
 	if(cells == *minesCount){
 		printf("Invalid level: Every cell contains a mine.\n");
+		printBoardCharEdit(customLevel);
 		return 0;
 	} else if(*minesCount == 0){
 		printf("Invalid level: There are no mines placed.\n");
+		printBoardCharEdit(customLevel);
 		return 0;
 	} else{
 		return 1;
@@ -359,17 +359,16 @@ int checkValidity(game *customLevel, int *minesCount){
 
 int editLevel(game *customLevel) {
     int minesCount = 0;
-    int save;
-    int quit;
+    int save = 0;
+    int quit = 0;
     int choice;
 
     printBoardCharEdit(customLevel);
 
-    while(save == 0 || quit == 0){
+    while(!save && !quit){
     	printf("MINES: %d\n", minesCount);
-    	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection: ");
-    	scanf("%d", &choice);
-
+    	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection:");
+    	scanf("%d", &choice);	
         switch (choice) {
             case 1:
                 placeMine(customLevel, &minesCount);
@@ -379,12 +378,14 @@ int editLevel(game *customLevel) {
                 break;
             case 3:
             	if(checkValidity(customLevel, &minesCount) == 1) {
-            	save = 1;
+            		save = 1;
                 }
                 break;
             case 4:
 				quit = 1;
 				break;
+			default:
+            	printf("Invalid selection. Please choose again.\n");
         }
 	}
 	return save;
@@ -405,7 +406,6 @@ void levelEditor(game *customLevel) {
         return;
     } else {
         printf("Level %s will be created.\n", filename);
-        level = fopen(path, "w");
 
 		int validNum = 0;
 		while(!validNum){
@@ -430,14 +430,16 @@ void levelEditor(game *customLevel) {
     	}
 
         editLevel(customLevel);
+        
+        if(editLevel(customLevel) == 1){
+    		level = fopen(path, "w");
+    		saveFile(level, customLevel);
+    		fclose(level);
+        	printf("Level created successfully.\n\n");
+		} else{
+			printf("Level was not saved.\n\n");
+		}
     }
-
-    if(editLevel(customLevel) == 1){
-    	saveFile(level, customLevel);
-        printf("Level created successfully.\n");
-	}
-
-	fclose(level);
 }
 
 /* play */
@@ -498,6 +500,7 @@ void playClassic(game *level){
 			level->cols = 8;
 			level->rows = 8;
 			level->mines = 10;
+			makeBoard(level);
 			gameProper(*level);
 			validChoice = 1;
 			break;
@@ -505,6 +508,7 @@ void playClassic(game *level){
 			level->cols = 10;
 			level->rows = 15;
 			level->mines = 35;
+			makeBoard(level);
 			gameProper(*level);
 			validChoice = 1;
 			break;
@@ -552,7 +556,7 @@ int main(){
 	int start = 0;
 
     do {
-	printf("\nMain Menu\n[1] PLAY\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
+	printf("Main Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
 	scanf("%d", &menuSelect);
 
 	switch (menuSelect){
@@ -588,3 +592,4 @@ int main(){
 	GRINO, MARY EUNICE E., DLSU ID# 12325872
 	TAMONDONG, MARIEL M., DLSU ID# 12308323
 */
+

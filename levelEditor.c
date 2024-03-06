@@ -136,7 +136,6 @@ void levelEditor(game *customLevel) {
         return;
     } else {
         printf("Level %s will be created.\n", filename);
-        level = fopen(path, "w");
 
 		int validNum = 0;
 		while(!validNum){
@@ -164,11 +163,11 @@ void levelEditor(game *customLevel) {
     }
 
     if(editLevel(customLevel) == 1){
+    	level = fopen(path, "w");
     	saveFile(level, customLevel);
+    	fclose(level);
         printf("Level created successfully.\n");
 	}
-
-	fclose(level);
 }
 
 int main() {
