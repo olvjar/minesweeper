@@ -274,11 +274,15 @@ void gameProper(game level){
 			printBoardChar(level);
 			alive = 0;
 		}
-		
 	}
 }
 
 /* level edit */
+
+void menuLevelEditor(int *choice){
+	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection: ");
+	scanf("%d", choice);
+}
 
 void printBoardCharEdit(game *customLevel) {
     for (int i = 0; i < customLevel->rows; i++) {
@@ -290,9 +294,9 @@ void printBoardCharEdit(game *customLevel) {
 }
 
 int fileExists(char *filename) {
-    FILE *level = fopen(filename, "r");
-    if (level) {
-        fclose(level);
+    FILE *file = fopen(filename, "r");
+    if (file) {
+        fclose(file);
         return 1; // exists
     } else {
         return 0; // null
@@ -318,7 +322,6 @@ void placeMine(game *customLevel, int *minesCount) {
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->gameBoard[row][col] == '.') {
         customLevel->gameBoard[row][col] = 'X'; // Place mine
         (*minesCount)++;
-        printBoardCharEdit(customLevel);
         printf("\n");
     } else {
         printf("Invalid position. Mine not placed.\n\n");
@@ -334,7 +337,6 @@ void deleteMine(game *customLevel, int *minesCount) {
         customLevel->gameBoard[row][col] == 'X') {
         customLevel->gameBoard[row][col] = '.'; // Delete mine
         (*minesCount)--;
-        printBoardCharEdit(customLevel);
         printf("\n");
     } else {
         printf("Invalid position. There is no mine.\n\n");
@@ -346,11 +348,9 @@ int checkValidity(game *customLevel, int *minesCount){
 
 	if(cells == *minesCount){
 		printf("Invalid level: Every cell contains a mine.\n");
-		printBoardCharEdit(customLevel);
 		return 0;
 	} else if(*minesCount == 0){
 		printf("Invalid level: There are no mines placed.\n");
-		printBoardCharEdit(customLevel);
 		return 0;
 	} else{
 		return 1;
@@ -359,16 +359,15 @@ int checkValidity(game *customLevel, int *minesCount){
 
 int editLevel(game *customLevel) {
     int minesCount = 0;
-    int save = 0;
-    int quit = 0;
+    int save;
+    int quit;
     int choice;
 
-    printBoardCharEdit(customLevel);
-
-    while(!save && !quit){
+    while(quit != 1){
+    	printBoardCharEdit(customLevel);
     	printf("MINES: %d\n", minesCount);
-    	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection:");
-    	scanf("%d", &choice);	
+		menuLevelEditor(&choice);
+    	
         switch (choice) {
             case 1:
                 placeMine(customLevel, &minesCount);
@@ -379,15 +378,18 @@ int editLevel(game *customLevel) {
             case 3:
             	if(checkValidity(customLevel, &minesCount) == 1) {
             		save = 1;
+            		quit = 1;
                 }
                 break;
             case 4:
+				printf("Returned to main menu.\n");
 				quit = 1;
 				break;
 			default:
             	printf("Invalid selection. Please choose again.\n");
         }
 	}
+	
 	return save;
 }
 
@@ -403,7 +405,6 @@ void levelEditor(game *customLevel) {
 
     if (fileExists(path) == 1) {
         printf("Level cannot be created. File already exists.\n");
-        return;
     } else {
         printf("Level %s will be created.\n", filename);
 
@@ -445,7 +446,7 @@ void levelEditor(game *customLevel) {
 /* play */
 
 void playCustom(game *customLevel){
-	int row, col;
+	//int row, col;
 	char filename[20];
     char path[] = "levels/";
 	FILE *chosenLevel;
@@ -462,26 +463,16 @@ void playCustom(game *customLevel){
         return;
     } else {
     	chosenLevel = fopen(path, "r");
-    	fscanf(chosenLevel, "%d %d", &row, &col);
-    	customLevel->rows = row;
-    	customLevel->cols = col;
-    	/*
-    	do{
-    		fscanf(chosenLevel, "%d %d", &row, &col);
-		} while (fscanf(chosenLevel, "%c", &ch) == 1 && fscanf(chosenLevel, "%c", &ch) != '\n');
     	
-    	customLevel->rows = row;
-    	customLevel->cols = col;
-    	
+    	fscanf(chosenLevel, "%d %d", &customLevel->rows, &customLevel->cols);
+    	// customLevel->rows = row;
+    	// customLevel->cols = col;
 		for (int i = 0; i < customLevel->rows; i++) {
-       		for (int j = 0; j < customLevel->cols; j++) {
-				fscanf(chosenLevel, "%c", &customLevel->gameBoard[i][j]);        	
-			}
+			fscanf(chosenLevel, "%s", customLevel->board[i]);
     	}
-    	*/
-    	fprintf(stdout, "%d %d\n", customLevel->rows, customLevel->cols);
     	fclose(chosenLevel);
-    	// printBoardCharEdit(customLevel);
+			
+    	gameProper(*customLevel);
 	}	
 }
 
