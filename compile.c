@@ -242,7 +242,7 @@ void gameProper(game level){
 	
 	while(alive){
 		printBoard(level);
-		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n\nSelection: ");
+		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n\nSELECTION: ");
 		scanf(" %d", &choice);
 		
 		switch (choice){
@@ -481,8 +481,8 @@ void playClassic(game *level){
 	int validChoice = 0;
 	
 	while(!validChoice){
-	printf("\nChoose difficulty\n[1] EASY or [2] DIFFICULT\n\n");
-	printf("Selection: ");
+	printf("\nChoose difficulty\n[1] EASY\t[2] DIFFICULT\n\t[0] BACK\n\n");
+	printf("SELECTION: ");
 	scanf(" %d", &classicSelect);
 	
 	switch (classicSelect)
@@ -503,8 +503,12 @@ void playClassic(game *level){
 			gameProper(*level);
 			validChoice = 1;
 			break;
+		case 0:
+			printf("You have opted to go back.\n\n");
+			validChoice = 1;
+			break;
 		default:
-			printf("Invalid input. Try again.");
+			printf("Invalid input. Try again.\n");
 	}
 	}
 }
@@ -515,7 +519,7 @@ void play(profile user, game level, game customLevel)
 	int validChoice = 0;
 
 	do {
-	printf("\nGame type selection\n[1] CLASSIC or [2] CUSTOM\n\nSELECTION: ");
+	printf("\nGame type selection\n[1] CLASSIC\t[2] CUSTOM\n\t[0] BACK\n\nSELECTION: ");
 	scanf("%d", &gameSelect);
 
 	switch (gameSelect)
@@ -528,8 +532,12 @@ void play(profile user, game level, game customLevel)
 			playCustom(&customLevel);
 			validChoice = 1;
 			break;
+		case 0:
+			printf("You have opted to go back.\n\n");
+			validChoice = 1;
+			break;
 		default:
-			printf("Invalid input. Try again.");
+			printf("Invalid input. Try again.\n");
 	}
 	} while(!validChoice);
 }
