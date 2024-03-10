@@ -3,6 +3,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "interface.c"
+
 struct level {
     int rows;
     int cols;
@@ -122,6 +124,8 @@ int editLevel(game *customLevel) {
 			default:
             	printf("Invalid selection. Please choose again.\n");
         }
+        
+    	iClear(0,0,50,20);
 	}
 	
 	return save;
@@ -176,6 +180,7 @@ void levelEditor(game *customLevel) {
 		}
     }
 }
+
 
 int main() {
     game customLevel;
