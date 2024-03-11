@@ -95,7 +95,8 @@ void printBoard(game level){
 
 //for testing of made board/text file
 void printBoardChar(game level){
-    for (int i = 0; i < level.rows; i++) {
+    printf("\n");
+	for (int i = 0; i < level.rows; i++) {
         for (int j = 0; j < level.cols; j++) {
 			printf(" %c ", level.board[i][j]);
         }
@@ -161,6 +162,7 @@ void forwardCascade(game *level, int i, int j){
 			}
 			else mine = 1;
 		}
+		mine = 0;
 	}
 }
 
@@ -174,6 +176,7 @@ void backwardCascade(game *level, int i, int j){
 			}
 			else mine = 1;
 		}
+		mine = 0;
 	}
 }
 
@@ -211,7 +214,7 @@ void removeFlag(game *level){
 	else printf("Tile is not flagged. Try again.\n");
 }
 
-int inspectBoard(game *level) {
+int inspectBoard(game *level, char outcome[]) {
     int i, j;
     
     printf("\nEnter row to inspect: ");
@@ -222,6 +225,9 @@ int inspectBoard(game *level) {
     if (i < level->rows && j < level->cols) {
         if (mineCount(*level, i, j) == -1) {
             printf("\nYou have hit a mine. Game over.\n");
+            strcpy(outcome, "lose");
+            level->gameBoard[i][j] = 999;
+            printBoardChar(*level);
             return 0;    
         } else {
             level->gameBoard[i][j] = mineCount(*level, i, j); //reveal chosen tile
@@ -235,11 +241,96 @@ int inspectBoard(game *level) {
     }
 }
 
+int gameChecker(game level, char outcome[]){
+	int totalSquares = (level.rows*level.cols)-level.mines;
+	int revealedCount = 0;
+	int i, j;
+	
+	
+		for(i = 0; i < level.rows; i++){
+			for(j = 0; j < level.cols; j++){
+				if (level.gameBoard[i][j] != 10 && level.board[i][j] != 'X'){
+					revealedCount++;
+				}
+			}
+		}
+		
+	if(revealedCount == totalSquares){
+		printBoard(level);
+		printf("\nAll non-mine tiles revealed.\nYou win!\n");
+		strcpy(outcome, "win");
+		printBoardChar(level);
+		return 0;
+	}
+	else return 1;
+}
+
+int saveSnapshot(game level, char outcome[]){
+	int i, j;
+	char filename[20];
+    char path[] = "recent games/";
+    FILE *fgame;
+    
+    strcpy(filename, "recentgame");
+	strcat(filename, ".txt");
+    strcat(path, filename);
+    
+    fgame = fopen(path, "w");
+    
+    if (strcmp(outcome, "win") == 0){
+		fprintf(fgame, "GAME WON\n");
+		
+		for (i = 0; i < level.rows; i++){
+    		for (j = 0; j < level.cols; j++){
+    			
+    			if (level.gameBoard[i][j] != 100 && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
+					fprintf(fgame, " %d ", level.gameBoard[i][j]);
+				}
+				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == 100){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
+					fprintf(fgame, " X ");
+				}
+		}
+		fprintf(fgame, "\n");
+	}
+}
+	
+	else if (strcmp(outcome, "lose") == 0){
+		fprintf(fgame, "GAME LOST\n");
+		
+		for (i = 0; i < level.rows; i++){
+    		for (j = 0; j < level.cols; j++){
+    			if (level.gameBoard[i][j] != 10 && level.gameBoard[i][j] != 100 && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
+					fprintf(fgame, " %d ", level.gameBoard[i][j]);
+				}
+				else if(level.gameBoard[i][j] == 999){ // bomb == exploded
+					fprintf(fgame, " X ");
+				}
+				else if (level.board[i][j] == 'X'){ // tile == bomb
+					fprintf(fgame, " x ");
+				}
+				else if (level.gameBoard[i][j] == 100){ // tile == flag
+    				fprintf(fgame, " F ");
+				}
+				else if (level.gameBoard[i][j] == 10){ // tile == not revealed
+					fprintf(fgame, " . ");
+    			}
+			}
+		fprintf(fgame, "\n");
+		}
+}
+	
+	else if (strcmp(outcome, "pause") == 0){
+	}
+    
+    fclose(fgame);
+    
+    return 1;
+}
+
 void gameProper(game level){
 	int i, j, alive = 1;
 	int choice;
-	int totalSquares = (level.rows*level.cols)-level.mines;
-	int revealedCount;
+	char outcome[11];
 
 	//PLAYER BOARD
 	for(i = 0; i < level.rows; i++){
@@ -257,7 +348,7 @@ void gameProper(game level){
 		
 		switch (choice){
 			case 1:
-				alive = inspectBoard(&level);
+				alive = inspectBoard(&level, outcome);
 				break;
 			case 2:
 				placeFlag(&level);
@@ -269,22 +360,11 @@ void gameProper(game level){
 				printf("Invalid input. Please try again.\n");
 		}
 		
-		revealedCount = 0;
-		for(i = 0; i < level.rows; i++){
-			for(j = 0; j < level.cols; j++){
-				if (level.gameBoard[i][j] != 10 && level.board[i][j] != 'X'){
-					revealedCount++;
-				}
-			}
-		}
-		
-		if(revealedCount == totalSquares){
-			printBoard(level);
-			printf("\nAll non-mine tiles revealed.\nYou win!\n");
-			printBoardChar(level);
-			alive = 0;
+		if (alive){
+		alive = gameChecker(level, outcome);
 		}
 	}
+	saveSnapshot(level, outcome);
 }
 
 /* level edit */
