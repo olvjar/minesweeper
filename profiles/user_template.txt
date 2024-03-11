@@ -8,5 +8,7 @@ games_lost
 games_won
 games_lost
 
-[recent_games]
-snapshot
+[recent games]
+SNAPSHOT_1
+SNAPSHOT_2
+SNAPSHOT_3
