@@ -7,3 +7,8 @@ gem
 [custom]
 0
 1
+
+[recent games]
+path
+path
+path
