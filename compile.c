@@ -12,16 +12,26 @@
 
 #include "interface.c"
 
+#define LVL_PATH "levels/"
+#define LVL_DIR "levels/level_list.txt"
+
 // PREPROCESSOR DIRECTIVES
-struct level{
-	int rows;
-	int cols;
-	int mines;
-	int gameBoard[100][100];
-	char board[100][100];
+struct level {
+    int rows;
+    int cols;
+    int mines;
+    int gameBoard[100][100];
+    char board[100][100];
+};
+
+struct fileInfo{
+	char filename[20];
+	char path[100];
 };
 
 typedef struct level game;
+typedef struct fileInfo file;
+typedef file customLevelList[100];
 
 struct recent_games{
 		char mode;
@@ -279,15 +289,20 @@ void gameProper(game level){
 
 /* level edit */
 
+void menuEditLevel(int *choice){
+	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to level editor menu\n\nSelection: ");
+	scanf("%d", choice);
+}
+
 void menuLevelEditor(int *choice){
-	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to main menu\n\nSelection: ");
+	printf("[1] CREATE a new level\n[2] EDIT an existing level\n[3] DELETE an existing level\n[4] RETURN to main menu\n\nSelection: ");
 	scanf("%d", choice);
 }
 
 void printBoardCharEdit(game *customLevel) {
     for (int i = 0; i < customLevel->rows; i++) {
         for (int j = 0; j < customLevel->cols; j++) {
-            printf(" %c ", customLevel->gameBoard[i][j]);
+            printf(" %c ", customLevel->board[i][j]);
         }
         printf("\n");
     }
@@ -303,24 +318,14 @@ int fileExists(char *filename) {
     }
 }
 
-void saveFile(FILE *file, game *customLevel) {
-    fprintf(file, "%d %d\n", customLevel->rows, customLevel->cols);
-
-    for (int i = 0; i < customLevel->rows; i++) {
-        for (int j = 0; j < customLevel->cols; j++) {
-            fprintf(file, "%c", customLevel->gameBoard[i][j]);
-        }
-        fprintf(file, "\n");
-    }
-}
-
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
-
+	*minesCount = customLevel->mines;
+	
     printf("Enter row and column for mine %d: ", *minesCount + 1);
     scanf("%d %d", &row, &col);
-    if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->gameBoard[row][col] == '.') {
-        customLevel->gameBoard[row][col] = 'X'; // Place mine
+    if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
+        customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
         printf("\n");
     } else {
@@ -330,12 +335,12 @@ void placeMine(game *customLevel, int *minesCount) {
 
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
-
+	*minesCount = customLevel->mines;
+	
     printf("Enter row and column of the mine to delete: ");
     scanf("%d %d", &row, &col);
-    if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols &&
-        customLevel->gameBoard[row][col] == 'X') {
-        customLevel->gameBoard[row][col] = '.'; // Delete mine
+    if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
+        customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
         printf("\n");
     } else {
@@ -357,18 +362,114 @@ int checkValidity(game *customLevel, int *minesCount){
 	}
 }
 
+void checkFiles(customLevelList *cLevels){
+	int i, numFiles;
+	FILE *dir;
+	
+	dir = fopen(LVL_DIR, "r");
+	fscanf(dir, "%d", &numFiles);
+	
+	for(i = 0; i < numFiles; i++){
+		fscanf(dir, "%s", cLevels[i]->filename);
+		printf("%d. ", i + 1);
+		
+		if(strcmp(cLevels[i]->filename, "") == 0){
+			printf("< empty >\n");
+		} else printf("%s\n", cLevels[i]->filename);
+	}
+	
+	fclose(dir);
+}
+
+
+void deleteFile(customLevelList *cLevels){
+	char filename[20];
+	char path[100] = LVL_PATH;
+	int num, i;
+	FILE *dir;
+	
+	printf("EXISTING CUSTOM LEVELS:\n");
+	checkFiles(cLevels);
+	
+	printf("\nProvide level to delete (do not include .txt): ");
+	scanf("%s", filename);
+	strcat(filename, ".txt");
+    strcat(path, filename);
+    printf("%s\n", path);
+	
+	if(fileExists(path) == 0) {
+        printf("\nLevel does not exist. Try again.\n");
+        return;
+    } else {
+		// read list
+	    dir = fopen(LVL_DIR, "r");
+	    fscanf(dir, "%d", &num);	
+	    for(i = 0; i < num; i++){
+			fscanf(dir, "%s", cLevels[i]->filename);
+		}
+		fclose(dir);
+		
+		// update list
+	    dir = fopen(LVL_DIR, "w");
+	    fprintf(dir, "%d\n", num - 1);
+	    for(i = 0; i < num; i++){
+	    	if(strcmp(cLevels[i]->filename, filename) == 0){
+	    		fprintf(dir, "%s", "");
+			} else fprintf(dir, "%s\n", cLevels[i]->filename);
+		}
+	    fclose(dir);
+	    
+	    // delete level file
+	    remove(path);
+	    printf("%s deleted successfully.", filename);
+	}
+}
+
+void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels, char *filename) {
+	fprintf(file, "%d %d\n", customLevel->rows, customLevel->cols);
+
+    for (int i = 0; i < customLevel->rows; i++) {
+        for (int j = 0; j < customLevel->cols; j++) {
+            fprintf(file, "%c", customLevel->board[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+    
+	FILE *dir;
+    int i, num;
+    if(mode == 0){
+    	// read list
+    	dir = fopen(LVL_DIR, "r");
+    	fscanf(dir, "%d", &num);
+    	for(i = 0; i < num; i++){
+			fscanf(dir, "%s", cLevels[i]->filename);
+		}	
+		fclose(dir);
+	
+		// write list
+    	dir = fopen(LVL_DIR, "w");
+    	fprintf(dir, "%d\n", num + 1);
+    	for(i = 0; i < num; i++){
+			fprintf(dir, "%s\n", cLevels[i]->filename);
+		}
+		fprintf(dir, "%s\n", filename);
+    	fclose(dir);
+	}
+}
+
 int editLevel(game *customLevel) {
-    int minesCount = 0;
+    int minesCount;
     int save;
     int quit;
     int choice;
 
     while(quit != 1){
     	printBoardCharEdit(customLevel);
+    	printf("GRID: %dx%d\t", customLevel->rows, customLevel->cols);
     	printf("MINES: %d\n", minesCount);
-		menuLevelEditor(&choice);
+		menuEditLevel(&choice);
     	
-        switch (choice) {
+        switch(choice){
             case 1:
                 placeMine(customLevel, &minesCount);
                 break;
@@ -388,17 +489,59 @@ int editLevel(game *customLevel) {
 			default:
             	printf("Invalid selection. Please choose again.\n");
         }
+        
+    	iClear(0,0,100,30);
 	}
 	
 	return save;
 }
 
-void levelEditor(game *customLevel) {
-    char filename[20];
-    char path[] = "levels/";
+void loadLevel(game *customLevel, customLevelList *cLevels){
+	char filename[20];
+    char path[100] = LVL_PATH;
     FILE *level;
+	
+	printf("EXISTING CUSTOM LEVELS:\n");
+	checkFiles(cLevels);
+	
+	printf("\nProvide level name to edit: ");
+	scanf("%s", filename);
+    strcat(filename, ".txt");
+    strcat(path, filename);
+    printf("%s\n", path);
 
-    printf("Provide file name: ");
+    if(fileExists(path) == 0) {
+        printf("\nLevel does not exist. Try again.\n");
+        return;
+    } else {
+    	level = fopen(path, "r");
+    	
+		fscanf(level, "%d %d", &customLevel->rows, &customLevel->cols);
+		for(int i = 0; i < customLevel->rows; i++) {
+			fscanf(level, "%s", customLevel->board[i]);
+    	}
+    	
+    	editLevel(customLevel); 
+		   	
+    	if(editLevel(customLevel) == 1){
+    		level = fopen(path, "w");
+    		saveFile(1, level, customLevel, cLevels, filename);
+    		fclose(level);
+        	printf("Level successfully edited.\n\n");
+		} else{
+			printf("Level was not saved.\n\n");
+		}
+		
+		fclose(level);
+	}
+}
+
+void createLevel(game *customLevel, customLevelList *cLevels){
+	char filename[20];
+    char path[100] = LVL_PATH;
+    FILE *level;
+    
+	printf("Provide file name: ");
     scanf("%s", filename);
     strcat(filename, ".txt");
     strcat(path, filename);
@@ -410,7 +553,7 @@ void levelEditor(game *customLevel) {
 
 		int validNum = 0;
 		while(!validNum){
-				printf("Enter number of rows and columns: ");
+				printf("Enter number of rows (5 to 10) and columns (5 to 15): ");
         		scanf("%d %d", &customLevel->rows, &customLevel->cols);
 
 				if((customLevel->rows < 5 || customLevel->rows > 10) && (customLevel->cols < 5 || customLevel->cols > 15)){
@@ -426,7 +569,7 @@ void levelEditor(game *customLevel) {
 
 		for (int i = 0; i < customLevel->rows; i++) {
         	for (int j = 0; j < customLevel->cols; j++) {
-            	customLevel->gameBoard[i][j] = '.';
+            	customLevel->board[i][j] = '.';
         	}
     	}
 
@@ -434,13 +577,42 @@ void levelEditor(game *customLevel) {
         
         if(editLevel(customLevel) == 1){
     		level = fopen(path, "w");
-    		saveFile(level, customLevel);
+    		saveFile(0, level, customLevel, cLevels, filename);
     		fclose(level);
         	printf("Level created successfully.\n\n");
 		} else{
 			printf("Level was not saved.\n\n");
 		}
     }
+}
+
+void levelEditor(game *customLevel, customLevelList *cLevels) {
+    int quit, choice;
+    
+	while(quit != 1){
+		printf("What would you like to do?\n");
+		menuLevelEditor(&choice);
+    	
+        switch (choice) {
+            case 1:
+                createLevel(customLevel, cLevels);
+                break;
+            case 2:
+                loadLevel(customLevel, cLevels);
+                break;
+            case 3:
+            	deleteFile(cLevels);
+                break;
+            case 4:
+				printf("Returned to main menu.\n");
+				quit = 1;
+				break;
+			default:
+            	printf("Invalid selection. Please choose again.\n");
+        }
+        
+    	iClear(0,0,100,30);
+	}
 }
 
 /* play */
@@ -549,6 +721,7 @@ int main(){
 	profile user;
 	game customLevel;
 	game level;
+	customLevelList customLvls;
 
 	// start
 	int menuSelect;
@@ -563,7 +736,7 @@ int main(){
 			play(user, level, customLevel);
 			break;
 		case 2:
-			levelEditor(&customLevel);
+			levelEditor(&customLevel, &customLvls);
 			break;
 		case 3:
 			//changeProfile(&user);
