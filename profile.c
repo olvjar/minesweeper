@@ -17,7 +17,7 @@ struct player{
 	int games_lost_classic;
 	int games_won_custom;
 	int games_lost_custom;
-	struct recent_games recentgame;
+	struct recent_games recentgame[3];
 };
 
 typedef struct player profile;
