@@ -98,12 +98,12 @@ void selectProfile(profile *currentUser, profileList *users){
 	    printf("%s\n%s\n", currentUser->name, currentUser->player_path);
 	    
 	    user = fopen(path, "rb");
-	    fread(currentUser->name, sizeof(currentUser->name), 1, user);
-	    fread(currentUser->player_path, sizeof(currentUser->player_path), 1, user);
-	    fread(&currentUser->games_won_classic, sizeof(currentUser->games_won_classic), 1, user);
-	    fread(&currentUser->games_lost_classic, sizeof(currentUser->games_lost_classic), 1, user);
-	    fread(&currentUser->games_won_custom, sizeof(currentUser->games_won_custom), 1, user);
-	    fread(&currentUser->games_lost_custom, sizeof(currentUser->games_lost_custom), 1, user);
+		fread(currentUser->name, sizeof(currentUser), 1, user);
+	    //fread(currentUser->player_path, sizeof(currentUser->player_path), 1, user);
+	    //fread(&currentUser->games_won_classic, sizeof(currentUser->games_won_classic), 1, user);
+	    //fread(&currentUser->games_lost_classic, sizeof(currentUser->games_lost_classic), 1, user);
+	    //fread(&currentUser->games_won_custom, sizeof(currentUser->games_won_custom), 1, user);
+	    //fread(&currentUser->games_lost_custom, sizeof(currentUser->games_lost_custom), 1, user);
 	    fclose(user);
 	    viewStatistics(currentUser);
 	}
