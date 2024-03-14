@@ -319,7 +319,22 @@ int saveSnapshot(game level, char outcome[]){
 		}
 }
 	
-	else if (strcmp(outcome, "pause") == 0){
+	else if (strcmp(outcome, "quit") == 0){
+		fprintf(fgame, "GAME QUIT\n");
+		
+		for(i = 0; i < level.rows; i++){
+			for(j = 0; j < level.cols; j++){
+				
+				if(level.gameBoard[i][j] == 10){
+					fprintf(fgame, " . ");
+				}
+				else if (level.gameBoard[i][j] == 100){
+					fprintf(fgame, " F ");
+				}
+				else fprintf(fgame, " %d ", level.gameBoard[i][j]);
+			}
+		fprintf(fgame, "\n");
+		}
 	}
     
     fclose(fgame);
