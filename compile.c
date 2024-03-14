@@ -358,7 +358,7 @@ void gameProper(game level){
 	
 	while(alive){
 		printBoard(level);
-		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n\nSELECTION: ");
+		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n[0] QUIT\n\nSELECTION: ");
 		scanf(" %d", &choice);
 		
 		switch (choice){
@@ -370,6 +370,11 @@ void gameProper(game level){
 				break;
 			case 3:
 				removeFlag(&level);
+				break;
+			case 0:
+				strcpy(outcome, "quit");
+				printf("Game Quitted\n");
+				alive = 0;
 				break;
 			default:
 				printf("Invalid input. Please try again.\n");
