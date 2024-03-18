@@ -14,6 +14,8 @@
 
 #define LVL_PATH "levels/"
 #define LVL_DIR "levels/level_list.txt"
+#define HIDDEN 10
+#define FLAG 100
 
 // PREPROCESSOR DIRECTIVES
 struct level {
@@ -77,7 +79,7 @@ void printBoard(game level){
 				iSetColor(I_COLOR_WHITE);
 				printf(" . ");
 			}
-			else if (level.gameBoard[i][j] == 100){ //flag
+			else if (level.gameBoard[i][j] == HIDDEN0){ //flag
 				iSetColor(I_COLOR_RED);
 				printf(" F ");
 				iSetColor(I_COLOR_WHITE);
@@ -188,10 +190,10 @@ void placeFlag(game *level){
 	printf("Enter column to flag: ");
 	scanf(" %d", &j);
 	
-	if(level->gameBoard[i][j] == 10){
-		level->gameBoard[i][j] = 100;
+	if(level->gameBoard[i][j] == HIDDEN){
+		level->gameBoard[i][j] = FLAG;
 	}
-	else if (level->gameBoard[i][j] == 100)
+	else if (level->gameBoard[i][j] == FLAG)
 		printf("Tile is already flagged. Try again.\n");
 	else if (i >= level->rows || j >= level->cols)
 		printf("Input is out of bounds\n");
@@ -206,8 +208,8 @@ void removeFlag(game *level){
 	printf("Enter column to remove flag: ");
 	scanf(" %d", &j);
 	
-	if(level->gameBoard[i][j] == 100){
-		level->gameBoard[i][j] = 10;
+	if(level->gameBoard[i][j] == FLAG){
+		level->gameBoard[i][j] = HIDDEN;
 	}
 	else if (i >= level->rows || j >= level->cols)
 		printf("Input is out of bounds\n");
@@ -249,7 +251,7 @@ int gameChecker(game level, char outcome[]){
 	
 		for(i = 0; i < level.rows; i++){
 			for(j = 0; j < level.cols; j++){
-				if (level.gameBoard[i][j] != 10 && level.board[i][j] != 'X'){
+				if (level.gameBoard[i][j] != HIDDEN && level.board[i][j] != 'X'){
 					revealedCount++;
 				}
 			}
@@ -283,10 +285,10 @@ int saveSnapshot(game level, char outcome[]){
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
     			
-    			if (level.gameBoard[i][j] != 100 && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
+    			if (level.gameBoard[i][j] != FLAG && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
 					fprintf(fgame, " %d ", level.gameBoard[i][j]);
 				}
-				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == 100){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
+				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == FLAG){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
 					fprintf(fgame, " X ");
 				}
 		}
@@ -299,7 +301,7 @@ int saveSnapshot(game level, char outcome[]){
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
-    			if (level.gameBoard[i][j] != 10 && level.gameBoard[i][j] != 100 && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
+    			if (level.gameBoard[i][j] != HIDDEN && level.gameBoard[i][j] != FLAG && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
 					fprintf(fgame, " %d ", level.gameBoard[i][j]);
 				}
 				else if(level.gameBoard[i][j] == 999){ // bomb == exploded
@@ -308,10 +310,10 @@ int saveSnapshot(game level, char outcome[]){
 				else if (level.board[i][j] == 'X'){ // tile == bomb
 					fprintf(fgame, " x ");
 				}
-				else if (level.gameBoard[i][j] == 100){ // tile == flag
+				else if (level.gameBoard[i][j] == FLAG){ // tile == flag
     				fprintf(fgame, " F ");
 				}
-				else if (level.gameBoard[i][j] == 10){ // tile == not revealed
+				else if (level.gameBoard[i][j] == HIDDEN){ // tile == not revealed
 					fprintf(fgame, " . ");
     			}
 			}
@@ -325,10 +327,10 @@ int saveSnapshot(game level, char outcome[]){
 		for(i = 0; i < level.rows; i++){
 			for(j = 0; j < level.cols; j++){
 				
-				if(level.gameBoard[i][j] == 10){
+				if(level.gameBoard[i][j] == HIDDEN){
 					fprintf(fgame, " . ");
 				}
-				else if (level.gameBoard[i][j] == 100){
+				else if (level.gameBoard[i][j] == FLAG){
 					fprintf(fgame, " F ");
 				}
 				else fprintf(fgame, " %d ", level.gameBoard[i][j]);
@@ -350,7 +352,7 @@ void gameProper(game level){
 	//PLAYER BOARD
 	for(i = 0; i < level.rows; i++){
 		for (j = 0; j < level.cols; j++){
-            level.gameBoard[i][j] = 10; // 10 == HIDDEN
+            level.gameBoard[i][j] = HIDDEN; 
         }
     }
     
