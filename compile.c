@@ -288,6 +288,7 @@ int saveSnapshot(game level, char outcome[]){
 }
 	
 	else if (strcmp(outcome, "lose") == 0){
+		fprintf(fgame, "%s\n", level.mode);
 		fprintf(fgame, "GAME LOST\n");
 		
 		for (i = 0; i < level.rows; i++){
@@ -313,6 +314,7 @@ int saveSnapshot(game level, char outcome[]){
 }
 	
 	else if (strcmp(outcome, "quit") == 0){
+		fprintf(fgame, "%s\n", level.mode);
 		fprintf(fgame, "GAME QUIT\n");
 		
 		for(i = 0; i < level.rows; i++){
@@ -736,7 +738,8 @@ void playCustom(game *customLevel){
 			fscanf(chosenLevel, "%s", customLevel->board[i]);
     	}
     	fclose(chosenLevel);
-			
+		
+		strcpy(customLevel->mode, CUSTOM);
     	gameProper(*customLevel);
 	}	
 }
@@ -756,6 +759,7 @@ void playClassic(game *level){
 			level->cols = 8;
 			level->rows = 8;
 			level->mines = 10;
+			strcpy(level->mode, CLASSIC_EASY);
 			makeBoard(level);
 			gameProper(*level);
 			validChoice = 1;
@@ -764,6 +768,7 @@ void playClassic(game *level){
 			level->cols = 10;
 			level->rows = 15;
 			level->mines = 35;
+			strcpy(level->mode, CLASSIC_DIFFICULT);
 			makeBoard(level);
 			gameProper(*level);
 			validChoice = 1;
