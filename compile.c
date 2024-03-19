@@ -16,12 +16,16 @@
 #define LVL_DIR "levels/level_list.txt"
 #define HIDDEN 10
 #define FLAG 100
+#define CLASSIC_EASY "CLASSIC-EASY"
+#define CLASSIC_DIFFICULT "CLASSIC-DIFFICULT"
+#define CUSTOM "CUSTOM"
 
 // PREPROCESSOR DIRECTIVES
 struct level {
     int rows;
     int cols;
     int mines;
+	char mode[11];
     int gameBoard[100][100];
     char board[100][100];
 };
@@ -221,8 +225,7 @@ int inspectBoard(game *level, char outcome[]) {
             return 0;    
         } else {
             level->gameBoard[i][j] = mineCount(*level, i, j); //reveal chosen tile
-            forwardCascade(level, i, j);
-            backwardCascade(level, i, j);
+            cascade(level, i, j);
             return 1;
         }
     } else {
@@ -267,6 +270,7 @@ int saveSnapshot(game level, char outcome[]){
     fgame = fopen(path, "w");
     
     if (strcmp(outcome, "win") == 0){
+		fprintf(fgame, "%s\n", level.mode);
 		fprintf(fgame, "GAME WON\n");
 		
 		for (i = 0; i < level.rows; i++){
@@ -579,7 +583,7 @@ int editLevel(game *customLevel) {
             	printf("Invalid selection. Please choose again.\n");
         }
         
-    	iClear(0,0,100,30);
+    	//iClear(0,0,100,30);
 	}
 	
 	return save;
@@ -700,7 +704,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
             	printf("Invalid selection. Please choose again.\n");
         }
         
-    	iClear(0,0,100,30);
+    	//iClear(0,0,100,30);
 	}
 }
 
