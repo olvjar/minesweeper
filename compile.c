@@ -40,8 +40,8 @@ typedef struct fileInfo file;
 typedef file customLevelList[100];
 
 struct recent_games{
-		char mode;
-		char outcome;
+		char mode[11];
+		char outcome[11];
 		char snapshot[100][100];
 };
 
