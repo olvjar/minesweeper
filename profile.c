@@ -15,7 +15,7 @@ struct recent_games{
 };
 
 struct player{
-	char name[20];
+	char name[21];
 	char player_path[100];
 	int games_won_classic;
 	int games_lost_classic;
@@ -62,7 +62,7 @@ void checkProfiles(profileList *users){
 }
 
 void viewStatistics(profile *currentUser){
-		int i;
+		//int i;
 		
 		printf("Name: %s\n", currentUser->name);
     	printf("Path: %s\n", currentUser->player_path);
@@ -75,6 +75,7 @@ void viewStatistics(profile *currentUser){
     	}
     	*/
 }
+
 void selectProfile(profile *currentUser, profileList *users){
 	char name[21];
 	char filename[21];
@@ -95,15 +96,13 @@ void selectProfile(profile *currentUser, profileList *users){
 	} else {
 	    strcpy(currentUser->name, name);
 	    strcpy(currentUser->player_path, path);
-	    printf("%s\n%s\n", currentUser->name, currentUser->player_path);
+	    printf("TEST\n%s\n%s\n\n\nOUTPUT:\n", currentUser->name, currentUser->player_path);
 	    
-	    user = fopen(path, "rb");
-		fread(currentUser->name, sizeof(currentUser), 1, user);
-	    //fread(currentUser->player_path, sizeof(currentUser->player_path), 1, user);
-	    //fread(&currentUser->games_won_classic, sizeof(currentUser->games_won_classic), 1, user);
-	    //fread(&currentUser->games_lost_classic, sizeof(currentUser->games_lost_classic), 1, user);
-	    //fread(&currentUser->games_won_custom, sizeof(currentUser->games_won_custom), 1, user);
-	    //fread(&currentUser->games_lost_custom, sizeof(currentUser->games_lost_custom), 1, user);
+	    user = fopen(path, "rb+");
+		fread(currentUser->name, sizeof(char), 1, user);
+		fread(currentUser->player_path, sizeof(char), 1, user);
+		fseek(user, size, SEEK_SET);
+		//fread(&currentUser->games_won_classic, sizeof(int), 1, user);
 	    fclose(user);
 	    viewStatistics(currentUser);
 	}
