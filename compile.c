@@ -160,7 +160,7 @@ int mineCount(game level, int i, int j){
 
 void cascade(game *level, int i, int j){
     if (i < 0 || i >= level->rows || j < 0 || j >= level->cols || 
-        level->board[i][j] == 'X' || level->gameBoard[i][j] == FLAG || !(level->gameBoard[i][j] == HIDDEN)) {
+        level->board[i][j] == 'X' || level->gameBoard[i][j] == FLAG || level->gameBoard[i][j] != HIDDEN)) {
         return; // Base case: out of bounds or already revealed/flagged
     }
     
