@@ -11,6 +11,7 @@ struct level {
     int rows;
     int cols;
     int mines;
+	char mode[11];
     int gameBoard[100][100];
     char board[100][100];
 };

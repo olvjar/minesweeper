@@ -1,9 +1,50 @@
 molly
 profiles/molly.dat
+
+[CLASSIC]
 1
 0
-0
+
+[CUSTOM]
+2
 1
-path
-path
-path
+
+[RECENT GAMES]
+> SNAPSHOT_1
+CLASSIC-EASY
+GAME QUIT
+ 0  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+ .  .  .  .  .  .  .  . 
+
+
+> SNAPSHOT_2
+GAME MODE
+GAME OUTCOME - TIME
+
+
+
+
+
+
+
+
+
+
+> SNAPSHOT_3
+GAME MODE
+GAME OUTCOME - TIME
+
+
+
+
+
+
+
+
+
