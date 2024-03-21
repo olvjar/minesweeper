@@ -6,7 +6,7 @@
         printf("\n");
 
         // 15 cols max
-        // 15 rows max
+        // 10 rows max
 
 // PROFILE
 
