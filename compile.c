@@ -46,7 +46,7 @@ struct recent_games{
 };
 
 struct player{
-	char name[20];
+	char name[21];
 	int games_won_classic;
 	int games_lost_classic;
 	int games_won_custom;
