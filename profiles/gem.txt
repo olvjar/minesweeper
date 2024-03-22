@@ -1,0 +1,15 @@
+gem
+profiles/gem.txt
+
+[CLASSIC]
+games_won
+games_lost
+
+[CUSTOM]
+games_won
+games_lost
+
+[RECENT GAMES]
+snapshots/gem_snapshot0.txt
+snapshots/gem_snapshot1.txt
+snapshots/gem_snapshot2.txt
