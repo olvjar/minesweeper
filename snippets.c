@@ -95,6 +95,7 @@ void newProfile(profileList *users){
 	}
 }
 */
+<<<<<<< HEAD
 
 		int i
 		for(i = 0; i < 3; i++) {
@@ -102,3 +103,5 @@ void newProfile(profileList *users){
             fread(currentUser->recentgame[i].outcome, sizeof(char), 1, user);
             fread(currentUser->recentgame[i].snapshot, sizeof(char), 1, user);
         }
+=======
+>>>>>>> refs/remotes/origin/main
