@@ -35,7 +35,7 @@ void menuLevelEditor(int *choice){
 	scanf("%d", choice);
 }
 
-void printBoardCharEdit(game *customLevel) {
+void printCustomBoard(game *customLevel) {
     for (int i = 0; i < customLevel->rows; i++) {
         for (int j = 0; j < customLevel->cols; j++) {
             printf(" %c ", customLevel->board[i][j]);
@@ -196,7 +196,7 @@ int editLevel(game *customLevel) {
     int choice;
 
     while(quit != 1){
-    	printBoardCharEdit(customLevel);
+    	printCustomBoard(customLevel);
     	printf("GRID: %dx%d\t", customLevel->rows, customLevel->cols);
     	printf("MINES: %d\n", minesCount);
 		menuEditLevel(&choice);
