@@ -1,6 +1,5 @@
 GAME QUIT
-CLASSIC-DIFF
-
+CLASSIC-DIFFICULT
  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 
  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 
  .  .  .  .  .  .  .  .  2  .  .  .  .  .  . 
