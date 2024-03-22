@@ -52,15 +52,6 @@ struct player{
 
 typedef struct player profile;
 
-void printBoardCharEdit(game *customLevel) {
-    for (int i = 0; i < customLevel->rows; i++) {
-        for (int j = 0; j < customLevel->cols; j++) {
-            printf(" %c ", customLevel->board[i][j]);
-        }
-        printf("\n");
-    }
-}
-
 void viewStatistics(profile *currentUser){
     int i, j, k;
     FILE *recentgames;
