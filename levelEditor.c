@@ -72,9 +72,9 @@ void checkLevels(customLevelList *cLevels){
 
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
-	*minesCount = customLevel->mines;
+	(*minesCount) = customLevel->mines;
 
-    printf("Enter row and column for mine %d: ", *minesCount + 1);
+    printf("Enter row and column for mine %d: ", (*minesCount) + 1);
     scanf("%d %d", &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
@@ -87,7 +87,7 @@ void placeMine(game *customLevel, int *minesCount) {
 
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
-	*minesCount = customLevel->mines;
+	(*minesCount) = customLevel->mines;
 
     printf("Enter row and column of the mine to delete: ");
     scanf("%d %d", &row, &col);
@@ -115,7 +115,7 @@ int checkValidity(game *customLevel, int *minesCount){
 }
 
 void deleteFile(customLevelList *cLevels){
-	char filename[20];
+	char filename[21];
 	char path[100] = LVL_PATH;
 	int num, i;
 	FILE *dir;

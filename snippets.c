@@ -95,3 +95,10 @@ void newProfile(profileList *users){
 	}
 }
 */
+
+		int i
+		for(i = 0; i < 3; i++) {
+            fread(currentUser->recentgame[i].mode, sizeof(char), 1, user);
+            fread(currentUser->recentgame[i].outcome, sizeof(char), 1, user);
+            fread(currentUser->recentgame[i].snapshot, sizeof(char), 1, user);
+        }
