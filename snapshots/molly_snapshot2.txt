@@ -1,5 +1,5 @@
-GAME QUIT
-CLASSIC-DIFFICULT
+QUIT
+CLASSIC-DIFFICULT 10 15
  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 
  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 
  .  .  .  .  .  .  .  .  2  .  .  .  .  .  . 
