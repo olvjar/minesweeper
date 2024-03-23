@@ -64,38 +64,68 @@ void printBoard(game level){
     int i, j;
     
     printf("\n");
-	printf("   ");
-	for (i = 0; i < level.cols; i++) {
-		iSetColor(I_COLOR_PURPLE);
-    	printf(" %2d ", i);
-    }
+	printf("     ");
+	for (i = 0; i < 2; i++) {
+		for(j = 0; j <  level.cols; j++) {
+			
+			if(i == 0){
+				iSetColor(I_COLOR_PURPLE);
+    			printf("%2d ", j);
+    				if(j == level.cols - 1){
+    					printf("\n");
+					}
+    		}
+    		
+    		else if (i == 1){
+    			if (j == 0){
+					printf("   ");
+				}
+    			else printf("---");
+			}
+		}
+	}
+	printf("------");
 	
 	printf("\n");
 	
 	for (i = 0; i < level.rows; i++) {
-        for (j = -1; j < level.cols; j++) {
+        for (j = -1; j <= level.cols; j++) {
 			if (j == -1){
 				iSetColor(I_COLOR_PURPLE);
-				printf(" %d ", i);
+				printf(" %d | ", i);
 				iSetColor(I_COLOR_WHITE);
-				}
+			}
+			else if (j == level.cols){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" |");
+				iSetColor(I_COLOR_WHITE);
+			}
 			else if (level.gameBoard[i][j] == HIDDEN){ //not revealed
 				iSetColor(I_COLOR_WHITE);
-				printf("  . ");
+				printf(" . ");
 			}
 			else if (level.gameBoard[i][j] == FLAG){ //flag
 				iSetColor(I_COLOR_RED);
-				printf("  F ");
+				printf(" F ");
 				iSetColor(I_COLOR_WHITE);
 			}
-			else{
+			else {
 				iSetColor(I_COLOR_GREEN);
-				printf("  %d ", level.gameBoard[i][j]); //valid space & revealed
+				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
 				iSetColor(I_COLOR_WHITE);
 			}
-				
+			printf("\n");	
         }
         printf("\n");
+        printf("   ");
+        
+        iSetColor(I_COLOR_PURPLE);
+        for(i=0; i<level.cols-1; i++){
+        	printf("---");
+		}
+		printf("------");
+        
+        iSetColor(I_COLOR_WHITE);
     }
 }
 
@@ -160,7 +190,7 @@ int mineCount(game level, int i, int j){
 
 void cascade(game *level, int i, int j){
     if (i < 0 || i >= level->rows || j < 0 || j >= level->cols || 
-        level->board[i][j] == 'X' || level->gameBoard[i][j] == FLAG || level->gameBoard[i][j] != HIDDEN)) {
+        level->board[i][j] == 'X' || level->gameBoard[i][j] == FLAG || !(level->gameBoard[i][j] == HIDDEN)) {
         return; // Base case: out of bounds or already revealed/flagged
     }
     
