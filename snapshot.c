@@ -79,7 +79,7 @@ int saveSnapshot(game level, char outcome[], profile *currentUser){
 	char SS0[] = GAME_PATH; // LATEST
 	char SS1[] = GAME_PATH;
 	char SS2[] = GAME_PATH;
-	FILE *fuser;
+	FILE *fgame;
     
     strcat(SS0, currentUser->name);
 	strcat(SS0, "0");
