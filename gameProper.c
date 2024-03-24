@@ -57,7 +57,8 @@ void printBoard(game level){
 
 //for testing of made board/text file
 void printBoardChar(game level){
-    for (int i = 0; i < level.rows; i++) {
+    printf("\n");
+	for (int i = 0; i < level.rows; i++) {
         for (int j = 0; j < level.cols; j++) {
 			printf(" %c ", level.board[i][j]);
         }
@@ -123,6 +124,7 @@ void forwardCascade(game *level, int i, int j){
 			}
 			else mine = 1;
 		}
+		mine = 0;
 	}
 }
 
@@ -136,6 +138,7 @@ void backwardCascade(game *level, int i, int j){
 			}
 			else mine = 1;
 		}
+		mine = 0;
 	}
 }
 
@@ -173,7 +176,7 @@ void removeFlag(game *level){
 	else printf("Tile is not flagged. Try again.\n");
 }
 
-int inspectBoard(game *level) {
+int inspectBoard(game *level, char outcome[]) {
     int i, j;
     
     printf("\nEnter row to inspect: ");
@@ -184,6 +187,9 @@ int inspectBoard(game *level) {
     if (i < level->rows && j < level->cols) {
         if (mineCount(*level, i, j) == -1) {
             printf("\nYou have hit a mine. Game over.\n");
+            strcpy(outcome, "lose");
+            level->gameBoard[i][j] = 999;
+            printBoardChar(*level);
             return 0;    
         } else {
             level->gameBoard[i][j] = mineCount(*level, i, j); //reveal chosen tile
@@ -197,42 +203,12 @@ int inspectBoard(game *level) {
     }
 }
 
-void gameProper(game level){
-	int i, j, alive = 1;
-	int choice;
+int gameChecker(game level, char outcome[]){
 	int totalSquares = (level.rows*level.cols)-level.mines;
-	int revealedCount;
-
-	for(i = 0; i < level.rows; i++){
-		for (j = 0; j < level.cols; j++){
-            level.gameBoard[i][j] = 10;
-        }
-    }
-    
-    
-    makeBoard(&level);
-    printBoardChar(level); //will print board for checking
+	int revealedCount = 0;
+	int i, j;
 	
-	while(alive){
-		printBoard(level);
-		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n\nSelection: ");
-		scanf(" %d", &choice);
-		
-		switch (choice){
-			case 1:
-				alive = inspectBoard(&level);
-				break;
-			case 2:
-				placeFlag(&level);
-				break;
-			case 3:
-				removeFlag(&level);
-				break;
-			default:
-				printf("Invalid input. Please try again.\n");
-		}
-		
-		revealedCount = 0;
+	
 		for(i = 0; i < level.rows; i++){
 			for(j = 0; j < level.cols; j++){
 				if (level.gameBoard[i][j] != 10 && level.board[i][j] != 'X'){
@@ -241,14 +217,136 @@ void gameProper(game level){
 			}
 		}
 		
-		if(revealedCount == totalSquares){
-			printBoard(level);
-			printf("\nAll non-mine tiles revealed.\nYou win!\n");
-			printBoardChar(level);
-			alive = 0;
+	if(revealedCount == totalSquares){
+		printBoard(level);
+		printf("\nAll non-mine tiles revealed.\nYou win!\n");
+		strcpy(outcome, "win");
+		printBoardChar(level);
+		return 0;
+	}
+	else return 1;
+}
+
+int saveSnapshot(game level, char outcome[]){
+	int i, j;
+	char filename[20];
+    char path[] = "recent games/";
+    FILE *fgame;
+    
+    strcpy(filename, "recentgame");
+	strcat(filename, ".txt");
+    strcat(path, filename);
+    
+    fgame = fopen(path, "w");
+    
+    if (strcmp(outcome, "win") == 0){
+		fprintf(fgame, "GAME WON\n");
+		
+		for (i = 0; i < level.rows; i++){
+    		for (j = 0; j < level.cols; j++){
+    			
+    			if (level.gameBoard[i][j] != 100 && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
+					fprintf(fgame, " %d ", level.gameBoard[i][j]);
+				}
+				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == 100){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
+					fprintf(fgame, " X ");
+				}
+		}
+		fprintf(fgame, "\n");
+	}
+}
+	
+	else if (strcmp(outcome, "lose") == 0){
+		fprintf(fgame, "GAME LOST\n");
+		
+		for (i = 0; i < level.rows; i++){
+    		for (j = 0; j < level.cols; j++){
+    			if (level.gameBoard[i][j] != 10 && level.gameBoard[i][j] != 100 && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
+					fprintf(fgame, " %d ", level.gameBoard[i][j]);
+				}
+				else if(level.gameBoard[i][j] == 999){ // bomb == exploded
+					fprintf(fgame, " X ");
+				}
+				else if (level.board[i][j] == 'X'){ // tile == bomb
+					fprintf(fgame, " x ");
+				}
+				else if (level.gameBoard[i][j] == 100){ // tile == flag
+    				fprintf(fgame, " F ");
+				}
+				else if (level.gameBoard[i][j] == 10){ // tile == not revealed
+					fprintf(fgame, " . ");
+    			}
+			}
+		fprintf(fgame, "\n");
+		}
+}
+	
+	else if (strcmp(outcome, "quit") == 0){
+		fprintf(fgame, "GAME QUIT\n");
+		
+		for(i = 0; i < level.rows; i++){
+			for(j = 0; j < level.cols; j++){
+				
+				if(level.gameBoard[i][j] == 10){
+					fprintf(fgame, " . ");
+				}
+				else if (level.gameBoard[i][j] == 100){
+					fprintf(fgame, " F ");
+				}
+				else fprintf(fgame, " %d ", level.gameBoard[i][j]);
+			}
+		fprintf(fgame, "\n");
+		}
+	}
+    
+    fclose(fgame);
+    
+    return 1;
+}
+
+void gameProper(game level){
+	int i, j, alive = 1;
+	int choice;
+	char outcome[11];
+
+	//PLAYER BOARD
+	for(i = 0; i < level.rows; i++){
+		for (j = 0; j < level.cols; j++){
+            level.gameBoard[i][j] = 10; // 10 == HIDDEN
+        }
+    }
+    
+    printBoardChar(level); // FOR TESTING
+	
+	while(alive){
+		printBoard(level);
+		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n[0] QUIT\n\nSELECTION: ");
+		scanf(" %d", &choice);
+		
+		switch (choice){
+			case 1:
+				alive = inspectBoard(&level, outcome);
+				break;
+			case 2:
+				placeFlag(&level);
+				break;
+			case 3:
+				removeFlag(&level);
+				break;
+			case 0:
+				strcpy(outcome, "quit");
+				printf("Game Quitted\n");
+				alive = 0;
+				break;
+			default:
+				printf("Invalid input. Please try again.\n");
 		}
 		
+		if (alive){
+		alive = gameChecker(level, outcome);
+		}
 	}
+	saveSnapshot(level, outcome);
 }
 
 void playClassic(game *level){
@@ -256,8 +354,8 @@ void playClassic(game *level){
 	int validChoice = 0;
 	
 	while(!validChoice){
-	printf("\nChoose difficulty\n[1] EASY or [2] DIFFICULT\n\n");
-	printf("Selection: ");
+	printf("\nChoose difficulty\n[1] EASY\t[2] DIFFICULT\n\t[0] BACK\n\n");
+	printf("SELECTION: ");
 	scanf(" %d", &classicSelect);
 	
 	switch (classicSelect)
@@ -266,6 +364,7 @@ void playClassic(game *level){
 			level->cols = 8;
 			level->rows = 8;
 			level->mines = 10;
+			makeBoard(level);
 			gameProper(*level);
 			validChoice = 1;
 			break;
@@ -273,46 +372,54 @@ void playClassic(game *level){
 			level->cols = 10;
 			level->rows = 15;
 			level->mines = 35;
+			makeBoard(level);
 			gameProper(*level);
 			validChoice = 1;
 			break;
+		case 0:
+			printf("You have opted to go back.\n\n");
+			validChoice = 1;
+			break;
 		default:
-			printf("Invalid input. Try again.");
+			printf("Invalid input. Try again.\n");
 	}
 	}
 }
 
-void playCustom(){
-	printf("Choose a level to play:");
-}
-
-void play(game level){
+void play(game level)
+{
 	int gameSelect;
 	int validChoice = 0;
-	
-	while(!validChoice){
-	printf("\nGame type selection\n[1] CLASSIC or [2] CUSTOM\n\n");
-	printf("Selection: ");
-	scanf(" %d", &gameSelect);
-	
+
+	do {
+	printf("\nGame type selection\n[1] CLASSIC\t[2] CUSTOM\n\t[0] BACK\n\nSELECTION: ");
+	scanf("%d", &gameSelect);
+
 	switch (gameSelect)
 	{
-		case 1: 
+		case 1:
 			playClassic(&level);
 			validChoice = 1;
 			break;
 		case 2:
-			playCustom(&level);
+			//playCustom(&customLevel);
+			validChoice = 1;
+			break;
+		case 0:
+			printf("You have opted to go back.\n\n");
 			validChoice = 1;
 			break;
 		default:
-			printf("Invalid input. Try again.");
+			printf("Invalid input. Try again.\n");
 	}
-	}
+	} while(!validChoice);
 }
 
-int main()
-{	
+
+// GAME PROPER
+int main(){
+	// initalize variables
+	game customLevel;
 	game level;
 
 	// start
@@ -320,31 +427,40 @@ int main()
 	int start = 0;
 
     do {
-	printf("Main Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\n");
-	printf("Selection: ");
-	scanf(" %d", &menuSelect);
-	
-	switch (menuSelect)
-	{
-		case 1: 
+	printf("Main Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
+	scanf("%d", &menuSelect);
+
+	switch (menuSelect){
+		case 1:
 			play(level);
-			start = 1;
 			break;
 		case 2:
-			//levelEditor(&customLevel);
-			start = 1;
+			//levelEditor(&customLevel, &customLvls);
 			break;
 		case 3:
 			//changeProfile(&user);
-			start = 1;
 			break;
 		case 4:
 			//viewStats(&user);
+			break;
+		case 0:
 			start = 1;
 			break;
 		default:
 			printf("Invalid input. Try again.");
 	}
-	} while(!start);
-	
+	}while(!start);
 }
+
+/*
+	This is to certify that this project is my own work, based on my personal
+	efforts in studying and applying the concepts learned. I have constructed
+	the functions and their respective algorithms and corresponding code by
+	myself. The program was run, tested, and debugged by my own efforts.
+	I further certify that I have not copied in part or whole or otherwise
+	plagiarized the work of other students and/or persons.
+
+	GRINO, MARY EUNICE E., DLSU ID# 12325872
+	TAMONDONG, MARIEL M., DLSU ID# 12308323
+*/
+
