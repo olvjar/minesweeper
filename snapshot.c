@@ -66,26 +66,40 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fclose(fdest);
 }
 
-int saveSnapshot(game level, char outcome[], profile User){
+int saveSnapshot(game level, char outcome[], profile *currentUser){
 	int i, j;
-	char filename[20];
-    char path[] = "recent games/";
+	char SS0[] = GAME_PATH; // LATEST
+	char SS1[] = GAME_PATH;
+	char SS2[] = GAME_PATH;
     FILE *fgame;
     
-    transferSnapshot()
+    strcat(SS0, currentUser->name);
+	strcat(SS0, "0");
+    strcat(SS0, ".txt");
+	strcat(SS1, currentUser->name);
+	strcat(SS1, "1");
+    strcat(SS1, ".txt");
+	strcat(SS2, currentUser->name);
+	strcat(SS2, "2");
+    strcat(SS2, ".txt");
+
+	transferSnapshot(SS2, SS1); // overwrites 2 with 1
+	transferSnapshot(SS1, SS0); // overwrites 1 with 0
     
-    fgame = fopen(path, "w");
+	// 0 will now be overwritten with latest game
+    fgame = fopen(SS0, "w");
     
     if (strcmp(outcome, "win") == 0){
-		fprintf(fgame, "GAME WON\n");
+		fprintf(fgame, "WIN\n");
+		fprintf(fgame, "%s %d %d", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
     			
-    			if (level.gameBoard[i][j] != 100 && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
+    			if (level.gameBoard[i][j] != FLAG && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
 					fprintf(fgame, " %d ", level.gameBoard[i][j]);
 				}
-				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == 100){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
+				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == FLAG){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
 					fprintf(fgame, " X ");
 				}
 		}
@@ -94,11 +108,12 @@ int saveSnapshot(game level, char outcome[], profile User){
 }
 	
 	else if (strcmp(outcome, "lose") == 0){
-		fprintf(fgame, "GAME LOST\n");
+		fprintf(fgame, "\nLOSE\n");
+		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
-    			if (level.gameBoard[i][j] != 10 && level.gameBoard[i][j] != 100 && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
+    			if (level.gameBoard[i][j] != HIDDEN && level.gameBoard[i][j] != FLAG && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
 					fprintf(fgame, " %d ", level.gameBoard[i][j]);
 				}
 				else if(level.gameBoard[i][j] == 999){ // bomb == exploded
@@ -107,10 +122,10 @@ int saveSnapshot(game level, char outcome[], profile User){
 				else if (level.board[i][j] == 'X'){ // tile == bomb
 					fprintf(fgame, " x ");
 				}
-				else if (level.gameBoard[i][j] == 100){ // tile == flag
+				else if (level.gameBoard[i][j] == FLAG){ // tile == flag
     				fprintf(fgame, " F ");
 				}
-				else if (level.gameBoard[i][j] == 10){ // tile == not revealed
+				else if (level.gameBoard[i][j] == HIDDEN){ // tile == not revealed
 					fprintf(fgame, " . ");
     			}
 			}
@@ -119,15 +134,17 @@ int saveSnapshot(game level, char outcome[], profile User){
 }
 	
 	else if (strcmp(outcome, "quit") == 0){
-		fprintf(fgame, "GAME QUIT\n");
+		fprintf(fgame, "QUIT\n");
+		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
+
 		
 		for(i = 0; i < level.rows; i++){
 			for(j = 0; j < level.cols; j++){
 				
-				if(level.gameBoard[i][j] == 10){
+				if(level.gameBoard[i][j] == HIDDEN){
 					fprintf(fgame, " . ");
 				}
-				else if (level.gameBoard[i][j] == 100){
+				else if (level.gameBoard[i][j] == FLAG){
 					fprintf(fgame, " F ");
 				}
 				else fprintf(fgame, " %d ", level.gameBoard[i][j]);
