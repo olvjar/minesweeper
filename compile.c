@@ -299,8 +299,8 @@ int saveSnapshot(game level, char outcome[]){
     fgame = fopen(path, "w");
     
     if (strcmp(outcome, "win") == 0){
-		fprintf(fgame, "%s", level.mode);
-		fprintf(fgame, "GAME WON\n");
+		fprintf(fgame, "WIN\n");
+		fprintf(fgame, "%s %d %d", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
@@ -317,8 +317,8 @@ int saveSnapshot(game level, char outcome[]){
 }
 	
 	else if (strcmp(outcome, "lose") == 0){
-		fprintf(fgame, "%s", level.mode);
-		fprintf(fgame, "\nGAME LOST\n");
+		fprintf(fgame, "\nLOSE\n");
+		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
@@ -343,8 +343,8 @@ int saveSnapshot(game level, char outcome[]){
 }
 	
 	else if (strcmp(outcome, "quit") == 0){
-		fprintf(fgame, "GAME QUIT\n");
-		fprintf(fgame, "%s\n", level.mode);
+		fprintf(fgame, "QUIT\n");
+		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 
 		
 		for(i = 0; i < level.rows; i++){
