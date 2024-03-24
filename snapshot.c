@@ -1,6 +1,12 @@
 #include<stdio.h>
 #include<string.h>
 
+#define MAX_PROFILES 10
+
+#define USER_PATH "profiles/"
+#define USER_DIR "profiles/profile_list.txt"
+#define GAME_PATH "snapshots/"
+
 struct level{
 	int rows;
 	int cols;
@@ -18,13 +24,15 @@ struct recent_games{
 };
 
 struct player{
-	char name[20];
+	char name[21];
 	int games_won_classic;
 	int games_lost_classic;
 	int games_won_custom;
 	int games_lost_custom;
 	struct recent_games recentgame[3];
 };
+
+typedef struct player profile;
 
 void transferSnapshot(char destFile[], char sourceFile[]){
 	FILE *fsource;
@@ -66,17 +74,31 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fclose(fdest);
 }
 
-int saveSnapshot(game level, char outcome[]){
+int saveSnapshot(game level, char outcome[], profile *currentUser){
 	int i, j;
-	char filename[20];
-    char path[] = "recent games/";
+	char filename[51];
+    char userPath[] = USER_PATH;
+	char SS0[] = GAME_PATH; // LATEST
+	char SS1[] = GAME_PATH;
+	char SS2[] = GAME_PATH;
     FILE *fgame;
+	FILE *fuser;
     
-    strcpy(filename, "recentgame");
-	strcat(filename, ".txt");
-    strcat(path, filename);
+    strcat(SS0, currentUser->name);
+	strcat(SS0, "0");
+    strcat(SS0, ".txt");
+	strcat(SS1, currentUser->name);
+	strcat(SS1, "1");
+    strcat(SS1, ".txt");
+	strcat(SS2, currentUser->name);
+	strcat(SS2, "2");
+    strcat(SS2, ".txt");
+
+	transferSnapshot(SS2, SS1); // overwrites 2 with 1
+	transferSnapshot(SS1, SS0); // overwrites 1 with 0
     
-    fgame = fopen(path, "w");
+	// 0 will now be overwritten with latest game
+    fgame = fopen(SS0, "w");
     
     if (strcmp(outcome, "win") == 0){
 		fprintf(fgame, "WIN\n");
