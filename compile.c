@@ -12,6 +12,8 @@
 
 #include "interface.c"
 
+#define MAX_PROFILES 10
+
 #define LVL_PATH "levels/"
 #define LVL_DIR "levels/level_list.txt"
 #define HIDDEN 10
@@ -19,6 +21,10 @@
 #define CLASSIC_EASY "CLASSIC-EASY"
 #define CLASSIC_DIFFICULT "CLASSIC-DIFFICULT"
 #define CUSTOM "CUSTOM"
+
+#define USER_PATH "profiles/"
+#define USER_DIR "profiles/profile_list.txt"
+#define GAME_PATH "snapshots/"
 
 // PREPROCESSOR DIRECTIVES
 struct level {
@@ -286,17 +292,71 @@ int gameChecker(game level, char outcome[]){
 	else return 1;
 }
 
-int saveSnapshot(game level, char outcome[]){
+void transferSnapshot(char destFile[], char sourceFile[]){
+	FILE *fsource;
+	FILE *fdest;
+	char mode[21];
+	char outcome[51];
+	int rows, cols, i ,j;
+	char val[100][100];
+	
+	fsource = fopen(sourceFile, "r");
+	fdest = fopen(destFile, "w");
+	
+	fscanf(fsource, "%s", outcome);
+	fscanf(fsource, "%s", mode);
+	fscanf(fsource, "%d", &rows);
+	fscanf(fsource, "%d", &cols);
+
+	fprintf(fdest, "%s\n", outcome);
+	fprintf(fdest, "%s ", mode);
+	fprintf(fdest, "%d ", rows);
+	fprintf(fdest, "%d\n", cols);
+
+	for(i=0;i<rows;i++){
+		for(j=0;j<cols;j++){
+			fscanf(fsource, " %c", &val[i][j]);
+		}
+	}
+	
+	for(i=0;i<rows;i++){
+		for(j=0;j<cols;j++){
+			fprintf(fdest, "%c ", val[i][j]);
+		}
+		fprintf(fdest, "\n");
+	}
+	
+	printf("copy success");
+	
+	fclose(fsource);
+	fclose(fdest);
+}
+
+int saveSnapshot(game level, char outcome[], profile *currentUser){
 	int i, j;
-	char filename[20];
-    char path[] = "recent games/";
+	char filename[51];
+    char userPath[] = USER_PATH;
+	char SS0[] = GAME_PATH; // LATEST
+	char SS1[] = GAME_PATH;
+	char SS2[] = GAME_PATH;
     FILE *fgame;
+	FILE *fuser;
     
-    strcpy(filename, "recentgame");
-	strcat(filename, ".txt");
-    strcat(path, filename);
+    strcat(SS0, currentUser->name);
+	strcat(SS0, "0");
+    strcat(SS0, ".txt");
+	strcat(SS1, currentUser->name);
+	strcat(SS1, "1");
+    strcat(SS1, ".txt");
+	strcat(SS2, currentUser->name);
+	strcat(SS2, "2");
+    strcat(SS2, ".txt");
+
+	transferSnapshot(SS2, SS1); // overwrites 2 with 1
+	transferSnapshot(SS1, SS0); // overwrites 1 with 0
     
-    fgame = fopen(path, "w");
+	// 0 will now be overwritten with latest game
+    fgame = fopen(SS0, "w");
     
     if (strcmp(outcome, "win") == 0){
 		fprintf(fgame, "WIN\n");
@@ -366,6 +426,7 @@ int saveSnapshot(game level, char outcome[]){
     
     return 1;
 }
+
 
 void gameProper(game level){
 	int i, j, alive = 1;
