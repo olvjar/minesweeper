@@ -5,12 +5,13 @@
 
 #include "interface.c"
 
-struct level{
-	int rows;
-	int cols;
-	int mines;
-	int gameBoard[100][100];
-	char board[100][100];
+struct level {
+    int rows;
+    int cols;
+    int mines;
+	char mode[30];
+    int gameBoard[100][100];
+    char board[100][100];
 };
 
 typedef struct level game;
