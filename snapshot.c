@@ -76,12 +76,9 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 
 int saveSnapshot(game level, char outcome[], profile *currentUser){
 	int i, j;
-	char filename[51];
-    char userPath[] = USER_PATH;
 	char SS0[] = GAME_PATH; // LATEST
 	char SS1[] = GAME_PATH;
 	char SS2[] = GAME_PATH;
-    FILE *fgame;
 	FILE *fuser;
     
     strcat(SS0, currentUser->name);
