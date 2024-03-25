@@ -9,10 +9,33 @@
 #define USER_DIR "profiles/profile_list.txt"
 #define GAME_PATH "snapshots/"
 
+struct level {
+    int rows;
+    int cols;
+    int mines;
+	char mode[30];
+    int gameBoard[100][100];
+    char board[100][100];
+};
+
+struct fileInfo{
+	char filename[20];
+	char path[100];
+};
+
+typedef struct level game;
+typedef struct fileInfo file;
+typedef file customLevelList[100];
+typedef game recentGame;
+
+
 struct recent_games{
-		char mode;
-		char outcome[100];
-		char snapshot[100][100];
+	char path[100];
+	char outcome[11];
+	char mode[50];
+    int rows;
+    int cols;
+	char snapshot[100][100];
 };
 
 struct player{
@@ -27,8 +50,8 @@ struct player{
 typedef struct player profile;
 typedef profile profileList[MAX_PROFILES];
 
-void menuProfile(int *choice){
-	printf("[1] SELECT profile\n[2] CREATE NEW profile\n[3] DELETE profile\n[4] RETURN to main menu\n\nSelection: ");
+void menuProfile(profile currentUser, int *choice){
+	printf("CURRENT USER: %s\n\n[1] SELECT profile\n[2] CREATE NEW profile\n[3] DELETE profile\n[4] RETURN to main menu\n\nSELECTION: ", currentUser.name);
 	scanf("%d", choice);
 }
 
@@ -42,7 +65,7 @@ int fileExists(char *filename) {
     }
 }
 
-void checkProfiles(profileList *users){
+void checkProfiles(profileList users){
 	int i, numFiles;
 	FILE *dir;
 
@@ -50,60 +73,42 @@ void checkProfiles(profileList *users){
 	fscanf(dir, "%d", &numFiles);
 
 	for(i = 0; i < numFiles; i++){
-		fscanf(dir, "%s", users[i]->name);
+		fscanf(dir, "%s", users[i].name);
 		printf("%d. ", i + 1);
 
-		if(strcmp(users[i]->name, "") == 0){
+		if(strcmp(users[i].name, "") == 0){
 			printf("< empty >\n");
-		} else printf("%s\n", users[i]->name);
+		} else printf("%s\n", users[i].name);
 	}
 
 	fclose(dir);
 }
 
-//test
-void viewStatistics(profile *currentUser){
-		//int i;
-		
-		printf("Name: %s\n", currentUser->name);
-    	printf("Classic games - Won: %d Lost: %d\n", currentUser->games_won_classic, currentUser->games_lost_classic);
-    	printf("Custom games - Won: %d Lost: %d\n", currentUser->games_won_custom, currentUser->games_lost_custom);
-		printf("Recent Games:\n");
-		/*
-    	for(int i = 0; i < 3; i++) {
-        	printf("Path %d: %s\n", i, currentUser->recentgame[i]->path);
-    	}
-    	*/
-}
-
-/*
 void selectProfile(profile *currentUser, profileList *users){
 	char name[21];
 	char filename[21];
 	char path[] = USER_PATH;
-	//char snapshotPaths[] = "snapshots/";
-	FILE *user;
+	//FILE *user;
 
-	printf("CURRENT USER: %s\n\n", currentUser->name);
-	checkProfiles(users);
+	printf("[PROFILE SELECTION]\nCURRENT USER: %s\n", currentUser->name);
+	checkProfiles(*users);
 
-	printf("SELECT PROFILE TO USE: ");
+	printf("\nSELECT PROFILE TO USE: ");
 	scanf("%s", name);
 	strcpy(filename, name);
-	strcat(filename, ".dat");
+	strcat(filename, ".txt");
 	strcat(path, filename);
 	
 	if(fileExists(path) == 0) {
-	    printf("Profile does not exist. Try again.\n");
+	    printf("\nProfile does not exist. Try again.\n\n");
 	} else {
-	    //strcpy(currentUser->name, name);
-	    //strcpy(currentUser->player_path, path);
-	    viewStatistics(currentUser);
+	    strcpy(currentUser->name, name);
+	    //viewStatistics(currentUser);
 	}
 }
-*/
 
-void newProfile(profileList *users){
+
+void newProfile(profile *currentUser, profileList users){
 	char name[21];
 	char filename[21];
     char path[] = USER_PATH;
@@ -111,14 +116,24 @@ void newProfile(profileList *users){
     FILE *user;
     FILE *dir;
 
-	printf("EXISTING USER PROFILES:\n");
+	printf("[PROFILE CREATION]\nEXISTING USER PROFILES:\n");
 	checkProfiles(users);
+	
+	dir = fopen(USER_DIR, "r");
+    fscanf(dir, "%d", &num);
+    fclose(dir);
+    
+    if(num > 9){
+		printf("\nMax number of profiles reached. (10 profiles)\n");
+		return;
+	}
 
-    printf("Provide profile name (3 to 20 characters): ");
+    printf("\nProvide profile name (3 to 20 characters): ");
 	scanf("%s", name);
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
+	
 
     if(strlen(name) > 20){
     	printf("Name is over 20 characters.\n");
@@ -126,16 +141,16 @@ void newProfile(profileList *users){
 	}else if(strlen(name) < 3){
 		printf("Name is less than 3 characters.\n");
     	return;
-	}else if(fileExists(path) == 1) {
+	}else if(fileExists(path) != 0) {
         printf("Profile already exists.\n");
-    }else {
-        printf("User profile [%s] will be created.\n", name);
+	}else {
+        printf("\nUser profile [%s] created.\n\n", name);
 
 		// read list of profiles
 		dir = fopen(USER_DIR, "r");
-    	fscanf(dir, "%d", &num);
+    	fscanf(dir, " %d", &num);
     	for(i = 0; i < num; i++){
-			fscanf(dir, "%s", users[i]->name);
+			fscanf(dir, "%s", users[i].name);
 		}
 		fclose(dir);
 
@@ -143,7 +158,7 @@ void newProfile(profileList *users){
     	dir = fopen(USER_DIR, "w");
     	fprintf(dir, "%d\n", num + 1);
     	for(i = 0; i < num; i++){
-			fprintf(dir, "%s\n", users[i]->name);
+			fprintf(dir, "%s\n", users[i].name);
 		}
 		fprintf(dir, "%s\n", name);
     	fclose(dir);
@@ -163,57 +178,78 @@ void newProfile(profileList *users){
 		}
     	fclose(user);
     	
+    	strcpy(currentUser->name, name);
 	}
 }
 
-void deleteProfile(profileList *users){
+void deleteProfile(profile *currentUser, profileList users){
 	char name[21];
 	char filename[21];
     char path[] = USER_PATH;
+    char gamePath[] = GAME_PATH;
     int num, i;
-    FILE *user;
     FILE *dir;
 
-	printf("EXISTING USER PROFILES: ");
+	printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
 	checkProfiles(users);
 
-	printf("SELECT PROFILE TO DELETE: ");
-	scanf("%s", name);
+	printf("\nSELECT PROFILE TO DELETE: ");
+	scanf(" %s", name);
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
-	printf("%s\n", path);
 
 	if(fileExists(path) == 0) {
-        printf("\nUser does not exist. Try again.\n");
+        printf("\nUser does not exist. Try again.\n\n");
         return;
     } else {
 		// read list
 	    dir = fopen(USER_DIR, "r");
-	    fscanf(dir, "%d", &num);
+	    fscanf(dir, " %d", &num);
 	    for(i = 0; i < num; i++){
-			fscanf(dir, "%s", users[i]->name);
+			fscanf(dir, "%s", users[i].name);
 		}
 		fclose(dir);
 
-		// update list
+		// update list | BUGS
 	    dir = fopen(USER_DIR, "w");
 	    fprintf(dir, "%d\n", num - 1);
 	    for(i = 0; i < num; i++){
-	    	if(strcmp(users[i]->name, filename) == 0){
+	    	if(strcmp(users[i].name, name) == 0){
 	    		fprintf(dir, "%s", "");
-			} else fprintf(dir, "%s\n", users[i]->name);
+			} else fprintf(dir, "%s\n", users[i].name);
 		}
 	    fclose(dir);
-
-	    // delete user file and snapshots
-		user = fopen(path, "r");
-		for(i = 0; i < 3; i++){
-			fscanf(user, "%s", name);
-			//remove(GAME_PATH  name  "_snapshot"  ".txt");
+	    
+	    // switch current user to none if currentUser == name
+		if (strcmp(currentUser->name, name) == 0){
+			strcpy(currentUser->name, "");
 		}
-	    remove(path);
-	    printf("%s deleted successfully.", filename);
+	
+	    // delete user snapshots | WORKING
+		for(i = 0; i < 3; i++){
+			strcpy(gamePath, GAME_PATH);
+			strcat(gamePath, name);
+			if (i == 0){
+				strcat(gamePath, "_snapshot0.txt");
+			}
+			if (i == 1){
+				strcat(gamePath, "_snapshot1.txt");
+			}
+			if (i == 2){
+				strcat(gamePath, "_snapshot2.txt");
+			}
+			remove(gamePath);
+		}
+	    
+		// delete user file | WORKING
+		strcpy(filename, name);
+		strcat(filename, ".txt");
+		strcpy(path, USER_PATH);
+		strcat(path, filename);
+		remove(path);
+		
+		printf("\nProfile [%s] deleted successfully.\n\n", name);
 	}
 }
 
@@ -222,16 +258,16 @@ void changeProfile(profile *currentUser, profileList *users){
 	int choice, quit;
 
 	while(!quit){
-		menuProfile(&choice);
+		menuProfile(*currentUser, &choice);
 		switch(choice) {
             case 1:
-                //selectProfile(currentUser, users);
+                selectProfile(currentUser, users); // WORKING
                 break;
             case 2:
-                newProfile(users);
+                newProfile(currentUser, *users); // WORKING
                 break;
             case 3:
-            	//deleteProfile()
+            	deleteProfile(currentUser, *users); // WORKING
                 break;
             case 4:
             	printf("Returned to main menu.\n");
@@ -240,14 +276,12 @@ void changeProfile(profile *currentUser, profileList *users){
 			default:
 				printf("Invalid selection. Please choose again.\n");
 		}
-
 	}
 	
 }
 
 int main(){
 	profile currentUser;
-	strcpy(currentUser.name, "gem");
 	profileList users;
 	changeProfile(&currentUser, &users);
 }
