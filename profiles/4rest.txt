@@ -1,8 +1,0 @@
-4rest
-0
-0
-0
-0
-snapshots/4rest_snapshot0.txt
-snapshots/4rest_snapshot1.txt
-snapshots/4rest_snapshot2.txt

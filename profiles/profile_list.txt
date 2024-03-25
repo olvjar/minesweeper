@@ -1,4 +1,3 @@
-3
-gem
-molly
-4rest
+2
+GEM
+MOLLY

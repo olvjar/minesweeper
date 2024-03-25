@@ -162,6 +162,7 @@ void newProfile(profile *currentUser, profileList users){
 	char name[21];
 	char filename[21];
     char path[] = USER_PATH;
+    char gamePath[] = GAME_PATH;
     int num, i;
     FILE *user;
     FILE *dir;
@@ -228,7 +229,22 @@ void newProfile(profile *currentUser, profileList users){
 			fprintf(user, "%s%s_snapshot%d.txt\n", GAME_PATH, name, i);
 		}
     	fclose(user);
-    	
+    	// make recent games files
+    	for(i = 0; i < 3; i++){
+    		strcpy(gamePath, GAME_PATH);
+			strcat(gamePath, name);
+			if (i == 0){
+				strcat(gamePath, "_snapshot0.txt");
+			}
+			if (i == 1){
+				strcat(gamePath, "_snapshot1.txt");
+			}
+			if (i == 2){
+				strcat(gamePath, "_snapshot2.txt");
+			}
+			FILE *recent = fopen(gamePath, "w");
+			fclose(recent); 
+		}
     	strcpy(currentUser->name, name);
 	}
 }
@@ -262,7 +278,7 @@ void deleteProfile(profile *currentUser, profileList users){
 		}
 		fclose(dir);
 
-		// update list | BUGS
+		// update list
 	    dir = fopen(USER_DIR, "w");
 	    fprintf(dir, "%d\n", num - 1);
 	    for(i = 0; i < num; i++){
