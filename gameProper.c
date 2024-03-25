@@ -5,6 +5,9 @@
 
 #include "interface.c"
 
+#define HIDDEN 10
+#define FLAG 100
+
 struct level {
     int rows;
     int cols;
