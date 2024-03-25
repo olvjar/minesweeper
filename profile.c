@@ -65,10 +65,60 @@ int fileExists(char *filename) {
     }
 }
 
+int checkCapital(char name[]){
+	int i;
+	
+	for(i = 0; i<strlen(name); i++){
+		if(name[i] >= 'A' && name [i] <= 'Z'){
+		} else return 0;
+	}
+	return 1;
+}
+
+void sortProfiles(profileList users){
+	int i, j, num;
+	int low;
+	char temp[21];
+	FILE *dir;
+	
+	// read list
+	dir = fopen(USER_DIR, "r");
+	fscanf(dir, " %d", &num);
+    for(i = 0; i < num; i++){
+		fscanf(dir, "%s", users[i].name);
+	}
+	fclose(dir);
+	
+	//sort algorithm
+	for (i = 0; i < num-1; i++){
+		low = i;
+		for (j = i+1; j < num; j++){
+			if(strcmp(users[low].name, users[j].name) > 0){ // when low is higher
+				low = j;
+			}
+		}
+		
+		if (i != low){
+			strcpy(temp, users[i].name);
+			strcpy(users[i].name, users[low].name);
+			strcpy(users[low].name, temp);
+		}
+	}
+
+	// update list
+    dir = fopen(USER_DIR, "w");
+    fprintf(dir, "%d\n", num);
+    for(i = 0; i < num; i++){
+		fprintf(dir, "%s\n", users[i].name);
+	}
+    fclose(dir);
+}
+
 void checkProfiles(profileList users){
 	int i, numFiles;
 	FILE *dir;
 
+	sortProfiles(users);
 	dir = fopen(USER_DIR, "r");
 	fscanf(dir, "%d", &numFiles);
 
@@ -128,12 +178,11 @@ void newProfile(profile *currentUser, profileList users){
 		return;
 	}
 
-    printf("\nProvide profile name (3 to 20 characters): ");
+    printf("\nName must be:\n[1] 3 to 20 characters\n[2] Uppercase letters only\n\nProvide profile name: ");
 	scanf("%s", name);
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
-	
 
     if(strlen(name) > 20){
     	printf("Name is over 20 characters.\n");
@@ -143,7 +192,9 @@ void newProfile(profile *currentUser, profileList users){
     	return;
 	}else if(fileExists(path) != 0) {
         printf("Profile already exists.\n");
-	}else {
+	}else if(!(checkCapital(name))){
+		printf("Name is not all uppercase letters\n.");
+	}else{
         printf("\nUser profile [%s] created.\n\n", name);
 
 		// read list of profiles
