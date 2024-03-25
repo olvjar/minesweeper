@@ -151,7 +151,9 @@ void selectProfile(profile *currentUser, profileList *users){
 	
 	if(fileExists(path) == 0) {
 	    printf("\nProfile does not exist. Try again.\n\n");
-	} else {
+	} else if(!(checkCapital(name))) {
+		printf("Name is not all uppercase letters.\n");
+	} else{
 	    strcpy(currentUser->name, name);
 	    //viewStatistics(currentUser);
 	}
@@ -194,7 +196,7 @@ void newProfile(profile *currentUser, profileList users){
 	}else if(fileExists(path) != 0) {
         printf("Profile already exists.\n");
 	}else if(!(checkCapital(name))){
-		printf("Name is not all uppercase letters\n.");
+		printf("Name is not all uppercase letters.\n");
 	}else{
         printf("\nUser profile [%s] created.\n\n", name);
 
@@ -269,7 +271,9 @@ void deleteProfile(profile *currentUser, profileList users){
 	if(fileExists(path) == 0) {
         printf("\nUser does not exist. Try again.\n\n");
         return;
-    } else {
+    } else if(!(checkCapital(name))){
+		printf("Name is not all uppercase letters.\n");
+	} else {
 		// read list
 	    dir = fopen(USER_DIR, "r");
 	    fscanf(dir, " %d", &num);
