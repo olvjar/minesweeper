@@ -357,10 +357,10 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
     		for (j = 0; j < level.cols; j++){
     			
     			if (level.gameBoard[i][j] != FLAG && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
-					fprintf(fgame, " %d", level.gameBoard[i][j]);
+					fprintf(fgame, "%d ", level.gameBoard[i][j]);
 				}
 				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == FLAG){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
-					fprintf(fgame, " X");
+					fprintf(fgame, "X ");
 				}
 		}
 		fprintf(fgame, "\n");
@@ -374,19 +374,19 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
     			if (level.gameBoard[i][j] != HIDDEN && level.gameBoard[i][j] != FLAG && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
-					fprintf(fgame, " %d", level.gameBoard[i][j]);
+					fprintf(fgame, "%d ", level.gameBoard[i][j]);
 				}
 				else if(level.gameBoard[i][j] == 999){ // bomb == exploded
-					fprintf(fgame, " X");
+					fprintf(fgame, "X ");
 				}
 				else if (level.board[i][j] == 'X'){ // tile == bomb
-					fprintf(fgame, " x");
+					fprintf(fgame, "x ");
 				}
 				else if (level.gameBoard[i][j] == FLAG){ // tile == flag
-    				fprintf(fgame, " F");
+    				fprintf(fgame, "F ");
 				}
 				else if (level.gameBoard[i][j] == HIDDEN){ // tile == not revealed
-					fprintf(fgame, " .");
+					fprintf(fgame, ". ");
     			}
 			}
 		fprintf(fgame, "\n");
@@ -402,12 +402,12 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
 			for(j = 0; j < level.cols; j++){
 				
 				if(level.gameBoard[i][j] == HIDDEN){
-					fprintf(fgame, " .");
+					fprintf(fgame, ". ");
 				}
 				else if (level.gameBoard[i][j] == FLAG){
-					fprintf(fgame, " F");
+					fprintf(fgame, "F ");
 				}
-				else fprintf(fgame, " %d", level.gameBoard[i][j]);
+				else fprintf(fgame, "%d ", level.gameBoard[i][j]);
 			}
 		fprintf(fgame, "\n");
 		}
@@ -896,7 +896,7 @@ void viewStatistics(profile *currentUser){
 	    
 	    fclose(recentgames);
 	        
-	    printf("GAME %s\n", currentUser->recentgame[i].outcome);
+	    printf("\nGAME %s\n", currentUser->recentgame[i].outcome);
 	    printf("%s\n", currentUser->recentgame[i].mode);
 	    printf("%d %d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
 	    for (j = 0; j < currentUser->recentgame[i].rows; j++) {
