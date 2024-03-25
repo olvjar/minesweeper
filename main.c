@@ -10,6 +10,7 @@
 #include <string.h>
 #include <time.h>
 
+//#include "controls.c"
 #include "interface.c"
 
 #define MAX_PROFILES 10
