@@ -72,7 +72,6 @@ void checkLevels(customLevelList *cLevels){
 
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
-	(*minesCount) = customLevel->mines;
 
     printf("Enter row and column for mine %d: ", (*minesCount) + 1);
     scanf("%d %d", &row, &col);
@@ -87,7 +86,6 @@ void placeMine(game *customLevel, int *minesCount) {
 
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
-	(*minesCount) = customLevel->mines;
 
     printf("Enter row and column of the mine to delete: ");
     scanf("%d %d", &row, &col);

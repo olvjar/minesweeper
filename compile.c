@@ -335,47 +335,32 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 		fprintf(fdest, "\n");
 	}
 	
-	printf("copy success");
-	
 	fclose(fsource);
 	fclose(fdest);
 }
 
-int saveSnapshot(game level, char outcome[], profile *currentUser){
+int saveSnapshot(game level, char outcome[], profile currentUser){
 	int i, j;
-	char SS0[] = GAME_PATH; // LATEST
-	char SS1[] = GAME_PATH;
-	char SS2[] = GAME_PATH;
     FILE *fgame;
-    
-    strcat(SS0, currentUser->name);
-	strcat(SS0, "0");
-    strcat(SS0, ".txt");
-	strcat(SS1, currentUser->name);
-	strcat(SS1, "1");
-    strcat(SS1, ".txt");
-	strcat(SS2, currentUser->name);
-	strcat(SS2, "2");
-    strcat(SS2, ".txt");
-
-	transferSnapshot(SS2, SS1); // overwrites 2 with 1
-	transferSnapshot(SS1, SS0); // overwrites 1 with 0
+	
+	transferSnapshot(currentUser.recentgame[2].path, currentUser.recentgame[1].path); // overwrites 2 with 1
+	transferSnapshot(currentUser.recentgame[1].path, currentUser.recentgame[0].path); // overwrites 1 with 0
     
 	// 0 will now be overwritten with latest game
-    fgame = fopen(SS0, "w");
+    fgame = fopen(currentUser.recentgame[0].path, "w");
     
     if (strcmp(outcome, "win") == 0){
-		fprintf(fgame, "WIN\n");
+		fprintf(fgame, "WON\n");
 		fprintf(fgame, "%s %d %d", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
     			
     			if (level.gameBoard[i][j] != FLAG && level.board[i][j] != 'X'){ // tile != flag && tile != bomb
-					fprintf(fgame, " %d ", level.gameBoard[i][j]);
+					fprintf(fgame, " %d", level.gameBoard[i][j]);
 				}
 				else if (level.board[i][j] == 'X' || level.gameBoard[i][j] == FLAG){ // tile == bomb || tile == flag (game only wins if all tiles are shown, so a flag == bomb)
-					fprintf(fgame, " X ");
+					fprintf(fgame, " X");
 				}
 		}
 		fprintf(fgame, "\n");
@@ -383,25 +368,25 @@ int saveSnapshot(game level, char outcome[], profile *currentUser){
 }
 	
 	else if (strcmp(outcome, "lose") == 0){
-		fprintf(fgame, "\nLOSE\n");
+		fprintf(fgame, "LOST\n");
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
     			if (level.gameBoard[i][j] != HIDDEN && level.gameBoard[i][j] != FLAG && level.gameBoard[i][j] != 999){ // tile != hidden && tile != flag && tile != bombExploded
-					fprintf(fgame, " %d ", level.gameBoard[i][j]);
+					fprintf(fgame, " %d", level.gameBoard[i][j]);
 				}
 				else if(level.gameBoard[i][j] == 999){ // bomb == exploded
-					fprintf(fgame, " X ");
+					fprintf(fgame, " X");
 				}
 				else if (level.board[i][j] == 'X'){ // tile == bomb
-					fprintf(fgame, " x ");
+					fprintf(fgame, " x");
 				}
 				else if (level.gameBoard[i][j] == FLAG){ // tile == flag
-    				fprintf(fgame, " F ");
+    				fprintf(fgame, " F");
 				}
 				else if (level.gameBoard[i][j] == HIDDEN){ // tile == not revealed
-					fprintf(fgame, " . ");
+					fprintf(fgame, " .");
     			}
 			}
 		fprintf(fgame, "\n");
@@ -411,18 +396,18 @@ int saveSnapshot(game level, char outcome[], profile *currentUser){
 	else if (strcmp(outcome, "quit") == 0){
 		fprintf(fgame, "QUIT\n");
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
-
+ 
 		
 		for(i = 0; i < level.rows; i++){
 			for(j = 0; j < level.cols; j++){
 				
 				if(level.gameBoard[i][j] == HIDDEN){
-					fprintf(fgame, " . ");
+					fprintf(fgame, " .");
 				}
 				else if (level.gameBoard[i][j] == FLAG){
-					fprintf(fgame, " F ");
+					fprintf(fgame, " F");
 				}
-				else fprintf(fgame, " %d ", level.gameBoard[i][j]);
+				else fprintf(fgame, " %d", level.gameBoard[i][j]);
 			}
 		fprintf(fgame, "\n");
 		}
@@ -476,11 +461,10 @@ void gameProper(game level, profile *currentUser){
 		alive = gameChecker(level, outcome);
 		}
 	}
-	saveSnapshot(level, outcome, currentUser);
+	saveSnapshot(level, outcome, *currentUser);
 }
 
 /* level edit */
-
 
 void menuEditLevel(int *choice){
 	printf("[1] PLACE mine\n[2] DELETE mine\n[3] SAVE\n[4] RETURN to level editor menu\n\nSelection: ");
@@ -492,7 +476,7 @@ void menuLevelEditor(int *choice){
 	scanf("%d", choice);
 }
 
-void printBoardCharEdit(game *customLevel) {
+void printCustomBoard(game *customLevel) {
     for (int i = 0; i < customLevel->rows; i++) {
         for (int j = 0; j < customLevel->cols; j++) {
             printf(" %c ", customLevel->board[i][j]);
@@ -529,9 +513,8 @@ void checkLevels(customLevelList *cLevels){
 
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
-	*minesCount = customLevel->mines;
 
-    printf("Enter row and column for mine %d: ", *minesCount + 1);
+    printf("Enter row and column for mine %d: ", (*minesCount) + 1);
     scanf("%d %d", &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
@@ -544,7 +527,6 @@ void placeMine(game *customLevel, int *minesCount) {
 
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
-	*minesCount = customLevel->mines;
 
     printf("Enter row and column of the mine to delete: ");
     scanf("%d %d", &row, &col);
@@ -572,7 +554,7 @@ int checkValidity(game *customLevel, int *minesCount){
 }
 
 void deleteFile(customLevelList *cLevels){
-	char filename[20];
+	char filename[21];
 	char path[100] = LVL_PATH;
 	int num, i;
 	FILE *dir;
@@ -653,7 +635,7 @@ int editLevel(game *customLevel) {
     int choice;
 
     while(quit != 1){
-    	printBoardCharEdit(customLevel);
+    	printCustomBoard(customLevel);
     	printf("GRID: %dx%d\t", customLevel->rows, customLevel->cols);
     	printf("MINES: %d\n", minesCount);
 		menuEditLevel(&choice);
@@ -800,7 +782,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
             	printf("Invalid selection. Please choose again.\n");
         }
 
-    	iClear(0,0,100,30);
+    	system("cls");
 	}
 }
 /* statistics */
@@ -933,7 +915,7 @@ void checkProfiles(profileList users){
 	fclose(dir);
 }
 
-void selectProfile(profile *currentUser, profileList *users){
+int selectProfile(profile *currentUser, profileList *users){
 	char name[21];
 	char filename[21];
 	char path[] = USER_PATH;
@@ -950,11 +932,14 @@ void selectProfile(profile *currentUser, profileList *users){
 	
 	if(fileExists(path) == 0) {
 	    printf("\nProfile does not exist. Try again.\n\n");
+		return 0;
 	} else if(!(checkCapital(name))) {
-		printf("Name is not all uppercase letters.\n");
+		printf("\nName is not all uppercase letters.\n");
+		return 0;
 	} else{
 	    strcpy(currentUser->name, name);
-	    //viewStatistics(currentUser);
+		return 1;
+	    getStatistics(currentUser);
 	}
 }
 
@@ -1094,6 +1079,7 @@ void deleteProfile(profile *currentUser, profileList users){
 	    // switch current user to none if currentUser == name
 		if (strcmp(currentUser->name, name) == 0){
 			strcpy(currentUser->name, "");
+			selectProfile(currentUser, users);
 		}
 	
 	    // delete user snapshots | WORKING
@@ -1253,10 +1239,15 @@ void play(profile currentUser, game level, game customLevel)
 }
 
 void startMenu(profile *currentUser, profileList *users){
+	int valid = 0;
+	
 	printf("Welcome to Minesweeper!\n");
 	delay(300);
-	selectProfile(currentUser, users);
-	//getStatistics(currentUser);
+	
+	while(!valid){
+		valid = selectProfile(currentUser, users);
+	}
+	getStatistics(currentUser);
 }
 
 /* GAME PROPER */
