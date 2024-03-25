@@ -50,6 +50,7 @@ struct recent_games{
 	char path[100];
 	char outcome[50];
 	char mode[50];
+	int time;
     int rows;
     int cols;
 	char snapshot[100][100];
