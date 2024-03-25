@@ -5,6 +5,18 @@
 
 #include "interface.c"
 
+#define HIDDEN 10
+#define FLAG 100
+#define CLASSIC_EASY "CLASSIC-EASY"
+#define CLASSIC_DIFFICULT "CLASSIC-DIFFICULT"
+#define CUSTOM "CUSTOM"
+
+#define LVL_PATH "levels/"
+#define LVL_DIR "levels/level_list.txt"
+#define USER_PATH "profiles/"
+#define USER_DIR "profiles/profile_list.txt"
+#define GAME_PATH "snapshots/"
+
 struct level {
     int rows;
     int cols;

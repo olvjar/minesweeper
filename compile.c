@@ -37,7 +37,7 @@ struct level {
 };
 
 struct fileInfo{
-	char filename[20];
+	char filename[21];
 	char path[100];
 };
 
@@ -48,7 +48,7 @@ typedef game recentGame;
 
 struct recent_games{
 	char path[100];
-	char outcome[11];
+	char outcome[50];
 	char mode[50];
     int rows;
     int cols;
