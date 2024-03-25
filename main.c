@@ -351,7 +351,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
     
     if (strcmp(outcome, "win") == 0){
 		fprintf(fgame, "WON\n");
-		fprintf(fgame, "%s %d %d", level.mode, level.rows, level.cols);
+		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
     		for (j = 0; j < level.cols; j++){
@@ -486,9 +486,22 @@ void gameProper(game level, profile *currentUser){
         }
     }
     
+    system("cls");
     printBoardChar(level); // FOR TESTING
+	time_t timeStart, timeEnd;
+	int timeElapsed, hours, minutes, seconds;
 	
+	time(&timeStart);
 	while(alive){
+		time(&timeEnd);
+        timeElapsed = difftime(timeEnd, timeStart);
+        
+        hours = timeElapsed / 3600;
+        minutes = (timeElapsed % 3600) / 60;
+        seconds = timeElapsed % 60;
+        
+		printf("\n\tTIME: %02d:%02d:%02d", hours, minutes, seconds);
+		delay(300);
 		printBoard(level);
 		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n[0] QUIT\n\nSELECTION: ");
 		scanf(" %d", &choice);
@@ -515,6 +528,7 @@ void gameProper(game level, profile *currentUser){
 		if (alive){
 		alive = gameChecker(level, outcome);
 		}
+		system("cls");
 	}
 	saveSnapshot(level, outcome, *currentUser);
 	updateStatistics(level, outcome, currentUser);
@@ -1006,8 +1020,8 @@ int selectProfile(profile *currentUser, profileList *users){
 		return 0;
 	} else{
 	    strcpy(currentUser->name, name);
-		return 1;
 	    getStatistics(currentUser);
+	    return 1;
 	}
 }
 
@@ -1204,31 +1218,41 @@ void changeProfile(profile *currentUser, profileList *users){
 
 /* play */
 
-void playCustom(game *customLevel, profile *currentUser){
-	//int row, col;
+void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevels){
 	char filename[20];
-    char path[] = "levels/";
-	FILE *chosenLevel;
+    char path[100] = LVL_PATH;
+    FILE *chosenLevel;
+    customLevel->mines = 0;
 
-	printf("Provide level name to play: ");
+	printf("EXISTING CUSTOM LEVELS:\n");
+	checkLevels(cLevels);
+
+	printf("\nSELECT CUSTOM LEVEL: ");
 	scanf("%s", filename);
     strcat(filename, ".txt");
     strcat(path, filename);
     printf("%s\n", path);
-    
-    
+
     if(fileExists(path) == 0) {
         printf("\nLevel does not exist. Try again.\n");
         return;
     } else {
     	chosenLevel = fopen(path, "r");
-    	
-    	fscanf(chosenLevel, "%d %d", &customLevel->rows, &customLevel->cols);
-    	// customLevel->rows = row;
-    	// customLevel->cols = col;
-		for (int i = 0; i < customLevel->rows; i++) {
+
+		// read level data
+		fscanf(chosenLevel, "%d %d", &customLevel->rows, &customLevel->cols);
+		for(int i = 0; i < customLevel->rows; i++) {
 			fscanf(chosenLevel, "%s", customLevel->board[i]);
     	}
+    	
+    	// count mines
+	    for (int i = 0; i < customLevel->rows; i++) {
+	        for (int j = 0; j < customLevel->cols; j++) {
+	            if (customLevel->board[i][j] == 'X') {
+        			customLevel->mines++;
+    			}
+	        }
+	    }
     	fclose(chosenLevel);
 		
 		strcpy(customLevel->mode, CUSTOM);
@@ -1275,7 +1299,7 @@ void playClassic(game *level, profile *currentUser){
 	}
 }
 
-void play(profile currentUser, game level, game customLevel)
+void play(profile currentUser, game level, game customLevel, customLevelList *cLevels)
 {
 	int gameSelect;
 	int validChoice = 0;
@@ -1291,7 +1315,7 @@ void play(profile currentUser, game level, game customLevel)
 			validChoice = 1;
 			break;
 		case 2:
-			playCustom(&customLevel, &currentUser);
+			playCustom(&customLevel, &currentUser, cLevels);
 			validChoice = 1;
 			break;
 		case 0:
@@ -1349,7 +1373,7 @@ int main(){
 
 	switch (menuSelect){
 		case 1:
-			play(currentUser, level, customLevel);
+			play(currentUser, level, customLevel, &customLvls);
 			break;
 		case 2:
 			levelEditor(&customLevel, &customLvls);
