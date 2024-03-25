@@ -122,7 +122,7 @@ void printBoard(game level){
 				printf(" . ");
 			}
 			else if (level.gameBoard[i][j] == FLAG){ //flag
-				iSetColor(I_COLOR_RED);
+				iSetColor(I_COLOR_CYAN);
 				printf(" F ");
 				iSetColor(I_COLOR_WHITE);
 			}
@@ -897,29 +897,45 @@ void viewStatistics(profile *currentUser){
 	printf("Recent Games:\n");
     
     for(i = 0; i < 3; i++) {
-	    recentgames = fopen(currentUser->recentgame[i].path, "r");
-	    
-		fscanf(recentgames, "%s", currentUser->recentgame[i].outcome);
-	    fscanf(recentgames, "%s", currentUser->recentgame[i].mode);
-	    fscanf(recentgames, "%d %d", &currentUser->recentgame[i].rows, &currentUser->recentgame[i].cols);
-	    
-	  	for (int b = 0; b < currentUser->recentgame[i].rows; b++) {
-	       for (int c = 0; c < currentUser->recentgame[i].cols; c++) {
-	            fscanf(recentgames, " %c", &currentUser->recentgame[i].snapshot[b][c]);
-	        }
-	    }
-	    
-	    fclose(recentgames);
-	        
-	    printf("\nGAME %s\n", currentUser->recentgame[i].outcome);
-	    printf("%s\n", currentUser->recentgame[i].mode);
-	    printf("%d %d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
-	    for (j = 0; j < currentUser->recentgame[i].rows; j++) {
-	        for (k = 0; k < currentUser->recentgame[i].cols; k++) {
-	            printf(" %c ", currentUser->recentgame[i].snapshot[j][k]);
-	        }
-	    printf("\n");
-	    }
+        recentgames = fopen(currentUser->recentgame[i].path, "r");
+
+        fscanf(recentgames, "%s", currentUser->recentgame[i].outcome);
+        fscanf(recentgames, "%s", currentUser->recentgame[i].mode);
+        fscanf(recentgames, "%d %d", &currentUser->recentgame[i].rows, &currentUser->recentgame[i].cols);
+
+          for (int b = 0; b < currentUser->recentgame[i].rows; b++) {
+           for (int c = 0; c < currentUser->recentgame[i].cols; c++) {
+                fscanf(recentgames, " %c", &currentUser->recentgame[i].snapshot[b][c]);
+            }
+        }
+
+        fclose(recentgames);
+
+        printf("\nGAME %s\n", currentUser->recentgame[i].outcome);
+        printf("%s\n", currentUser->recentgame[i].mode);
+        printf("%d %d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
+        for (j = 0; j < currentUser->recentgame[i].rows; j++) {
+            for (k = 0; k < currentUser->recentgame[i].cols; k++) {
+                if(currentUser->recentgame[i].snapshot[j][k] == 'X'){
+                    iSetColor(I_COLOR_RED);
+                    printf("X ");
+                } else if (currentUser->recentgame[i].snapshot[j][k] == 'F'){
+                    iSetColor(I_COLOR_CYAN);
+                    printf("F ");
+                } else if (currentUser->recentgame[i].snapshot[j][k] == 'x'){
+                    iSetColor(I_COLOR_YELLOW);
+                    printf("x ");
+                } else if (currentUser->recentgame[i].snapshot[j][k] == '.'){
+                    iSetColor(I_COLOR_WHITE);
+                    printf(". ");
+                } else {
+                    iSetColor(I_COLOR_GREEN);
+                    printf("%c ", currentUser->recentgame[i].snapshot[j][k]);
+                }
+            }
+        printf("\n");
+        }
+        iSetColor(I_COLOR_WHITE);
     }
 }
 
