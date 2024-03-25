@@ -101,7 +101,7 @@ void printBoard(game level){
 			}
 		}
 	}
-	printf("------");
+	printf("-------");
 	
 	printf("\n");
 	
@@ -111,11 +111,10 @@ void printBoard(game level){
 				iSetColor(I_COLOR_PURPLE);
 				printf(" %d | ", i);
 				iSetColor(I_COLOR_WHITE);
-			}
+				}
 			else if (j == level.cols){
 				iSetColor(I_COLOR_PURPLE);
-				printf(" |");
-				iSetColor(I_COLOR_WHITE);
+				printf(" | ");
 			}
 			else if (level.gameBoard[i][j] == HIDDEN){ //not revealed
 				iSetColor(I_COLOR_WHITE);
@@ -126,24 +125,23 @@ void printBoard(game level){
 				printf(" F ");
 				iSetColor(I_COLOR_WHITE);
 			}
-			else {
+			else{
 				iSetColor(I_COLOR_GREEN);
 				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
 				iSetColor(I_COLOR_WHITE);
 			}
-			printf("\n");	
+				
         }
         printf("\n");
-        printf("   ");
-        
-        iSetColor(I_COLOR_PURPLE);
-        for(i=0; i<level.cols-1; i++){
-        	printf("---");
-		}
-		printf("------");
-        
-        iSetColor(I_COLOR_WHITE);
     }
+    
+    for (i = 0; i < level.cols; i++) {
+    	if (i == 0){
+    		printf("   ");	
+		} else printf("---");
+	}
+	printf("-------\n");
+	iSetColor(I_COLOR_WHITE);
 }
 
 //for testing of made board/text file
