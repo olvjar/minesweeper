@@ -5,9 +5,6 @@
 
 #include "interface.c"
 
-#define HIDDEN 10
-#define FLAG 100
-
 struct level {
     int rows;
     int cols;
@@ -24,21 +21,41 @@ void printBoard(game level){
     int i, j;
     
     printf("\n");
-	printf("   ");
-	for (i = 0; i < level.cols; i++) {
-		iSetColor(I_COLOR_PURPLE);
-    	printf(" %d ", i);
-    }
+	printf("     ");
+	for (i = 0; i < 2; i++) {
+		for(j = 0; j <  level.cols; j++) {
+			
+			if(i == 0){
+				iSetColor(I_COLOR_PURPLE);
+    			printf("%2d ", j);
+    				if(j == level.cols - 1){
+    					printf("\n");
+					}
+    		}
+    		
+    		else if (i == 1){
+    			if (j == 0){
+					printf("   ");
+				}
+    			else printf("---");
+			}
+		}
+	}
+	printf("-------");
 	
 	printf("\n");
 	
 	for (i = 0; i < level.rows; i++) {
-        for (j = -1; j < level.cols; j++) {
+        for (j = -1; j <= level.cols; j++) {
 			if (j == -1){
 				iSetColor(I_COLOR_PURPLE);
-				printf(" %d ", i);
+				printf(" %d | ", i);
 				iSetColor(I_COLOR_WHITE);
 				}
+			else if (j == level.cols){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" | ");
+			}
 			else if (level.gameBoard[i][j] == HIDDEN){ //not revealed
 				iSetColor(I_COLOR_WHITE);
 				printf(" . ");
@@ -57,6 +74,14 @@ void printBoard(game level){
         }
         printf("\n");
     }
+    
+    for (i = 0; i < level.cols; i++) {
+    	if (i == 0){
+    		printf("   ");	
+		} else printf("---");
+	}
+	printf("-------\n");
+	iSetColor(I_COLOR_WHITE);
 }
 
 //for testing of made board/text file
@@ -142,10 +167,10 @@ void placeFlag(game *level){
 	printf("Enter column to flag: ");
 	scanf(" %d", &j);
 	
-	if(level->gameBoard[i][j] == 10){
-		level->gameBoard[i][j] = 100;
+	if(level->gameBoard[i][j] == HIDDEN){
+		level->gameBoard[i][j] = FLAG;
 	}
-	else if (level->gameBoard[i][j] == 100)
+	else if (level->gameBoard[i][j] == FLAG)
 		printf("Tile is already flagged. Try again.\n");
 	else if (i >= level->rows || j >= level->cols)
 		printf("Input is out of bounds\n");
@@ -160,8 +185,8 @@ void removeFlag(game *level){
 	printf("Enter column to remove flag: ");
 	scanf(" %d", &j);
 	
-	if(level->gameBoard[i][j] == 100){
-		level->gameBoard[i][j] = 10;
+	if(level->gameBoard[i][j] == FLAG){
+		level->gameBoard[i][j] = HIDDEN;
 	}
 	else if (i >= level->rows || j >= level->cols)
 		printf("Input is out of bounds\n");
@@ -198,10 +223,9 @@ int gameChecker(game level, char outcome[]){
 	int revealedCount = 0;
 	int i, j;
 	
-	
 		for(i = 0; i < level.rows; i++){
 			for(j = 0; j < level.cols; j++){
-				if (level.gameBoard[i][j] != 10 && level.board[i][j] != 'X'){
+				if (level.gameBoard[i][j] != HIDDEN && level.board[i][j] != 'X'){
 					revealedCount++;
 				}
 			}
@@ -217,17 +241,68 @@ int gameChecker(game level, char outcome[]){
 	else return 1;
 }
 
-int saveSnapshot(game level, char outcome[]){
+void transferSnapshot(char destFile[], char sourceFile[]){
+	FILE *fsource;
+	FILE *fdest;
+	char mode[21];
+	char outcome[51];
+	int rows, cols, i ,j;
+	char val[100][100];
+	
+	fsource = fopen(sourceFile, "r");
+	fdest = fopen(destFile, "w");
+	
+	fscanf(fsource, "%s", outcome);
+	fscanf(fsource, "%s", mode);
+	fscanf(fsource, "%d", &rows);
+	fscanf(fsource, "%d", &cols);
+
+	fprintf(fdest, "%s\n", outcome);
+	fprintf(fdest, "%s ", mode);
+	fprintf(fdest, "%d ", rows);
+	fprintf(fdest, "%d\n", cols);
+
+	for(i=0;i<rows;i++){
+		for(j=0;j<cols;j++){
+			fscanf(fsource, " %c", &val[i][j]);
+		}
+	}
+	
+	for(i=0;i<rows;i++){
+		for(j=0;j<cols;j++){
+			fprintf(fdest, "%c ", val[i][j]);
+		}
+		fprintf(fdest, "\n");
+	}
+	
+	printf("copy success");
+	
+	fclose(fsource);
+	fclose(fdest);
+}
+
+int saveSnapshot(game level, char outcome[], profile *currentUser){
 	int i, j;
-	char filename[20];
-    char path[] = "recent games/";
+	char SS0[] = GAME_PATH; // LATEST
+	char SS1[] = GAME_PATH;
+	char SS2[] = GAME_PATH;
     FILE *fgame;
     
-    strcpy(filename, "recentgame");
-	strcat(filename, ".txt");
-    strcat(path, filename);
+    strcat(SS0, currentUser->name);
+	strcat(SS0, "0");
+    strcat(SS0, ".txt");
+	strcat(SS1, currentUser->name);
+	strcat(SS1, "1");
+    strcat(SS1, ".txt");
+	strcat(SS2, currentUser->name);
+	strcat(SS2, "2");
+    strcat(SS2, ".txt");
+
+	transferSnapshot(SS2, SS1); // overwrites 2 with 1
+	transferSnapshot(SS1, SS0); // overwrites 1 with 0
     
-    fgame = fopen(path, "w");
+	// 0 will now be overwritten with latest game
+    fgame = fopen(SS0, "w");
     
     if (strcmp(outcome, "win") == 0){
 		fprintf(fgame, "WIN\n");
@@ -298,7 +373,8 @@ int saveSnapshot(game level, char outcome[]){
     return 1;
 }
 
-void gameProper(game level){
+
+void gameProper(game level, profile *currentUser){
 	int i, j, alive = 1;
 	int choice;
 	char outcome[11];
@@ -306,7 +382,7 @@ void gameProper(game level){
 	//PLAYER BOARD
 	for(i = 0; i < level.rows; i++){
 		for (j = 0; j < level.cols; j++){
-            level.gameBoard[i][j] = 10; // 10 == HIDDEN
+            level.gameBoard[i][j] = HIDDEN; 
         }
     }
     
@@ -329,7 +405,7 @@ void gameProper(game level){
 				break;
 			case 0:
 				strcpy(outcome, "quit");
-				printf("Game Quitted\n");
+				printf("Game QUIT\n");
 				alive = 0;
 				break;
 			default:
@@ -340,73 +416,7 @@ void gameProper(game level){
 		alive = gameChecker(level, outcome);
 		}
 	}
-	saveSnapshot(level, outcome);
-}
-
-void playClassic(game *level){
-	int classicSelect;
-	int validChoice = 0;
-	
-	while(!validChoice){
-	printf("\nChoose difficulty\n[1] EASY\t[2] DIFFICULT\n\t[0] BACK\n\n");
-	printf("SELECTION: ");
-	scanf(" %d", &classicSelect);
-	
-	switch (classicSelect)
-	{
-		case 1: 
-			level->cols = 8;
-			level->rows = 8;
-			level->mines = 10;
-			makeBoard(level);
-			gameProper(*level);
-			validChoice = 1;
-			break;
-		case 2:
-			level->cols = 10;
-			level->rows = 15;
-			level->mines = 35;
-			makeBoard(level);
-			gameProper(*level);
-			validChoice = 1;
-			break;
-		case 0:
-			printf("You have opted to go back.\n\n");
-			validChoice = 1;
-			break;
-		default:
-			printf("Invalid input. Try again.\n");
-	}
-	}
-}
-
-void play(game level)
-{
-	int gameSelect;
-	int validChoice = 0;
-
-	do {
-	printf("\nGame type selection\n[1] CLASSIC\t[2] CUSTOM\n\t[0] BACK\n\nSELECTION: ");
-	scanf("%d", &gameSelect);
-
-	switch (gameSelect)
-	{
-		case 1:
-			playClassic(&level);
-			validChoice = 1;
-			break;
-		case 2:
-			//playCustom(&customLevel);
-			validChoice = 1;
-			break;
-		case 0:
-			printf("You have opted to go back.\n\n");
-			validChoice = 1;
-			break;
-		default:
-			printf("Invalid input. Try again.\n");
-	}
-	} while(!validChoice);
+	saveSnapshot(level, outcome, currentUser);
 }
 
 
