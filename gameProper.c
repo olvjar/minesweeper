@@ -36,11 +36,11 @@ void printBoard(game level){
 				printf(" %d ", i);
 				iSetColor(I_COLOR_WHITE);
 				}
-			else if (level.gameBoard[i][j] == 10){ //not revealed
+			else if (level.gameBoard[i][j] == HIDDEN){ //not revealed
 				iSetColor(I_COLOR_WHITE);
 				printf(" . ");
 			}
-			else if (level.gameBoard[i][j] == 100){ //flag
+			else if (level.gameBoard[i][j] == FLAG){ //flag
 				iSetColor(I_COLOR_RED);
 				printf(" F ");
 				iSetColor(I_COLOR_WHITE);
