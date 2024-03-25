@@ -184,9 +184,7 @@ int inspectBoard(game *level, char outcome[]) {
             printBoardChar(*level);
             return 0;    
         } else {
-            level->gameBoard[i][j] = mineCount(*level, i, j); //reveal chosen tile
-            forwardCascade(level, i, j);
-            backwardCascade(level, i, j);
+            cascade(level, i, j);
             return 1;
         }
     } else {
