@@ -1,5 +1,4 @@
 user
-profiles/user.txt
 games_won_classic
 games_lost_classic
 games_won_custom

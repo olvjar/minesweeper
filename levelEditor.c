@@ -187,8 +187,7 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
 	}
 }
 
-int editLevel(game *customLevel) {
-    int minesCount;
+int editLevel(game *customLevel, int minesCount){
     int save;
     int quit;
     int choice;
@@ -230,6 +229,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	char filename[20];
     char path[100] = LVL_PATH;
     FILE *level;
+    int minesCount = 0;
 
 	printf("EXISTING CUSTOM LEVELS:\n");
 	checkLevels(cLevels);
@@ -246,14 +246,24 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     } else {
     	level = fopen(path, "r");
 
+		// read level data
 		fscanf(level, "%d %d", &customLevel->rows, &customLevel->cols);
 		for(int i = 0; i < customLevel->rows; i++) {
 			fscanf(level, "%s", customLevel->board[i]);
     	}
+    	
+    	// count mines
+	    for (int i = 0; i < customLevel->rows; i++) {
+	        for (int j = 0; j < customLevel->cols; j++) {
+	            if (customLevel->board[i][j] == 'X') {
+        			minesCount++;
+    			}
+	        }
+	    }
 
-    	editLevel(customLevel); 
+    	editLevel(customLevel, minesCount); 
 
-    	if(editLevel(customLevel) == 1){
+    	if(editLevel(customLevel, minesCount) == 1){
     		level = fopen(path, "w");
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
@@ -270,6 +280,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 	char filename[20];
     char path[100] = LVL_PATH;
     FILE *level;
+    int minesCount = 0;
 
 	printf("Provide file name: ");
     scanf("%s", filename);
@@ -303,9 +314,9 @@ void createLevel(game *customLevel, customLevelList *cLevels){
         	}
     	}
 
-        editLevel(customLevel);
+        editLevel(customLevel, minesCount);
 
-        if(editLevel(customLevel) == 1){
+        if(editLevel(customLevel, minesCount) == 1){
     		level = fopen(path, "w");
     		saveFile(0, level, customLevel, cLevels, filename);
     		fclose(level);
@@ -341,7 +352,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
             	printf("Invalid selection. Please choose again.\n");
         }
 
-    	iClear(0,0,100,30);
+    	system("cls");
 	}
 }
 
