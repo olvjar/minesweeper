@@ -52,10 +52,27 @@ struct player{
 
 typedef struct player profile;
 
+void getStatistics(profile *currentUser){
+	FILE *user;
+	char path[] = USER_PATH;
+	
+	strcat(path, currentUser->name);
+	strcat(path, ".txt");
+	
+    user = fopen(path, "r");
+    fscanf(user, "%s", currentUser->name);
+    fscanf(user, "%d\n%d\n%d\n%d", &currentUser->games_won_classic, &currentUser->games_lost_classic, &currentUser->games_won_custom, &currentUser->games_lost_custom);
+ 	for(int i = 0; i < 3; i++){
+   		fscanf(user, "%s\n", currentUser->recentgame[i].path);
+	}
+}
+
 void viewStatistics(profile *currentUser){
     int i, j, k;
     FILE *recentgames;
-		
+	
+	getStatistics(currentUser);
+	
 	printf("Name: %s\n", currentUser->name);
     printf("Classic games - Won: %d Lost: %d\n", currentUser->games_won_classic, currentUser->games_lost_classic);
     printf("Custom games - Won: %d Lost: %d\n", currentUser->games_won_custom, currentUser->games_lost_custom);
