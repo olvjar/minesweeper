@@ -13,6 +13,8 @@
 //#include "controls.c"
 #include "interface.c"
 
+#define CLEARSCREEN system("cls")
+
 #define MAX_PROFILES 10
 
 #define HIDDEN 10
@@ -308,18 +310,21 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	FILE *fdest;
 	char mode[21];
 	char outcome[51];
-	int rows, cols, i ,j;
+	int rows, cols, time, i ,j;
 	char val[100][100];
 	
 	fsource = fopen(sourceFile, "r");
 	fdest = fopen(destFile, "w");
 	
-	fscanf(fsource, "%s", outcome);
-	fscanf(fsource, "%s", mode);
-	fscanf(fsource, "%d", &rows);
-	fscanf(fsource, "%d", &cols);
+	fscanf(fsource, " %s", outcome);
+	if (!(outcome[0] >= 'A' && outcome[0] <= 'z')) return; 
+	fscanf(fsource, " %d", &time);
+	fscanf(fsource, " %s", mode);
+	fscanf(fsource, " %d", &rows);
+	fscanf(fsource, " %d", &cols);
 
-	fprintf(fdest, "%s\n", outcome);
+	fprintf(fdest, "%s ", outcome);
+	fprintf(fdest, "%d\n", time);
 	fprintf(fdest, "%s ", mode);
 	fprintf(fdest, "%d ", rows);
 	fprintf(fdest, "%d\n", cols);
@@ -341,10 +346,11 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fclose(fdest);
 }
 
-int saveSnapshot(game level, char outcome[], profile currentUser){
+int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 	int i, j;
     FILE *fgame;
-	
+
+	currentUser.recentgame[0].time = time;
 	transferSnapshot(currentUser.recentgame[2].path, currentUser.recentgame[1].path); // overwrites 2 with 1
 	transferSnapshot(currentUser.recentgame[1].path, currentUser.recentgame[0].path); // overwrites 1 with 0
     
@@ -352,7 +358,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
     fgame = fopen(currentUser.recentgame[0].path, "w");
     
     if (strcmp(outcome, "win") == 0){
-		fprintf(fgame, "WON\n");
+		fprintf(fgame, "WON %d\n", currentUser.recentgame[0].time);
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
@@ -370,7 +376,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
 }
 	
 	else if (strcmp(outcome, "lose") == 0){
-		fprintf(fgame, "LOST\n");
+		fprintf(fgame, "LOST %d\n", currentUser.recentgame[0].time);
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
@@ -396,7 +402,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
 }
 	
 	else if (strcmp(outcome, "quit") == 0){
-		fprintf(fgame, "QUIT\n");
+		fprintf(fgame, "QUIT %d\n", currentUser.recentgame[0].time);
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
  
 		
@@ -532,7 +538,7 @@ void gameProper(game level, profile *currentUser){
 		}
 		system("cls");
 	}
-	saveSnapshot(level, outcome, *currentUser);
+	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
 }
 
@@ -663,8 +669,12 @@ void deleteFile(customLevelList *cLevels){
 	    fclose(dir);
 
 	    // delete level file
+		if (remove(path) != 0) {
+        	perror("Error deleting user file");
+    	} else{
+			printf("%s deleted successfully.", filename);
+		}
 	    remove(path);
-	    printf("%s deleted successfully.", filename);
 	}
 }
 
@@ -887,7 +897,8 @@ void getStatistics(profile *currentUser){
 }
 
 void viewStatistics(profile *currentUser){
-    int i, j, k;
+    int i, j, k, b, c;
+    int time, hours, minutes, seconds;
     FILE *recentgames;
 	
 	getStatistics(currentUser);
@@ -901,20 +912,27 @@ void viewStatistics(profile *currentUser){
         recentgames = fopen(currentUser->recentgame[i].path, "r");
 
         fscanf(recentgames, "%s", currentUser->recentgame[i].outcome);
+		fscanf(recentgames, "%d", &currentUser->recentgame[i].time);
         fscanf(recentgames, "%s", currentUser->recentgame[i].mode);
         fscanf(recentgames, "%d %d", &currentUser->recentgame[i].rows, &currentUser->recentgame[i].cols);
 
-          for (int b = 0; b < currentUser->recentgame[i].rows; b++) {
-           for (int c = 0; c < currentUser->recentgame[i].cols; c++) {
+          for (b = 0; b < currentUser->recentgame[i].rows; b++) {
+           for (c = 0; c < currentUser->recentgame[i].cols; c++) {
                 fscanf(recentgames, " %c", &currentUser->recentgame[i].snapshot[b][c]);
             }
         }
+        
+        time = currentUser->recentgame[i].time;
+		hours = time / 3600;
+        minutes = (time % 3600) / 60;
+        seconds = time % 60;
 
         fclose(recentgames);
 
-        printf("\nGAME %s\n", currentUser->recentgame[i].outcome);
-        printf("%s\n", currentUser->recentgame[i].mode);
-        printf("%d %d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
+        printf("\nGAME %s ", currentUser->recentgame[i].outcome);
+		printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
+        printf("%s ", currentUser->recentgame[i].mode);
+        printf("%dx%d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
         for (j = 0; j < currentUser->recentgame[i].rows; j++) {
             for (k = 0; k < currentUser->recentgame[i].cols; k++) {
                 if(currentUser->recentgame[i].snapshot[j][k] == 'X'){
@@ -1131,79 +1149,84 @@ void newProfile(profile *currentUser, profileList users){
 			fclose(recent); 
 		}
     	strcpy(currentUser->name, name);
+		getStatistics(currentUser);
 	}
 }
 
-void deleteProfile(profile *currentUser, profileList users){
-	char name[21];
-	char filename[21];
-    char path[] = USER_PATH;
-    char gamePath[] = GAME_PATH;
+void deleteProfile(profile *currentUser, profileList users) {
+    char name[21];
+    char filename[21];
+    char path[200];
+    char gamePath[200];
     int num, i;
     FILE *dir;
 
-	printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
-	checkProfiles(users);
+    printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
+    checkProfiles(users);
 
-	printf("\nSELECT PROFILE TO DELETE: ");
-	scanf(" %s", name);
-	strcpy(filename, name);
-	strcat(filename, ".txt");
-	strcat(path, filename);
+    printf("\nSELECT PROFILE TO DELETE: ");
+    scanf("%s", name);
+    strcpy(filename, name);
+    strcat(filename, ".txt");
+    strcpy(path, USER_PATH);
+    strcat(path, filename);
 
-	if(fileExists(path) == 0) {
+    if (fileExists(path) == 0) {
         printf("\nUser does not exist. Try again.\n\n");
         return;
-    } else if(!(checkCapital(name))){
-		printf("Name is not all uppercase letters.\n");
-	} else {
-		// read list
-	    dir = fopen(USER_DIR, "r");
-	    fscanf(dir, " %d", &num);
-	    for(i = 0; i < num; i++){
-			fscanf(dir, "%s", users[i].name);
-		}
-		fclose(dir);
+    } else if (!checkCapital(name)) {
+        printf("\nName is not all uppercase letters.\n");
+        return;
+    }
 
-		// update list
-	    dir = fopen(USER_DIR, "w");
-	    fprintf(dir, "%d\n", num - 1);
-	    for(i = 0; i < num; i++){
-	    	if(strcmp(users[i].name, name) == 0){
-	    		fprintf(dir, "%s", "");
-			} else fprintf(dir, "%s\n", users[i].name);
-		}
-	    fclose(dir);
-	    
-	    // switch current user to none if currentUser == name
-		if (strcmp(currentUser->name, name) == 0){
-			strcpy(currentUser->name, "");
-			//selectProfile(currentUser, users);
-		}
-	
-	    // delete user snapshots | WORKING
-		for(i = 0; i < 3; i++){
-			strcpy(gamePath, GAME_PATH);
-			strcat(gamePath, name);
-			if (i == 0){
-				strcat(gamePath, "_snapshot0.txt");
-			}
-			if (i == 1){
-				strcat(gamePath, "_snapshot1.txt");
-			}
-			if (i == 2){
-				strcat(gamePath, "_snapshot2.txt");
-			}
-			remove(gamePath);
-		}
-	    
-		// delete user file | WORKING
-		strcpy(filename, name);
-		strcat(filename, ".txt");
-		strcpy(path, USER_PATH);
-		strcat(path, filename);
-		remove(path);
-		
+    // read list
+    dir = fopen(USER_DIR, "r");
+    fscanf(dir, "%d", &num);
+    for (i = 0; i < num; i++) {
+        fscanf(dir, "%s", users[i].name);
+    }
+    fclose(dir);
+
+    // update list
+    dir = fopen(USER_DIR, "w");
+    fprintf(dir, "%d\n", num - 1);
+    for (i = 0; i < num; i++) {
+        if (strcmp(users[i].name, name) == 0) {
+            fprintf(dir, "%s", "");
+        } else {
+            fprintf(dir, "%s\n", users[i].name);
+        }
+    }
+    fclose(dir);
+
+    // switch current user to none if currentUser == name
+    if (strcmp(currentUser->name, name) == 0) {
+        strcpy(currentUser->name, "");
+        // selectProfile(currentUser, users);
+    }
+
+    // delete user snapshots
+    for (i = 0; i < 3; i++) {
+        strcpy(gamePath, GAME_PATH);
+        strcat(gamePath, name);
+        if (i == 0) {
+            strcat(gamePath, "_snapshot0.txt");
+        }
+        if (i == 1) {
+            strcat(gamePath, "_snapshot1.txt");
+        }
+        if (i == 2) {
+            strcat(gamePath, "_snapshot2.txt");
+        }
+        remove(gamePath);
+    }
+
+    // delete user file
+    printf("%s", path);
+    delay(300);
+    if (remove(path) != 0) {
+        perror("Error deleting user file");
+    } else{
 		printf("\nProfile [%s] deleted successfully.\n\n", name);
 	}
 }
