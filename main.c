@@ -11,7 +11,6 @@
 #include <time.h>
 #include <conio.h>
 
-//#include "controls.c"
 #include "interface.c"
 
 #define CLEARSCREEN system("cls")
@@ -171,7 +170,7 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
     printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
 
 	while (cont) {
-		system("cls");
+		CLEARSCREEN;
 	    
 	    printf("\n");
 		printf("     ");
@@ -715,8 +714,8 @@ void checkLevels(customLevelList *cLevels){
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
 
-    printf("Enter row and column for mine %d: ", (*minesCount) + 1);
-    scanf("%d %d", &row, &col);
+    printf("MINE %d", (*minesCount) + 1);
+    controlsGame(*customLevel, &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
@@ -729,8 +728,8 @@ void placeMine(game *customLevel, int *minesCount) {
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
-    printf("Enter row and column of the mine to delete: ");
-    scanf("%d %d", &row, &col);
+    printf("MINE %d", (*minesCount) + 1);
+    controlsGame(*customLevel, &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
@@ -760,7 +759,6 @@ void deleteLevel(customLevelList *cLevels){
 	int num, i;
 	FILE *dir;
 
-	CLEARSCREEN;
 	printf("[LEVEL DELETION]\n\nEXISTING CUSTOM LEVELS:\n");
 	checkLevels(cLevels);
 
@@ -839,10 +837,11 @@ int editLevel(game *customLevel, int minesCount){
     int quit;
     int choice;
 
+	CLEARSCREEN;
     while(quit != 1){
     	printCustomBoard(customLevel);
     	printf("GRID: %dx%d\t", customLevel->rows, customLevel->cols);
-    	printf("MINES: %d\n", minesCount);
+    	printf("MINES: %d\n\n", minesCount);
 		menuEditLevel(&choice);
 
         switch(choice){
@@ -878,7 +877,6 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     FILE *level;
     int minesCount = 0;
 
-	CLEARSCREEN;
 	printf("[LEVEL EDITOR]\nEXISTING CUSTOM LEVELS:\n");
 	checkLevels(cLevels);
 
@@ -930,7 +928,6 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     FILE *level;
     int minesCount = 0;
 
-	CLEARSCREEN;
 	printf("[LEVEL CREATION]\n\nProvide file name: ");
     scanf("%s", filename);
     strcat(filename, ".txt");
@@ -986,23 +983,26 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 
         switch (choice) {
             case 1:
+				CLEARSCREEN;
                 createLevel(customLevel, cLevels);
                 break;
             case 2:
+				CLEARSCREEN;
                 loadLevel(customLevel, cLevels);
                 break;
             case 3:
+				CLEARSCREEN;
             	deleteLevel(cLevels);
                 break;
             case 4:
+				CLEARSCREEN;
 				printf("Returned to main menu.\n");
 				quit = 1;
 				break;
 			default:
-            	printf("Invalid selection. Please choose again.\n");
+				CLEARSCREEN;
+            	printf("Invalid selection. Please choose again.\n\n");
         }
-
-    	CLEARSCREEN;
 	}
 }
 
@@ -1021,15 +1021,19 @@ void getStatistics(profile *currentUser){
  	for(int i = 0; i < 3; i++){
    		fscanf(user, "%s\n", currentUser->recentgame[i].path);
 	}
+	fclose(user);
 }
 
 void viewStatistics(profile *currentUser){
+	int choice, quit = 0;
     int i, j, k, b, c;
     int time, hours, minutes, seconds;
     FILE *recentgames;
 	
+	CLEARSCREEN;
 	getStatistics(currentUser);
 	
+	printf("press ESC to go back\n\n");
 	printf("Name: %s\n", currentUser->name);
     printf("Classic games - Won: %d Lost: %d\n", currentUser->games_won_classic, currentUser->games_lost_classic);
     printf("Custom games - Won: %d Lost: %d\n\n", currentUser->games_won_custom, currentUser->games_lost_custom);
@@ -1089,6 +1093,14 @@ void viewStatistics(profile *currentUser){
 			iSetColor(I_COLOR_WHITE);
 		}
     }
+	while(!quit){
+		if(kbhit()){
+            choice = getch();
+                if(choice == 27){ // escape
+                    quit = 1;
+				}
+		}
+	}
 }
 
 /* profile */
@@ -1170,7 +1182,6 @@ int selectProfile(profile *currentUser, profileList *users){
 	char name[21];
 	char filename[21];
 	char path[] = USER_PATH;
-	//FILE *user;
 
 	CLEARSCREEN;
 	printf("[PROFILE SELECTION]\nCURRENT USER: %s\n", currentUser->name);
@@ -1204,12 +1215,11 @@ void newProfile(profile *currentUser, profileList users){
     FILE *user;
     FILE *dir;
 
-	CLEARSCREEN;
 	printf("[PROFILE CREATION]\nEXISTING USER PROFILES:\n");
 	checkProfiles(users);
 	
 	dir = fopen(USER_DIR, "r");
-    fscanf(dir, "%d", &num);
+    fscanf(dir, " %d", &num);
     fclose(dir);
     
     if(num > 9){
@@ -1218,7 +1228,7 @@ void newProfile(profile *currentUser, profileList users){
 	}
 
     printf("\nName must be:\n[1] 3 to 20 characters\n[2] Uppercase letters only\n\nProvide profile name: ");
-	scanf("%s", name);
+	scanf(" %s", name);
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
@@ -1281,6 +1291,7 @@ void newProfile(profile *currentUser, profileList users){
 				strcat(gamePath, "_snapshot2.txt");
 			}
 			FILE *recent = fopen(gamePath, "w");
+			fprintf(recent, "0");
 			fclose(recent); 
 		}
     	strcpy(currentUser->name, name);
@@ -1288,37 +1299,47 @@ void newProfile(profile *currentUser, profileList users){
 	}
 }
 
-void deleteProfile(profile *currentUser, profileList users) {
+void deleteProfile(profile *currentUser, profileList users){
     char name[21];
     char filename[21];
-    char path[200];
-    char gamePath[200];
+    char path[] = USER_PATH;
+    char gamePath[] = GAME_PATH;
     int num, i;
     FILE *dir;
 
-	CLEARSCREEN;
     printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
     checkProfiles(users);
 
     printf("\nSELECT PROFILE TO DELETE: ");
-    scanf("%s", name);
+    scanf(" %s", name);
     strcpy(filename, name);
     strcat(filename, ".txt");
-    strcpy(path, USER_PATH);
     strcat(path, filename);
 
-    if (fileExists(path) == 0) {
+    if(fileExists(path) == 0) {
         printf("\nUser does not exist. Try again.\n\n");
         return;
-    } else if (!checkCapital(name)) {
-        printf("\nName is not all uppercase letters.\n");
+    } else if(!(checkCapital(name))){
+        printf("Name is not all uppercase letters.\n");
+	} else {
+		// delete user file | WORKING
+		strcpy(filename, name);
+		strcat(filename, ".txt");
+		strcpy(path, USER_PATH);
+		strcat(path, filename);
+		remove(path);
+		
+		if (fileExists(path) == 0){
+			printf("\nProfile [%s] deleted successfully.\n\n", name);
+		} else {
+		printf("Profile not deleted successfully.\n\n");
         return;
     }
 
     // read list
     dir = fopen(USER_DIR, "r");
-    fscanf(dir, "%d", &num);
-    for (i = 0; i < num; i++) {
+    fscanf(dir, " %d", &num);
+    for(i = 0; i < num; i++){
         fscanf(dir, "%s", users[i].name);
     }
     fclose(dir);
@@ -1326,44 +1347,33 @@ void deleteProfile(profile *currentUser, profileList users) {
     // update list
     dir = fopen(USER_DIR, "w");
     fprintf(dir, "%d\n", num - 1);
-    for (i = 0; i < num; i++) {
-        if (strcmp(users[i].name, name) == 0) {
+    for(i = 0; i < num; i++){
+        if(strcmp(users[i].name, name) == 0){
             fprintf(dir, "%s", "");
-        } else {
-            fprintf(dir, "%s\n", users[i].name);
-        }
+        } else fprintf(dir, "%s\n", users[i].name);
     }
     fclose(dir);
 
-    // switch current user to none if currentUser == name
-    if (strcmp(currentUser->name, name) == 0) {
-        strcpy(currentUser->name, "");
-        // selectProfile(currentUser, users);
-    }
+		// switch current user to none if currentUser == name
+		if (strcmp(currentUser->name, name) == 0){
+			strcpy(currentUser->name, "");
+		}
 
     // delete user snapshots
-    for (i = 0; i < 3; i++) {
-        strcpy(gamePath, GAME_PATH);
-        strcat(gamePath, name);
-        if (i == 0) {
-            strcat(gamePath, "_snapshot0.txt");
-        }
-        if (i == 1) {
-            strcat(gamePath, "_snapshot1.txt");
-        }
-        if (i == 2) {
-            strcat(gamePath, "_snapshot2.txt");
-        }
-        remove(gamePath);
-    }
-
-    // delete user file
-    printf("%s", path);
-    delay(300);
-    if (remove(path) != 0) {
-        perror("Error deleting user file\n");
-    } else{
-		printf("\nProfile [%s] deleted successfully.\n\n", name);
+		for(i = 0; i < 3; i++){
+			strcpy(gamePath, GAME_PATH);
+			strcat(gamePath, name);
+			if (i == 0) {
+				strcat(gamePath, "_snapshot0.txt");
+			}
+			if (i == 1) {
+				strcat(gamePath, "_snapshot1.txt");
+			}
+			if (i == 2) {
+				strcat(gamePath, "_snapshot2.txt");
+			}
+			remove(gamePath);
+		}
 	}
 }
 
@@ -1375,22 +1385,26 @@ void changeProfile(profile *currentUser, profileList *users){
 		menuProfile(*currentUser, &choice);
 		switch(choice) {
             case 1:
-                selectProfile(currentUser, users); // WORKING
+                CLEARSCREEN;
+				selectProfile(currentUser, users); // WORKING
                 break;
             case 2:
-                newProfile(currentUser, *users); // WORKING
+                CLEARSCREEN;
+				newProfile(currentUser, *users); // WORKING
                 break;
             case 3:
-            	deleteProfile(currentUser, *users); // WORKING
+            	CLEARSCREEN;
+				deleteProfile(currentUser, *users); // WORKING
                 break;
             case 4:
-            	printf("Returned to main menu.\n");
+            	CLEARSCREEN;
+				printf("Returned to main menu.\n");
 				quit = 1;
 				break;
 			default:
-				printf("Invalid selection. Please choose again.\n");
+				CLEARSCREEN;
+				printf("Invalid selection. Please choose again.\n\n");
 		}
-		CLEARSCREEN;
 	}
 	
 }
@@ -1474,7 +1488,7 @@ void playClassic(game *level, profile *currentUser){
 			break;
 		default:
 			printf("Invalid input. Try again.\n");
-	}
+		}
 	}
 }
 
@@ -1518,7 +1532,7 @@ void startMenu(profile *currentUser, profileList *users){
 	fscanf(dir, " %d", &num);
 	fclose(dir);
 
-	if(num == 0){
+	if(num <= 0){
 		newProfile(currentUser, *users);
 	} else {
 		while(!valid){
@@ -1543,17 +1557,18 @@ int main(){
 	int start = 0;
 	startMenu(&currentUser, &users);
 	delay(300);
-	CLEARSCREEN;
 	
     do {
-	printf("Main Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
+    CLEARSCREEN;
+	printf("CURRENT USER: %s", currentUser.name);
+	printf("\nMain Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
 	scanf("%d", &menuSelect);
 
 	switch (menuSelect){
 		case 1:
 			if (strcmp(currentUser.name, "") != 0){
 				play(currentUser, level, customLevel, &customLvls);
-			} else printf("Please select player profile.\n");
+			} else printf("NO CURRENT USER. Please select player profile.\n");
 			break;
 		case 2:
 			levelEditor(&customLevel, &customLvls);
@@ -1564,7 +1579,7 @@ int main(){
 		case 4:
 			if (strcmp(currentUser.name, "") != 0){
 				viewStatistics(&currentUser);
-			} else printf("Please select player profile.\n");
+			} else printf("NO CURRENT USER. Please select player profile.\n");
 			break;
 		case 0:
 			start = 1;
