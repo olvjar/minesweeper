@@ -1538,7 +1538,6 @@ int main(){
 	// start
 	int menuSelect;
 	int start = 0;
-
 	startMenu(&currentUser, &users);
 	delay(300);
 	CLEARSCREEN;
