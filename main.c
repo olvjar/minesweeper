@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <conio.h>
 
 //#include "controls.c"
 #include "interface.c"
@@ -159,6 +160,133 @@ void printBoardChar(game level){
     }
 }
 
+void controlsGame(game level, int *rowChosen, int *colChosen){
+	int input;
+    int cont = 1;
+    int i, j;
+    int row = 0;
+    int col = 0;
+    
+    printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
+
+	while (cont) {
+		system("cls");
+	    
+	    printf("\n");
+		printf("     ");
+		for (i = 0; i < 2; i++) {
+			for(j = 0; j <  level.cols; j++) {
+				if(i == 0){
+					iSetColor(I_COLOR_PURPLE);
+	    			printf("%2d ", j);
+	    				if(j == level.cols - 1){
+	    					printf("\n");
+						}
+	    		}
+	    		
+	    		else if (i == 1){
+	    			if (j == 0){
+						printf("   ");
+					}
+	    			else printf("---");
+				}
+			}
+		}
+		printf("-------");
+		
+		printf("\n");
+		
+		for (i = 0; i < level.rows; i++) {
+	        for (j = -1; j <= level.cols; j++) {
+				if (j == -1){
+					iSetColor(I_COLOR_PURPLE);
+					printf(" %d | ", i);
+					}
+				else if (j == level.cols){
+					iSetColor(I_COLOR_PURPLE);
+					printf(" | ");
+				}
+				else if (i == row && j == col){
+	                    if (level.gameBoard[i][j] == HIDDEN){ //not revealed
+					    iSetColor(I_COLOR_WHITE);
+					    printf(">.<");
+				    }
+				    else if (level.gameBoard[i][j] == FLAG){ //flag
+					    iSetColor(I_COLOR_CYAN);
+					    printf(">F<");
+				    }
+				    else{
+					    iSetColor(I_COLOR_GREEN);
+					    printf(">%d<", level.gameBoard[i][j]); //valid space & revealed
+				    }
+	            } else {
+	                if (level.gameBoard[i][j] == HIDDEN){ //not revealed
+					    iSetColor(I_COLOR_WHITE);
+					    printf(" . ");
+			    	}
+				    else if (level.gameBoard[i][j] == FLAG){ //flag
+				    	iSetColor(I_COLOR_CYAN);
+				    	printf(" F ");
+				    }
+			    	else{
+				    	iSetColor(I_COLOR_GREEN);
+				    	printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
+				    }
+					
+	            }
+	        }
+	        printf("\n");
+	    }
+	    
+	    for (i = 0; i < level.cols; i++) {
+	    	if (i == 0){
+	    		printf("   ");	
+			} else printf("---");
+		}
+		printf("-------\n");
+		iSetColor(I_COLOR_WHITE);
+	
+		
+	        input = getch(); 
+	        if (input == 224) { // arrow key entered
+	            input = getch(); 
+	            switch(input) {
+	                case 72:
+	                    if (row > 0){
+							row--;
+						} else printf("Border reached.\n");
+	                    break;
+	                case 80:
+	                    if (row < level.rows-1){
+							row++;
+						} else printf("Border reached.\n");
+	                    break;
+	                case 75:
+	                    if (col > 0){
+	                    	col--;
+						} else printf("Border reached.\n");
+	                    break;
+	                case 77:
+	                    if (col < level.cols-1){
+	                    	col++;
+						} else printf("Border reached.\n");
+	                    break;
+	                default:
+	                    printf("Unknown key pressed. Please press arrow keys.\n");
+	                    break;
+	            }
+	        }
+	        else if (input == '\r') // Enter key
+	            cont = 0;
+	        else
+	            printf("Invalid input. Use arrow keys.\n");
+    }
+
+	*rowChosen = row;
+	*colChosen = col;
+	printf("Choice: (%d, %d)", row, col);
+}
+
 void makeBoard(game *level){
     srand(time(0));
 	int minesCount;
@@ -226,11 +354,8 @@ void cascade(game *level, int i, int j){
 void placeFlag(game *level){
 	int i, j;
 	
-	printf("\nEnter row to flag: ");
-	scanf(" %d", &i);
-	printf("Enter column to flag: ");
-	scanf(" %d", &j);
-	
+	controlsGame(*level, &i, &j);
+
 	if(level->gameBoard[i][j] == HIDDEN){
 		level->gameBoard[i][j] = FLAG;
 	}
@@ -244,10 +369,7 @@ void placeFlag(game *level){
 void removeFlag(game *level){
 	int i, j;
 	
-	printf("\nEnter row to remove flag: ");
-	scanf(" %d", &i);
-	printf("Enter column to remove flag: ");
-	scanf(" %d", &j);
+	controlsGame(*level, &i, &j);
 	
 	if(level->gameBoard[i][j] == FLAG){
 		level->gameBoard[i][j] = HIDDEN;
@@ -260,10 +382,7 @@ void removeFlag(game *level){
 int inspectBoard(game *level, char outcome[]) {
     int i, j;
     
-    printf("\nEnter row to inspect: ");
-    scanf(" %d", &i);
-    printf("Enter column to inspect: ");
-    scanf(" %d", &j);
+    controlsGame(*level, &i, &j);
     
     if (i < level->rows && j < level->cols) {
         if (mineCount(*level, i, j) == -1) {
@@ -1414,7 +1533,9 @@ int main(){
 
 	switch (menuSelect){
 		case 1:
-			play(currentUser, level, customLevel, &customLvls);
+			if (strcmp(currentUser.name, "") != 0){
+				play(currentUser, level, customLevel, &customLvls);
+			} else printf("Please select player profile.\n");
 			break;
 		case 2:
 			levelEditor(&customLevel, &customLvls);
@@ -1423,7 +1544,9 @@ int main(){
 			changeProfile(&currentUser, &users);
 			break;
 		case 4:
-			viewStatistics(&currentUser);
+			if (strcmp(currentUser.name, "") != 0){
+				viewStatistics(&currentUser);
+			} else printf("Please select player profile.\n");
 			break;
 		case 0:
 			start = 1;
