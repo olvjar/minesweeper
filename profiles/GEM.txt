@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 GEM
 0
 0
@@ -6,3 +7,13 @@ GEM
 snapshots/GEM_snapshot0.txt
 snapshots/GEM_snapshot1.txt
 snapshots/GEM_snapshot2.txt
+=======
+GEM
+0
+0
+0
+0
+snapshots/GEM_snapshot0.txt
+snapshots/GEM_snapshot1.txt
+snapshots/GEM_snapshot2.txt
+>>>>>>> 329ac8a40162fac99d667e3ac51d00a32c91e247

@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <conio.h>
 
 //#include "controls.c"
 #include "interface.c"
@@ -160,135 +159,6 @@ void printBoardChar(game level){
     }
 }
 
-void controlsGame(game level, int *rowChosen, int *colChosen){
-	int input;
-    int cont = 1;
-    int i, j;
-    int row = 0;
-    int col = 0;
-
-	iHideCursor();
-    printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
-
-	while (cont) {
-		system("cls");
-	    
-	    printf("\n");
-		printf("     ");
-		for (i = 0; i < 2; i++) {
-			for(j = 0; j <  level.cols; j++) {
-				if(i == 0){
-					iSetColor(I_COLOR_PURPLE);
-	    			printf("%2d ", j);
-	    				if(j == level.cols - 1){
-	    					printf("\n");
-						}
-	    		}
-	    		
-	    		else if (i == 1){
-	    			if (j == 0){
-						printf("   ");
-					}
-	    			else printf("---");
-				}
-			}
-		}
-		printf("-------");
-		
-		printf("\n");
-		
-		for (i = 0; i < level.rows; i++) {
-	        for (j = -1; j <= level.cols; j++) {
-				if (j == -1){
-					iSetColor(I_COLOR_PURPLE);
-					printf(" %d | ", i);
-					}
-				else if (j == level.cols){
-					iSetColor(I_COLOR_PURPLE);
-					printf(" | ");
-				}
-				else if (i == row && j == col){
-	                    if (level.gameBoard[i][j] == HIDDEN){ //not revealed
-					    iSetColor(I_COLOR_WHITE);
-					    printf(">.<");
-				    }
-				    else if (level.gameBoard[i][j] == FLAG){ //flag
-					    iSetColor(I_COLOR_CYAN);
-					    printf(">F<");
-				    }
-				    else{
-					    iSetColor(I_COLOR_GREEN);
-					    printf(">%d<", level.gameBoard[i][j]); //valid space & revealed
-				    }
-	            } else {
-	                if (level.gameBoard[i][j] == HIDDEN){ //not revealed
-					    iSetColor(I_COLOR_WHITE);
-					    printf(" . ");
-			    	}
-				    else if (level.gameBoard[i][j] == FLAG){ //flag
-				    	iSetColor(I_COLOR_CYAN);
-				    	printf(" F ");
-				    }
-			    	else{
-				    	iSetColor(I_COLOR_GREEN);
-				    	printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
-				    }
-					
-	            }
-	        }
-	        printf("\n");
-	    }
-	    
-	    for (i = 0; i < level.cols; i++) {
-	    	if (i == 0){
-	    		printf("   ");	
-			} else printf("---");
-		}
-		printf("-------\n");
-		iSetColor(I_COLOR_WHITE);
-	
-		
-	        input = getch(); 
-	        if (input == 224) { // arrow key entered
-	            input = getch(); 
-	            switch(input) {
-	                case 72:
-	                    if (row > 0){
-							row--;
-						} //else printf("Border reached.\n");
-	                    break;
-	                case 80:
-	                    if (row < level.rows-1){
-							row++;
-						} //else printf("Border reached.\n");
-	                    break;
-	                case 75:
-	                    if (col > 0){
-	                    	col--;
-						} //else printf("Border reached.\n");
-	                    break;
-	                case 77:
-	                    if (col < level.cols-1){
-	                    	col++;
-						} //else printf("Border reached.\n");
-	                    break;
-	                default:
-	                    printf("Unknown key pressed. Please press arrow keys.\n");
-	                    break;
-	            }
-	        }
-	        else if (input == '\r') // Enter key
-	            cont = 0;
-	        else
-	            printf("Invalid input. Use arrow keys.\n");
-    }
-
-	CLEARSCREEN;
-	*rowChosen = row;
-	*colChosen = col;
-	iShowCursor();
-}
-
 void makeBoard(game *level){
     srand(time(0));
 	int minesCount;
@@ -356,8 +226,11 @@ void cascade(game *level, int i, int j){
 void placeFlag(game *level){
 	int i, j;
 	
-	controlsGame(*level, &i, &j);
-
+	printf("\nEnter row to flag: ");
+	scanf(" %d", &i);
+	printf("Enter column to flag: ");
+	scanf(" %d", &j);
+	
 	if(level->gameBoard[i][j] == HIDDEN){
 		level->gameBoard[i][j] = FLAG;
 	}
@@ -371,7 +244,10 @@ void placeFlag(game *level){
 void removeFlag(game *level){
 	int i, j;
 	
-	controlsGame(*level, &i, &j);
+	printf("\nEnter row to remove flag: ");
+	scanf(" %d", &i);
+	printf("Enter column to remove flag: ");
+	scanf(" %d", &j);
 	
 	if(level->gameBoard[i][j] == FLAG){
 		level->gameBoard[i][j] = HIDDEN;
@@ -384,7 +260,10 @@ void removeFlag(game *level){
 int inspectBoard(game *level, char outcome[]) {
     int i, j;
     
-    controlsGame(*level, &i, &j);
+    printf("\nEnter row to inspect: ");
+    scanf(" %d", &i);
+    printf("Enter column to inspect: ");
+    scanf(" %d", &j);
     
     if (i < level->rows && j < level->cols) {
         if (mineCount(*level, i, j) == -1) {
@@ -615,7 +494,7 @@ void gameProper(game level, profile *currentUser){
         }
     }
     
-    CLEARSCREEN;
+    system("cls");
     printBoardChar(level); // FOR TESTING
 	time_t timeStart, timeEnd;
 	int timeElapsed, hours, minutes, seconds;
@@ -657,10 +536,7 @@ void gameProper(game level, profile *currentUser){
 		if (alive){
 		alive = gameChecker(level, outcome);
 		}
-<<<<<<< HEAD
-		CLEARSCREEN;
-=======
->>>>>>> 329ac8a40162fac99d667e3ac51d00a32c91e247
+		system("cls");
 	}
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
@@ -755,14 +631,13 @@ int checkValidity(game *customLevel, int *minesCount){
 	}
 }
 
-void deleteLevel(customLevelList *cLevels){
+void deleteFile(customLevelList *cLevels){
 	char filename[21];
 	char path[100] = LVL_PATH;
 	int num, i;
 	FILE *dir;
 
-	CLEARSCREEN;
-	printf("[LEVEL DELETION]\n\nEXISTING CUSTOM LEVELS:\n");
+	printf("EXISTING CUSTOM LEVELS:\n");
 	checkLevels(cLevels);
 
 	printf("\nProvide level to delete (do not include .txt): ");
@@ -866,7 +741,8 @@ int editLevel(game *customLevel, int minesCount){
 			default:
             	printf("Invalid selection. Please choose again.\n");
         }
-    	CLEARSCREEN;
+
+    	system("cls");
 	}
 
 	return save;
@@ -878,8 +754,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     FILE *level;
     int minesCount = 0;
 
-	CLEARSCREEN;
-	printf("[LEVEL EDITOR]\nEXISTING CUSTOM LEVELS:\n");
+	printf("EXISTING CUSTOM LEVELS:\n");
 	checkLevels(cLevels);
 
 	printf("\nProvide level name to edit: ");
@@ -930,8 +805,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     FILE *level;
     int minesCount = 0;
 
-	CLEARSCREEN;
-	printf("[LEVEL CREATION]\n\nProvide file name: ");
+	printf("Provide file name: ");
     scanf("%s", filename);
     strcat(filename, ".txt");
     strcat(path, filename);
@@ -977,11 +851,10 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 }
 
 void levelEditor(game *customLevel, customLevelList *cLevels) {
-    int quit = 0, choice;
+    int quit, choice;
 
-	CLEARSCREEN;
-	while(!quit){
-		printf("[LEVEL EDITOR]\n\nWhat would you like to do?\n\n");
+	while(quit != 1){
+		printf("What would you like to do?\n");
 		menuLevelEditor(&choice);
 
         switch (choice) {
@@ -992,7 +865,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
                 loadLevel(customLevel, cLevels);
                 break;
             case 3:
-            	deleteLevel(cLevels);
+            	deleteFile(cLevels);
                 break;
             case 4:
 				printf("Returned to main menu.\n");
@@ -1002,7 +875,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
             	printf("Invalid selection. Please choose again.\n");
         }
 
-    	CLEARSCREEN;
+    	system("cls");
 	}
 }
 
@@ -1032,7 +905,7 @@ void viewStatistics(profile *currentUser){
 	
 	printf("Name: %s\n", currentUser->name);
     printf("Classic games - Won: %d Lost: %d\n", currentUser->games_won_classic, currentUser->games_lost_classic);
-    printf("Custom games - Won: %d Lost: %d\n\n", currentUser->games_won_custom, currentUser->games_lost_custom);
+    printf("Custom games - Won: %d Lost: %d\n", currentUser->games_won_custom, currentUser->games_lost_custom);
 	printf("Recent Games:\n");
     
     for(i = 0; i < 3; i++) {
@@ -1055,39 +928,34 @@ void viewStatistics(profile *currentUser){
         seconds = time % 60;
 
         fclose(recentgames);
-		if(strcmp(currentUser->recentgame[i].outcome, "") == 0){
-			printf(" ");
-		} else{
-			printf("#%d | ", i+1);
-			printf("\nGAME %s ", currentUser->recentgame[i].outcome);
-			printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
-			printf("%s ", currentUser->recentgame[i].mode);
-			printf("%dx%d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
-			for (j = 0; j < currentUser->recentgame[i].rows; j++) {
-				for (k = 0; k < currentUser->recentgame[i].cols; k++) {
-					if(currentUser->recentgame[i].snapshot[j][k] == 'X'){
-						iSetColor(I_COLOR_RED);
-						printf("X ");
-					} else if (currentUser->recentgame[i].snapshot[j][k] == 'F'){
-						iSetColor(I_COLOR_CYAN);
-						printf("F ");
-					} else if (currentUser->recentgame[i].snapshot[j][k] == 'x'){
-						iSetColor(I_COLOR_YELLOW);
-						printf("x ");
-					} else if (currentUser->recentgame[i].snapshot[j][k] == '.'){
-						iSetColor(I_COLOR_WHITE);
-						printf(". ");
-					} else {
-						iSetColor(I_COLOR_GREEN);
-						printf("%c ", currentUser->recentgame[i].snapshot[j][k]);
-					}
-				}
-			printf("\n");
-			}
-			iSetColor(I_COLOR_WHITE);
-		}
+
+        printf("\nGAME %s ", currentUser->recentgame[i].outcome);
+		printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
+        printf("%s ", currentUser->recentgame[i].mode);
+        printf("%dx%d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
+        for (j = 0; j < currentUser->recentgame[i].rows; j++) {
+            for (k = 0; k < currentUser->recentgame[i].cols; k++) {
+                if(currentUser->recentgame[i].snapshot[j][k] == 'X'){
+                    iSetColor(I_COLOR_RED);
+                    printf("X ");
+                } else if (currentUser->recentgame[i].snapshot[j][k] == 'F'){
+                    iSetColor(I_COLOR_CYAN);
+                    printf("F ");
+                } else if (currentUser->recentgame[i].snapshot[j][k] == 'x'){
+                    iSetColor(I_COLOR_YELLOW);
+                    printf("x ");
+                } else if (currentUser->recentgame[i].snapshot[j][k] == '.'){
+                    iSetColor(I_COLOR_WHITE);
+                    printf(". ");
+                } else {
+                    iSetColor(I_COLOR_GREEN);
+                    printf("%c ", currentUser->recentgame[i].snapshot[j][k]);
+                }
+            }
+        printf("\n");
+        }
+        iSetColor(I_COLOR_WHITE);
     }
-	
 }
 
 /* profile */
@@ -1171,7 +1039,6 @@ int selectProfile(profile *currentUser, profileList *users){
 	char path[] = USER_PATH;
 	//FILE *user;
 
-	CLEARSCREEN;
 	printf("[PROFILE SELECTION]\nCURRENT USER: %s\n", currentUser->name);
 	checkProfiles(*users);
 
@@ -1203,7 +1070,6 @@ void newProfile(profile *currentUser, profileList users){
     FILE *user;
     FILE *dir;
 
-	CLEARSCREEN;
 	printf("[PROFILE CREATION]\nEXISTING USER PROFILES:\n");
 	checkProfiles(users);
 	
@@ -1265,7 +1131,7 @@ void newProfile(profile *currentUser, profileList users){
 		for(i = 0; i < 3; i++){
 			fprintf(user, "%s%s_snapshot%d.txt\n", GAME_PATH, name, i);
 		}
-		fclose(user);
+    	fclose(user);
     	// make recent games files
     	for(i = 0; i < 3; i++){
     		strcpy(gamePath, GAME_PATH);
@@ -1295,7 +1161,6 @@ void deleteProfile(profile *currentUser, profileList users) {
     int num, i;
     FILE *dir;
 
-	CLEARSCREEN;
     printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
     checkProfiles(users);
 
@@ -1360,16 +1225,15 @@ void deleteProfile(profile *currentUser, profileList users) {
     printf("%s", path);
     delay(300);
     if (remove(path) != 0) {
-        perror("Error deleting user file\n");
+        perror("Error deleting user file");
     } else{
 		printf("\nProfile [%s] deleted successfully.\n\n", name);
 	}
 }
 
 void changeProfile(profile *currentUser, profileList *users){
-	int choice, quit = 0;
+	int choice, quit;
 
-	CLEARSCREEN;
 	while(!quit){
 		menuProfile(*currentUser, &choice);
 		switch(choice) {
@@ -1389,7 +1253,6 @@ void changeProfile(profile *currentUser, profileList *users){
 			default:
 				printf("Invalid selection. Please choose again.\n");
 		}
-		CLEARSCREEN;
 	}
 	
 }
@@ -1511,7 +1374,7 @@ void startMenu(profile *currentUser, profileList *users){
 	FILE *dir;
 	
 	printf("Welcome to Minesweeper!\n");
-	delay(2000);
+	delay(300);
 	
 	dir = fopen(USER_DIR, "r");
 	fscanf(dir, " %d", &num);
@@ -1543,17 +1406,15 @@ int main(){
 
 	startMenu(&currentUser, &users);
 	delay(300);
-	CLEARSCREEN;
+	system("cls");
 	
     do {
-	printf("Main Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
+	printf("\nMain Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
 	scanf("%d", &menuSelect);
 
 	switch (menuSelect){
 		case 1:
-			if (strcmp(currentUser.name, "") != 0){
-				play(currentUser, level, customLevel, &customLvls);
-			} else printf("Please select player profile.\n");
+			play(currentUser, level, customLevel, &customLvls);
 			break;
 		case 2:
 			levelEditor(&customLevel, &customLvls);
@@ -1562,9 +1423,7 @@ int main(){
 			changeProfile(&currentUser, &users);
 			break;
 		case 4:
-			if (strcmp(currentUser.name, "") != 0){
-				viewStatistics(&currentUser);
-			} else printf("Please select player profile.\n");
+			viewStatistics(&currentUser);
 			break;
 		case 0:
 			start = 1;
