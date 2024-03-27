@@ -494,7 +494,8 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		}
 		fprintf(fgame, "\n");
 	}
-}
+		fclose(fgame);
+	}
 	
 	else if (strcmp(outcome, "lose") == 0){
 		fprintf(fgame, "LOST %d\n", currentUser.recentgame[0].time);
@@ -520,7 +521,8 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 			}
 		fprintf(fgame, "\n");
 		}
-}
+		fclose(fgame);
+	}
 	
 	else if (strcmp(outcome, "quit") == 0){
 		fprintf(fgame, "QUIT %d\n", currentUser.recentgame[0].time);
@@ -540,10 +542,10 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 			}
 		fprintf(fgame, "\n");
 		}
+		fclose(fgame);
 	}
     
     fclose(fgame);
-    
     return 1;
 }
 
@@ -689,6 +691,7 @@ int fileExists(char *filename) {
         fclose(file);
         return 1; // exists
     } else {
+    	fclose(file);
         return 0; // null
     }
 }
