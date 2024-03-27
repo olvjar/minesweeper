@@ -1,0 +1,8 @@
+GEM
+0
+1
+0
+0
+snapshots/GEM_snapshot0.txt
+snapshots/GEM_snapshot1.txt
+snapshots/GEM_snapshot2.txt

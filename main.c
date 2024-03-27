@@ -9,9 +9,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <conio.h>
 
 //#include "controls.c"
 #include "interface.c"
+
+#define CLEARSCREEN system("cls")
 
 #define MAX_PROFILES 10
 
@@ -157,6 +160,135 @@ void printBoardChar(game level){
     }
 }
 
+void controlsGame(game level, int *rowChosen, int *colChosen){
+	int input;
+    int cont = 1;
+    int i, j;
+    int row = 0;
+    int col = 0;
+
+	iHideCursor();
+    printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
+
+	while (cont) {
+		system("cls");
+	    
+	    printf("\n");
+		printf("     ");
+		for (i = 0; i < 2; i++) {
+			for(j = 0; j <  level.cols; j++) {
+				if(i == 0){
+					iSetColor(I_COLOR_PURPLE);
+	    			printf("%2d ", j);
+	    				if(j == level.cols - 1){
+	    					printf("\n");
+						}
+	    		}
+	    		
+	    		else if (i == 1){
+	    			if (j == 0){
+						printf("   ");
+					}
+	    			else printf("---");
+				}
+			}
+		}
+		printf("-------");
+		
+		printf("\n");
+		
+		for (i = 0; i < level.rows; i++) {
+	        for (j = -1; j <= level.cols; j++) {
+				if (j == -1){
+					iSetColor(I_COLOR_PURPLE);
+					printf(" %d | ", i);
+					}
+				else if (j == level.cols){
+					iSetColor(I_COLOR_PURPLE);
+					printf(" | ");
+				}
+				else if (i == row && j == col){
+	                    if (level.gameBoard[i][j] == HIDDEN){ //not revealed
+					    iSetColor(I_COLOR_WHITE);
+					    printf(">.<");
+				    }
+				    else if (level.gameBoard[i][j] == FLAG){ //flag
+					    iSetColor(I_COLOR_CYAN);
+					    printf(">F<");
+				    }
+				    else{
+					    iSetColor(I_COLOR_GREEN);
+					    printf(">%d<", level.gameBoard[i][j]); //valid space & revealed
+				    }
+	            } else {
+	                if (level.gameBoard[i][j] == HIDDEN){ //not revealed
+					    iSetColor(I_COLOR_WHITE);
+					    printf(" . ");
+			    	}
+				    else if (level.gameBoard[i][j] == FLAG){ //flag
+				    	iSetColor(I_COLOR_CYAN);
+				    	printf(" F ");
+				    }
+			    	else{
+				    	iSetColor(I_COLOR_GREEN);
+				    	printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
+				    }
+					
+	            }
+	        }
+	        printf("\n");
+	    }
+	    
+	    for (i = 0; i < level.cols; i++) {
+	    	if (i == 0){
+	    		printf("   ");	
+			} else printf("---");
+		}
+		printf("-------\n");
+		iSetColor(I_COLOR_WHITE);
+	
+		
+	        input = getch(); 
+	        if (input == 224) { // arrow key entered
+	            input = getch(); 
+	            switch(input) {
+	                case 72:
+	                    if (row > 0){
+							row--;
+						} //else printf("Border reached.\n");
+	                    break;
+	                case 80:
+	                    if (row < level.rows-1){
+							row++;
+						} //else printf("Border reached.\n");
+	                    break;
+	                case 75:
+	                    if (col > 0){
+	                    	col--;
+						} //else printf("Border reached.\n");
+	                    break;
+	                case 77:
+	                    if (col < level.cols-1){
+	                    	col++;
+						} //else printf("Border reached.\n");
+	                    break;
+	                default:
+	                    printf("Unknown key pressed. Please press arrow keys.\n");
+	                    break;
+	            }
+	        }
+	        else if (input == '\r') // Enter key
+	            cont = 0;
+	        else
+	            printf("Invalid input. Use arrow keys.\n");
+    }
+
+	CLEARSCREEN;
+	*rowChosen = row;
+	*colChosen = col;
+	iShowCursor();
+}
+
 void makeBoard(game *level){
     srand(time(0));
 	int minesCount;
@@ -224,11 +356,8 @@ void cascade(game *level, int i, int j){
 void placeFlag(game *level){
 	int i, j;
 	
-	printf("\nEnter row to flag: ");
-	scanf(" %d", &i);
-	printf("Enter column to flag: ");
-	scanf(" %d", &j);
-	
+	controlsGame(*level, &i, &j);
+
 	if(level->gameBoard[i][j] == HIDDEN){
 		level->gameBoard[i][j] = FLAG;
 	}
@@ -242,10 +371,7 @@ void placeFlag(game *level){
 void removeFlag(game *level){
 	int i, j;
 	
-	printf("\nEnter row to remove flag: ");
-	scanf(" %d", &i);
-	printf("Enter column to remove flag: ");
-	scanf(" %d", &j);
+	controlsGame(*level, &i, &j);
 	
 	if(level->gameBoard[i][j] == FLAG){
 		level->gameBoard[i][j] = HIDDEN;
@@ -258,10 +384,7 @@ void removeFlag(game *level){
 int inspectBoard(game *level, char outcome[]) {
     int i, j;
     
-    printf("\nEnter row to inspect: ");
-    scanf(" %d", &i);
-    printf("Enter column to inspect: ");
-    scanf(" %d", &j);
+    controlsGame(*level, &i, &j);
     
     if (i < level->rows && j < level->cols) {
         if (mineCount(*level, i, j) == -1) {
@@ -308,18 +431,21 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	FILE *fdest;
 	char mode[21];
 	char outcome[51];
-	int rows, cols, i ,j;
+	int rows, cols, time, i ,j;
 	char val[100][100];
 	
 	fsource = fopen(sourceFile, "r");
 	fdest = fopen(destFile, "w");
 	
-	fscanf(fsource, "%s", outcome);
-	fscanf(fsource, "%s", mode);
-	fscanf(fsource, "%d", &rows);
-	fscanf(fsource, "%d", &cols);
+	fscanf(fsource, " %s", outcome);
+	if (!(outcome[0] >= 'A' && outcome[0] <= 'z')) return; 
+	fscanf(fsource, " %d", &time);
+	fscanf(fsource, " %s", mode);
+	fscanf(fsource, " %d", &rows);
+	fscanf(fsource, " %d", &cols);
 
-	fprintf(fdest, "%s\n", outcome);
+	fprintf(fdest, "%s ", outcome);
+	fprintf(fdest, "%d\n", time);
 	fprintf(fdest, "%s ", mode);
 	fprintf(fdest, "%d ", rows);
 	fprintf(fdest, "%d\n", cols);
@@ -341,10 +467,11 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fclose(fdest);
 }
 
-int saveSnapshot(game level, char outcome[], profile currentUser){
+int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 	int i, j;
     FILE *fgame;
-	
+
+	currentUser.recentgame[0].time = time;
 	transferSnapshot(currentUser.recentgame[2].path, currentUser.recentgame[1].path); // overwrites 2 with 1
 	transferSnapshot(currentUser.recentgame[1].path, currentUser.recentgame[0].path); // overwrites 1 with 0
     
@@ -352,7 +479,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
     fgame = fopen(currentUser.recentgame[0].path, "w");
     
     if (strcmp(outcome, "win") == 0){
-		fprintf(fgame, "WON\n");
+		fprintf(fgame, "WON %d\n", currentUser.recentgame[0].time);
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
@@ -370,7 +497,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
 }
 	
 	else if (strcmp(outcome, "lose") == 0){
-		fprintf(fgame, "LOST\n");
+		fprintf(fgame, "LOST %d\n", currentUser.recentgame[0].time);
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
 		
 		for (i = 0; i < level.rows; i++){
@@ -396,7 +523,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser){
 }
 	
 	else if (strcmp(outcome, "quit") == 0){
-		fprintf(fgame, "QUIT\n");
+		fprintf(fgame, "QUIT %d\n", currentUser.recentgame[0].time);
 		fprintf(fgame, "%s %d %d\n", level.mode, level.rows, level.cols);
  
 		
@@ -530,9 +657,8 @@ void gameProper(game level, profile *currentUser){
 		if (alive){
 		alive = gameChecker(level, outcome);
 		}
-		system("cls");
 	}
-	saveSnapshot(level, outcome, *currentUser);
+	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
 }
 
@@ -663,8 +789,12 @@ void deleteFile(customLevelList *cLevels){
 	    fclose(dir);
 
 	    // delete level file
+		if (remove(path) != 0) {
+        	perror("Error deleting user file");
+    	} else{
+			printf("%s deleted successfully.", filename);
+		}
 	    remove(path);
-	    printf("%s deleted successfully.", filename);
 	}
 }
 
@@ -887,7 +1017,8 @@ void getStatistics(profile *currentUser){
 }
 
 void viewStatistics(profile *currentUser){
-    int i, j, k;
+    int i, j, k, b, c;
+    int time, hours, minutes, seconds;
     FILE *recentgames;
 	
 	getStatistics(currentUser);
@@ -901,20 +1032,27 @@ void viewStatistics(profile *currentUser){
         recentgames = fopen(currentUser->recentgame[i].path, "r");
 
         fscanf(recentgames, "%s", currentUser->recentgame[i].outcome);
+		fscanf(recentgames, "%d", &currentUser->recentgame[i].time);
         fscanf(recentgames, "%s", currentUser->recentgame[i].mode);
         fscanf(recentgames, "%d %d", &currentUser->recentgame[i].rows, &currentUser->recentgame[i].cols);
 
-          for (int b = 0; b < currentUser->recentgame[i].rows; b++) {
-           for (int c = 0; c < currentUser->recentgame[i].cols; c++) {
+          for (b = 0; b < currentUser->recentgame[i].rows; b++) {
+           for (c = 0; c < currentUser->recentgame[i].cols; c++) {
                 fscanf(recentgames, " %c", &currentUser->recentgame[i].snapshot[b][c]);
             }
         }
+        
+        time = currentUser->recentgame[i].time;
+		hours = time / 3600;
+        minutes = (time % 3600) / 60;
+        seconds = time % 60;
 
         fclose(recentgames);
 
-        printf("\nGAME %s\n", currentUser->recentgame[i].outcome);
-        printf("%s\n", currentUser->recentgame[i].mode);
-        printf("%d %d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
+        printf("\nGAME %s ", currentUser->recentgame[i].outcome);
+		printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
+        printf("%s ", currentUser->recentgame[i].mode);
+        printf("%dx%d\n", currentUser->recentgame[i].rows, currentUser->recentgame[i].cols);
         for (j = 0; j < currentUser->recentgame[i].rows; j++) {
             for (k = 0; k < currentUser->recentgame[i].cols; k++) {
                 if(currentUser->recentgame[i].snapshot[j][k] == 'X'){
@@ -1131,78 +1269,84 @@ void newProfile(profile *currentUser, profileList users){
 			fclose(recent); 
 		}
     	strcpy(currentUser->name, name);
+		getStatistics(currentUser);
 	}
 }
 
-void deleteProfile(profile *currentUser, profileList users){
-	char name[21];
-	char filename[21];
-    char path[] = USER_PATH;
-    char gamePath[] = GAME_PATH;
+void deleteProfile(profile *currentUser, profileList users) {
+    char name[21];
+    char filename[21];
+    char path[200];
+    char gamePath[200];
     int num, i;
     FILE *dir;
 
-	printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
-	checkProfiles(users);
+    printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
+    checkProfiles(users);
 
-	printf("\nSELECT PROFILE TO DELETE: ");
-	scanf(" %s", name);
-	strcpy(filename, name);
-	strcat(filename, ".txt");
-	strcat(path, filename);
+    printf("\nSELECT PROFILE TO DELETE: ");
+    scanf("%s", name);
+    strcpy(filename, name);
+    strcat(filename, ".txt");
+    strcpy(path, USER_PATH);
+    strcat(path, filename);
 
-	if(fileExists(path) == 0) {
+    if (fileExists(path) == 0) {
         printf("\nUser does not exist. Try again.\n\n");
         return;
-    } else if(!(checkCapital(name))){
-		printf("Name is not all uppercase letters.\n");
-	} else {
-		// read list
-	    dir = fopen(USER_DIR, "r");
-	    fscanf(dir, " %d", &num);
-	    for(i = 0; i < num; i++){
-			fscanf(dir, "%s", users[i].name);
-		}
-		fclose(dir);
+    } else if (!checkCapital(name)) {
+        printf("\nName is not all uppercase letters.\n");
+        return;
+    }
 
-		// update list
-	    dir = fopen(USER_DIR, "w");
-	    fprintf(dir, "%d\n", num - 1);
-	    for(i = 0; i < num; i++){
-	    	if(strcmp(users[i].name, name) == 0){
-	    		fprintf(dir, "%s", "");
-			} else fprintf(dir, "%s\n", users[i].name);
-		}
-	    fclose(dir);
-	    
-	    // switch current user to none if currentUser == name
-		if (strcmp(currentUser->name, name) == 0){
-			strcpy(currentUser->name, "");
-		}
-	
-	    // delete user snapshots | WORKING
-		for(i = 0; i < 3; i++){
-			strcpy(gamePath, GAME_PATH);
-			strcat(gamePath, name);
-			if (i == 0){
-				strcat(gamePath, "_snapshot0.txt");
-			}
-			if (i == 1){
-				strcat(gamePath, "_snapshot1.txt");
-			}
-			if (i == 2){
-				strcat(gamePath, "_snapshot2.txt");
-			}
-			remove(gamePath);
-		}
-	    
-		// delete user file | WORKING
-		strcpy(filename, name);
-		strcat(filename, ".txt");
-		strcpy(path, USER_PATH);
-		strcat(path, filename);
-		remove(path);
-		
+    // read list
+    dir = fopen(USER_DIR, "r");
+    fscanf(dir, "%d", &num);
+    for (i = 0; i < num; i++) {
+        fscanf(dir, "%s", users[i].name);
+    }
+    fclose(dir);
+
+    // update list
+    dir = fopen(USER_DIR, "w");
+    fprintf(dir, "%d\n", num - 1);
+    for (i = 0; i < num; i++) {
+        if (strcmp(users[i].name, name) == 0) {
+            fprintf(dir, "%s", "");
+        } else {
+            fprintf(dir, "%s\n", users[i].name);
+        }
+    }
+    fclose(dir);
+
+    // switch current user to none if currentUser == name
+    if (strcmp(currentUser->name, name) == 0) {
+        strcpy(currentUser->name, "");
+        // selectProfile(currentUser, users);
+    }
+
+    // delete user snapshots
+    for (i = 0; i < 3; i++) {
+        strcpy(gamePath, GAME_PATH);
+        strcat(gamePath, name);
+        if (i == 0) {
+            strcat(gamePath, "_snapshot0.txt");
+        }
+        if (i == 1) {
+            strcat(gamePath, "_snapshot1.txt");
+        }
+        if (i == 2) {
+            strcat(gamePath, "_snapshot2.txt");
+        }
+        remove(gamePath);
+    }
+
+    // delete user file
+    printf("%s", path);
+    delay(300);
+    if (remove(path) != 0) {
+        perror("Error deleting user file");
+    } else{
 		printf("\nProfile [%s] deleted successfully.\n\n", name);
 	}
 }
@@ -1390,7 +1534,9 @@ int main(){
 
 	switch (menuSelect){
 		case 1:
-			play(currentUser, level, customLevel, &customLvls);
+			if (strcmp(currentUser.name, "") != 0){
+				play(currentUser, level, customLevel, &customLvls);
+			} else printf("Please select player profile.\n");
 			break;
 		case 2:
 			levelEditor(&customLevel, &customLvls);
@@ -1399,7 +1545,9 @@ int main(){
 			changeProfile(&currentUser, &users);
 			break;
 		case 4:
-			viewStatistics(&currentUser);
+			if (strcmp(currentUser.name, "") != 0){
+				viewStatistics(&currentUser);
+			} else printf("Please select player profile.\n");
 			break;
 		case 0:
 			start = 1;
