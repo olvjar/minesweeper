@@ -53,6 +53,7 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
     int row = 0;
     int col = 0;
     
+    iHideCursor();
     printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
 
 	while (cont) {
@@ -170,7 +171,7 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 
 	*rowChosen = row;
 	*colChosen = col;
-	printf("Choice: (%d, %d)", row, col);
+    iShowCursor();
 }
 
 int main() {

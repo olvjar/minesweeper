@@ -166,7 +166,8 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
     int i, j;
     int row = 0;
     int col = 0;
-    
+
+	iHideCursor();
     printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
 
 	while (cont) {
@@ -254,22 +255,22 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	                case 72:
 	                    if (row > 0){
 							row--;
-						} else printf("Border reached.\n");
+						} //else printf("Border reached.\n");
 	                    break;
 	                case 80:
 	                    if (row < level.rows-1){
 							row++;
-						} else printf("Border reached.\n");
+						} //else printf("Border reached.\n");
 	                    break;
 	                case 75:
 	                    if (col > 0){
 	                    	col--;
-						} else printf("Border reached.\n");
+						} //else printf("Border reached.\n");
 	                    break;
 	                case 77:
 	                    if (col < level.cols-1){
 	                    	col++;
-						} else printf("Border reached.\n");
+						} //else printf("Border reached.\n");
 	                    break;
 	                default:
 	                    printf("Unknown key pressed. Please press arrow keys.\n");
@@ -282,9 +283,10 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	            printf("Invalid input. Use arrow keys.\n");
     }
 
+	CLEARSCREEN;
 	*rowChosen = row;
 	*colChosen = col;
-	printf("Choice: (%d, %d)", row, col);
+	iShowCursor();
 }
 
 void makeBoard(game *level){
@@ -655,7 +657,6 @@ void gameProper(game level, profile *currentUser){
 		if (alive){
 		alive = gameChecker(level, outcome);
 		}
-		system("cls");
 	}
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
