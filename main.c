@@ -114,7 +114,6 @@ void printBoard(game level){
 			if (j == -1){
 				iSetColor(I_COLOR_PURPLE);
 				printf(" %d | ", i);
-				iSetColor(I_COLOR_WHITE);
 				}
 			else if (j == level.cols){
 				iSetColor(I_COLOR_PURPLE);
@@ -127,14 +126,72 @@ void printBoard(game level){
 			else if (level.gameBoard[i][j] == FLAG){ //flag
 				iSetColor(I_COLOR_CYAN);
 				printf(" F ");
-				iSetColor(I_COLOR_WHITE);
 			}
 			else{
 				iSetColor(I_COLOR_GREEN);
 				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
-				iSetColor(I_COLOR_WHITE);
 			}
 				
+        }
+        printf("\n");
+    }
+    
+    iSetColor(I_COLOR_PURPLE);
+    for (i = 0; i < level.cols; i++) {
+    	if (i == 0){
+    		printf("   ");	
+		} else printf("---");
+	}
+	printf("-------\n");
+	iSetColor(I_COLOR_WHITE);
+}
+
+void printBoardChar(game level){
+    int i, j;
+    
+    printf("\n");
+	printf("     ");
+	for (i = 0; i < 2; i++) {
+		for(j = 0; j <  level.cols; j++) {
+			
+			if(i == 0){
+				iSetColor(I_COLOR_PURPLE);
+    			printf("%2d ", j);
+    				if(j == level.cols - 1){
+    					printf("\n");
+					}
+    		}
+    		
+    		else if (i == 1){
+    			if (j == 0){
+					printf("   ");
+				}
+    			else printf("---");
+			}
+		}
+	}
+	printf("-------");
+	
+	printf("\n");
+	
+	for (i = 0; i < level.rows; i++) {
+        for (j = -1; j <= level.cols; j++) {
+			if (j == -1){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" %d | ", i);
+				}
+			else if (j == level.cols){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" | ");
+			}
+			else if (level.board[i][j] == 'X'){ 
+				iSetColor(I_COLOR_RED);
+				printf(" X ");
+			}
+			else {
+				iSetColor(I_COLOR_WHITE);
+				printf(" . ");
+			}
         }
         printf("\n");
     }
@@ -148,16 +205,6 @@ void printBoard(game level){
 	iSetColor(I_COLOR_WHITE);
 }
 
-//for testing of made board/text file
-void printBoardChar(game level){
-    printf("\n");
-	for (int i = 0; i < level.rows; i++) {
-        for (int j = 0; j < level.cols; j++) {
-			printf(" %c ", level.board[i][j]);
-        }
-        printf("\n");
-    }
-}
 
 void controlsGame(game level, int *rowChosen, int *colChosen){
 	int input;
@@ -167,10 +214,11 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
     int col = 0;
 
 	iHideCursor();
-    printf("Press arrow keys (use arrow keys and press Enter to quit):\n");
 
 	while (cont) {
 		CLEARSCREEN;
+	    
+	    printf("Use ARROW KEYS and press ENTER to quit\n");
 	    
 	    printf("\n");
 		printf("     ");
@@ -207,7 +255,7 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 					printf(" | ");
 				}
 				else if (i == row && j == col){
-	                    if (level.gameBoard[i][j] == HIDDEN){ //not revealed
+	                if (level.gameBoard[i][j] == HIDDEN){ //not revealed
 					    iSetColor(I_COLOR_WHITE);
 					    printf(">.<");
 				    }
@@ -254,29 +302,150 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	                case 72:
 	                    if (row > 0){
 							row--;
-						} //else printf("Border reached.\n");
+						}
 	                    break;
 	                case 80:
 	                    if (row < level.rows-1){
 							row++;
-						} //else printf("Border reached.\n");
+						}
 	                    break;
 	                case 75:
 	                    if (col > 0){
 	                    	col--;
-						} //else printf("Border reached.\n");
+						} 
 	                    break;
 	                case 77:
 	                    if (col < level.cols-1){
 	                    	col++;
-						} //else printf("Border reached.\n");
+						} 
 	                    break;
 	                default:
 	                    printf("Unknown key pressed. Please press arrow keys.\n");
 	                    break;
 	            }
 	        }
-	        else if (input == '\r') // Enter key
+			// enter key
+	        else if (input == '\r') 
+	            cont = 0;
+	        else
+	            printf("Invalid input. Use arrow keys.\n");
+    }
+
+	CLEARSCREEN;
+	*rowChosen = row;
+	*colChosen = col;
+	iShowCursor();
+}
+
+void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
+	int input;
+    int cont = 1;
+    int i, j;
+    int row = 0;
+    int col = 0;
+
+	iHideCursor();
+
+	while (cont) {
+		CLEARSCREEN;
+	    
+	    printf("Use ARROW KEYS and press ENTER to quit\n");
+	    
+	    printf("\n");
+		printf("     ");
+		for (i = 0; i < 2; i++) {
+			for(j = 0; j <  level.cols; j++) {
+				if(i == 0){
+					iSetColor(I_COLOR_PURPLE);
+	    			printf("%2d ", j);
+	    				if(j == level.cols - 1){
+	    					printf("\n");
+						}
+	    		}
+	    		
+	    		else if (i == 1){
+	    			if (j == 0){
+						printf("   ");
+					}
+	    			else printf("---");
+				}
+			}
+		}
+		printf("-------");
+		
+		printf("\n");
+		
+		for (i = 0; i < level.rows; i++) {
+	        for (j = -1; j <= level.cols; j++) {
+				if (j == -1){
+					iSetColor(I_COLOR_PURPLE);
+					printf(" %d | ", i);
+					}
+				else if (j == level.cols){
+					iSetColor(I_COLOR_PURPLE);
+					printf(" | ");
+				}
+				else if (i == row && j == col){
+	                if (level.board[i][j] == 'X'){ 
+					    iSetColor(I_COLOR_RED);
+					    printf(">X<");
+				    } else{
+					    iSetColor(I_COLOR_WHITE);
+					    printf(">.<");
+				    }
+	            } else {
+	                if (level.board[i][j] == 'X'){ 
+					    iSetColor(I_COLOR_RED);
+					    printf(" X ");
+				    } else{
+					    iSetColor(I_COLOR_WHITE);
+					    printf(" . ");
+					}
+	            }
+	        }
+	        printf("\n");
+	    }
+	    
+	    for (i = 0; i < level.cols; i++) {
+	    	if (i == 0){
+	    		printf("   ");	
+			} else printf("---");
+		}
+		printf("-------\n");
+		iSetColor(I_COLOR_WHITE);
+	
+		
+	        input = getch(); 
+	        if (input == 224) { // arrow key entered
+	            input = getch(); 
+	            switch(input) {
+	                case 72:
+	                    if (row > 0){
+							row--;
+						}
+	                    break;
+	                case 80:
+	                    if (row < level.rows-1){
+							row++;
+						}
+	                    break;
+	                case 75:
+	                    if (col > 0){
+	                    	col--;
+						} 
+	                    break;
+	                case 77:
+	                    if (col < level.cols-1){
+	                    	col++;
+						} 
+	                    break;
+	                default:
+	                    printf("Unknown key pressed. Please press arrow keys.\n");
+	                    break;
+	            }
+	        }
+			// enter key
+	        else if (input == '\r') 
 	            cont = 0;
 	        else
 	            printf("Invalid input. Use arrow keys.\n");
@@ -617,7 +786,6 @@ void gameProper(game level, profile *currentUser){
     }
     
     CLEARSCREEN;
-    printBoardChar(level); // FOR TESTING
 	time_t timeStart, timeEnd;
 	int timeElapsed, hours, minutes, seconds;
 	
@@ -630,7 +798,7 @@ void gameProper(game level, profile *currentUser){
         minutes = (timeElapsed % 3600) / 60;
         seconds = timeElapsed % 60;
         
-		printf("\n\tTIME: %02d:%02d:%02d", hours, minutes, seconds);
+		printf("\nTIME: %02d:%02d:%02d", hours, minutes, seconds);
 		delay(300);
 		printBoard(level);
 		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n[0] QUIT\n\nSELECTION: ");
@@ -715,7 +883,7 @@ void placeMine(game *customLevel, int *minesCount) {
     int row, col;
 
     printf("MINE %d", (*minesCount) + 1);
-    controlsGame(*customLevel, &row, &col);
+    controlsLevelEdit(*customLevel, &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
@@ -729,7 +897,7 @@ void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
     printf("MINE %d", (*minesCount) + 1);
-    controlsGame(*customLevel, &row, &col);
+    controlsLevelEdit(*customLevel, &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
@@ -846,26 +1014,29 @@ int editLevel(game *customLevel, int minesCount){
 
         switch(choice){
             case 1:
-                placeMine(customLevel, &minesCount);
+                CLEARSCREEN;
+				placeMine(customLevel, &minesCount);
                 break;
             case 2:
-                deleteMine(customLevel, &minesCount);
+                CLEARSCREEN;
+				deleteMine(customLevel, &minesCount);
                 break;
             case 3:
-            	if(checkValidity(customLevel, &minesCount) == 1) {
+            	CLEARSCREEN;
+				if(checkValidity(customLevel, &minesCount) == 1) {
             		save = 1;
             		quit = 1;
                 }
                 break;
             case 4:
+				CLEARSCREEN;
 				printf("Returned to main menu.\n");
 				quit = 1;
 				break;
 			default:
-            	printf("Invalid selection. Please choose again.\n");
+            	CLEARSCREEN;
+				printf("Invalid selection. Please choose again.\n");
         }
-
-    	CLEARSCREEN;
 	}
 
 	return save;
@@ -1183,7 +1354,6 @@ int selectProfile(profile *currentUser, profileList *users){
 	char filename[21];
 	char path[] = USER_PATH;
 
-	CLEARSCREEN;
 	printf("[PROFILE SELECTION]\nCURRENT USER: %s\n", currentUser->name);
 	checkProfiles(*users);
 
@@ -1558,8 +1728,9 @@ int main(){
 	startMenu(&currentUser, &users);
 	delay(300);
 	
+	CLEARSCREEN;
+	
     do {
-    CLEARSCREEN;
 	printf("CURRENT USER: %s", currentUser.name);
 	printf("\nMain Menu\n[1] PLAY\t\t[2] LEVEL EDITOR\n[3] CHANGE PROFILE\t[4] VIEW STATISTICS \n[0] QUIT\n\nSELECTION: ");
 	scanf("%d", &menuSelect);
