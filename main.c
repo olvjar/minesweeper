@@ -234,12 +234,13 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	                    delay(500);
 	                    break;
 	            }
-	        }
-			// enter key
-	        else if (input == '\r') 
+	        } else if (input == '\r') {
 	            cont = 0;
-	        else
-	            printf("Invalid input. Use arrow keys.\n");
+	        }
+	        else {
+				printf("Invalid input. Use arrow keys.\n");
+				delay(500);
+		    }
     }
 
 	CLEARSCREEN;
@@ -354,12 +355,13 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 	                    printf("Unknown key pressed. Please press arrow keys.\n");
 	                    break;
 	            }
-	        }
-			// enter key
-	        else if (input == '\r') 
+	        } else if (input == '\r') {
 	            cont = 0;
-	        else
-	            printf("Invalid input. Use arrow keys.\n");
+	        }
+	        else {
+				printf("Invalid input. Use arrow keys.\n");
+				delay(500);
+		    }
     }
 
 	CLEARSCREEN;
@@ -591,7 +593,7 @@ int inspectBoard(game *level, char outcome[]) {
     
     controlsGame(*level, &i, &j);
     
-    if (i < level->rows && j < level->cols) {
+    if (i < level->rows && j < level->cols && level->gameBoard[i][j] != FLAG) {
         if (mineCount(*level, i, j) == -1) {
             printf("\nYou have hit a mine. Game over.\n");
             strcpy(outcome, "lose");
@@ -602,7 +604,10 @@ int inspectBoard(game *level, char outcome[]) {
             cascade(level, i, j);
             return 1;
         }
-    } else {
+    } else if (level->gameBoard[i][j] == FLAG) {
+    	printf("You can not inspect a flagged tile.\n");
+    	return 1;
+	} else{
         printf("Invalid input. Try again.\n");
         return 1;
     }
@@ -811,8 +816,8 @@ void updateStatistics(game level, char outcome[], profile *currentUser){
 }
 
 void gameProper(game level, profile *currentUser){
-	int i, j, alive = 1;
-	int choice;
+	int i, j, cont = 1, alive = 1;
+	int choice = 0;
 	char outcome[11];
 
 	//PLAYER BOARD
@@ -822,39 +827,56 @@ void gameProper(game level, profile *currentUser){
         }
     }
     
-    
     CLEARSCREEN;
 	time_t timeStart, timeEnd;
 	int timeElapsed, hours, minutes, seconds;
 	
 	time(&timeStart);
 	while(alive){
-		printBoardChar(level);
+		cont = 1;
+		iHideCursor();
+		while(cont){
+			CLEARSCREEN;
+			printBoardChar(level); //REMOVE THIS
 
-		time(&timeEnd);
-        timeElapsed = difftime(timeEnd, timeStart);
-        
-        hours = timeElapsed / 3600;
-        minutes = (timeElapsed % 3600) / 60;
-        seconds = timeElapsed % 60;
-        
-		printf("\nTIME: %02d:%02d:%02d", hours, minutes, seconds);
-		delay(300);
-		printBoard(level);
-		printf("\n[1] INSPECT\n[2] FLAG\n[3] REMOVE FLAG\n[0] QUIT\n\nSELECTION: ");
-		scanf(" %d", &choice);
+			time(&timeEnd);
+	        timeElapsed = difftime(timeEnd, timeStart);
+	        
+	        hours = timeElapsed / 3600;
+	        minutes = (timeElapsed % 3600) / 60;
+	        seconds = timeElapsed % 60;
+			
+			printf("\nTIME: %02d:%02d:%02d", hours, minutes, seconds);
+			printBoard(level);
+			
+			for (i = 0; i < 4; i++){
+				if (i == choice){
+					if (i==0) printf(" > INSPECT tile\n");
+					if (i==1) printf(" > FLAG tile\n");
+					if (i==2) printf(" > REMOVE flag\n");
+					if (i==3) printf(" > QUIT current game\n");
+				} else {
+					if (i==0) printf("   INSPECT tile\n");
+					if (i==1) printf("   FLAG tile\n");
+					if (i==2) printf("   REMOVE flag\n");
+					if (i==3) printf("   QUIT current game\n");
+				}
+			}
+			
+			choice = controlsMenu(&cont, choice, 4);
+			}
 		
 		switch (choice){
-			case 1:
+			case 0:
 				alive = inspectBoard(&level, outcome);
 				break;
-			case 2:
+			case 1:
 				placeFlag(&level);
 				break;
-			case 3:
+			case 2:
 				removeFlag(&level);
 				break;
-			case 0:
+			case 3:
 				strcpy(outcome, "quit");
 				printf("Game QUIT\n");
 				alive = 0;
@@ -869,6 +891,7 @@ void gameProper(game level, profile *currentUser){
 	}
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
+	iShowCursor();
 }
 
 /* level edit */
@@ -2045,7 +2068,9 @@ void startMenu(profile *currentUser, profileList *users){
 				case 0:
 					CLEARSCREEN;
 					newProfile(currentUser, *users);
-					valid = 1;
+					if (strcmp(currentUser->name, "") == 0){
+						valid = 0;
+					} else valid = 1;
 					break;
 				case 1:
 					CLEARSCREEN;
@@ -2054,9 +2079,9 @@ void startMenu(profile *currentUser, profileList *users){
 				default:
 					printf("Invalid input. Try again.\n");
 			}
+			printf("Press any key to continue...\n");
+			getch();
 		}
-		printf("Press any key to continue...\n");
-		getch();
 	
 	}
 	getStatistics(currentUser);

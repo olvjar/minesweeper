@@ -1,8 +1,0 @@
-FORREST
-0
-0
-0
-0
-snapshots/FORREST_snapshot0.txt
-snapshots/FORREST_snapshot1.txt
-snapshots/FORREST_snapshot2.txt
