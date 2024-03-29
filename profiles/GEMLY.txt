@@ -1,7 +1,7 @@
 GEMLY
 1
-0
-1
+2
+2
 0
 snapshots/GEMLY_snapshot0.txt
 snapshots/GEMLY_snapshot1.txt

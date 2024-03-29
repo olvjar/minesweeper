@@ -123,8 +123,6 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
     int row = 0;
     int col = 0;
 
-	iHideCursor();
-
 	while (cont) {
 		CLEARSCREEN;
 	    
@@ -246,7 +244,6 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	CLEARSCREEN;
 	*rowChosen = row;
 	*colChosen = col;
-	iShowCursor();
 }
 
 void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
@@ -256,7 +253,6 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
     int row = 0;
     int col = 0;
 
-	iHideCursor();
 
 	while (cont) {
 		CLEARSCREEN;
@@ -367,7 +363,6 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 	CLEARSCREEN;
 	*rowChosen = row;
 	*colChosen = col;
-	iShowCursor();
 }
 
 /* board */
@@ -599,6 +594,8 @@ int inspectBoard(game *level, char outcome[]) {
             strcpy(outcome, "lose");
             level->gameBoard[i][j] = 999;
             printBoardChar(*level);
+            printf("Press any key to continue...");
+			getch();
             return 0;    
         } else {
             cascade(level, i, j);
@@ -631,6 +628,8 @@ int gameChecker(game level, char outcome[]){
 		printf("\nAll non-mine tiles revealed.\nYou win!\n");
 		strcpy(outcome, "win");
 		printBoardChar(level);
+		printf("Press any key to continue...");
+		getch();
 		return 0;
 	}
 	else return 1;
@@ -705,6 +704,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		fprintf(fgame, "\n");
 	}
 		fclose(fgame);
+		return 1;
 	}
 	
 	else if (strcmp(outcome, "lose") == 0){
@@ -732,6 +732,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		fprintf(fgame, "\n");
 		}
 		fclose(fgame);
+		return 1;
 	}
 	
 	else if (strcmp(outcome, "quit") == 0){
@@ -753,6 +754,7 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		fprintf(fgame, "\n");
 		}
 		fclose(fgame);
+		return 1;
 	}
     
     fclose(fgame);
@@ -834,7 +836,6 @@ void gameProper(game level, profile *currentUser){
 	time(&timeStart);
 	while(alive){
 		cont = 1;
-		iHideCursor();
 		while(cont){
 			CLEARSCREEN;
 			printBoardChar(level); //REMOVE THIS
@@ -885,13 +886,16 @@ void gameProper(game level, profile *currentUser){
 				printf("Invalid input. Please try again.\n");
 		}
 		
+		printf("before game checker");
 		if (alive){
 		alive = gameChecker(level, outcome);
 		}
 	}
+	printf("game ended.\n");
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
+	printf("Save snapshot passed\n");
 	updateStatistics(level, outcome, currentUser);
-	iShowCursor();
+	printf("update stats passed\n");
 }
 
 /* level edit */
@@ -908,7 +912,6 @@ void printCustomBoard(game *customLevel) {
 int menuEditLevel(game *customLevel, int minesCount){
 	int i, selection = 0, cont = 1;
 	
-	iHideCursor();
 	while(cont){
 		CLEARSCREEN;
 		printf("\n");
@@ -932,14 +935,12 @@ int menuEditLevel(game *customLevel, int minesCount){
 		}
 		selection = controlsMenu(&cont, selection, 4);
 	}
-	iShowCursor();
 	return selection;
 }
 
 int menuLevelEditor(){
 	int i, selection = 0, cont = 1;
 	
-	iHideCursor();
 	while(cont){
 		CLEARSCREEN;
 		printf("[LEVEL EDITOR]\n\nWhat would you like to do?\n\n");
@@ -960,7 +961,6 @@ int menuLevelEditor(){
 		}
 		selection = controlsMenu(&cont, selection, 4);
 	}
-	iShowCursor();
 	return selection;
 }
 
@@ -1012,7 +1012,7 @@ void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
 	controlsLevelEdit(*customLevel, &row, &col);
-    printf("MINE %d", (*minesCount) + 1);
+    printf("MINE %d\n", (*minesCount) + 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
@@ -1394,7 +1394,6 @@ void viewStatistics(profile *currentUser){
 int menuProfile(profile currentUser, int *choice){
 	int i, selection = 0, cont = 1;
 	
-	iHideCursor();
 	while(cont){
 		CLEARSCREEN;
 		printf("[CHANGE PROFILE]\nCURRENT USER: %s\n\nWhat would you like to do?\n\n", currentUser.name);
@@ -1415,7 +1414,6 @@ int menuProfile(profile currentUser, int *choice){
 		}
 		selection = controlsMenu(&cont, selection, 4);
 	}
-	iShowCursor();
 	return selection;
 }
 
@@ -1875,10 +1873,11 @@ void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevel
 	scanf("%s", filename);
     strcat(filename, ".txt");
     strcat(path, filename);
-    printf("%s\n", path);
 
     if(fileExists(path) == 0) {
         printf("\nLevel does not exist. Try again.\n");
+        printf("Press any key to continue...\n");
+		getch();
         return;
     } else {
     	chosenLevel = fopen(path, "r");
@@ -1909,7 +1908,6 @@ void playClassic(game *level, profile *currentUser){
 	int exit = 0;
 	int i, cont = 1;
 	
-	iHideCursor();
 	while (!exit){
 		while(cont){
 			CLEARSCREEN;
@@ -1929,7 +1927,6 @@ void playClassic(game *level, profile *currentUser){
 			}
 			classicSelect = controlsMenu(&cont, classicSelect, 3);
 		}
-		iShowCursor();
 		
 		switch (classicSelect)
 		{
@@ -1972,7 +1969,6 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 	int max = 3;
 	int exit = 0;
 
-	iHideCursor();
 	while (!exit){
 		while (cont) {
 			CLEARSCREEN;
@@ -1998,7 +1994,6 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 			
 			gameSelect = controlsMenu(&cont, gameSelect, max);
 		}
-			iShowCursor();
 			
 			switch (gameSelect)
 			{
@@ -2040,7 +2035,6 @@ void startMenu(profile *currentUser, profileList *users){
 	if(num <= 0){
 		newProfile(currentUser, *users);
 	} else {
-		iHideCursor();
 		while (cont){
 			CLEARSCREEN;
 			printf("CHOOSE PLAYER:\n\n");
@@ -2059,7 +2053,6 @@ void startMenu(profile *currentUser, profileList *users){
 			}
 			selection = controlsMenu(&cont, selection, 2);
 		}
-		iShowCursor();
 		
 		while (!valid){
 			switch(selection){
@@ -2106,7 +2099,6 @@ int main(){
 	
 	while (!exit){
 		cont = 1;
-		iHideCursor();
 		while (cont){
 			CLEARSCREEN;
 	    	printf("CURRENT USER: %s\n", currentUser.name);
@@ -2158,7 +2150,6 @@ int main(){
 			}
 		
 		delay(1500);
-		iShowCursor();
 	}
 }
 

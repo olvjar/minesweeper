@@ -1,3 +1,7 @@
-2
+6
 forrest.txt
 easyreal.txt
+10by15.txt
+10by14.txt
+9by14.txt
+gem.txt
