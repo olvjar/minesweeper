@@ -648,7 +648,7 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fdest = fopen(destFile, "w");
 	
 	fscanf(fsource, " %s", outcome);
-	if (!(outcome[0] >= 'A' && outcome[0] <= 'z')) return; 
+	if (outcome[0] == '0') return; 
 	fscanf(fsource, " %d", &time);
 	fscanf(fsource, " %s", mode);
 	fscanf(fsource, " %d", &rows);
@@ -995,8 +995,8 @@ void checkLevels(customLevelList *cLevels){
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
 
-    printf("MINE %d", (*minesCount) + 1);
-    controlsLevelEdit(*customLevel, &row, &col);
+	controlsLevelEdit(*customLevel, &row, &col);
+    printf("MINE %d\n", (*minesCount) + 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
@@ -1011,8 +1011,8 @@ void placeMine(game *customLevel, int *minesCount) {
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
+	controlsLevelEdit(*customLevel, &row, &col);
     printf("MINE %d", (*minesCount) + 1);
-    controlsLevelEdit(*customLevel, &row, &col);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
@@ -1350,7 +1350,7 @@ void viewStatistics(profile *currentUser){
 		if(strcmp(currentUser->recentgame[i].outcome, "0") == 0){
 			printf(" ");
 		} else{
-			printf("#%d | ", i+1);
+			printf("\n#%d | ", i+1);
 			printf("\nGAME %s ", currentUser->recentgame[i].outcome);
 			printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
 			printf("%s ", currentUser->recentgame[i].mode);
@@ -1998,6 +1998,7 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 			
 			gameSelect = controlsMenu(&cont, gameSelect, max);
 		}
+			iShowCursor();
 			
 			switch (gameSelect)
 			{
@@ -2021,7 +2022,7 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 					printf("\nInvalid input. Try again.\n");
 			}
 	}
-	iShowCursor();
+	
 }
 
 

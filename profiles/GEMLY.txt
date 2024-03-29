@@ -1,0 +1,8 @@
+GEMLY
+1
+0
+1
+0
+snapshots/GEMLY_snapshot0.txt
+snapshots/GEMLY_snapshot1.txt
+snapshots/GEMLY_snapshot2.txt
