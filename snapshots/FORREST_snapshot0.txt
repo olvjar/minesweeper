@@ -1,4 +1,4 @@
-WON 2
+WON 4
 CLASSIC-EASY 8 8
 . . . . . . . . 
 . . . . . . . . 
