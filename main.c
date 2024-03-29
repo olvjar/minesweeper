@@ -911,9 +911,9 @@ int menuEditLevel(game *customLevel, int minesCount){
 	iHideCursor();
 	while(cont){
 		CLEARSCREEN;
-		
+		printf("\n");
     	printCustomBoard(customLevel);
-    	printf("GRID: %dx%d\t", customLevel->rows, customLevel->cols);
+    	printf("\nGRID: %dx%d\t", customLevel->rows, customLevel->cols);
     	printf("MINES: %d\n\n", minesCount);
     	printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
 		
