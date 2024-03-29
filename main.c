@@ -1051,7 +1051,6 @@ void deleteLevel(customLevelList *cLevels){
 	scanf("%s", filename);
 	strcat(filename, ".txt");
     strcat(path, filename);
-    printf("%s\n", path);
 
 	if(fileExists(path) == 0) {
         printf("\nLevel does not exist. Try again.\n");
