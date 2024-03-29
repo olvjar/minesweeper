@@ -35,8 +35,8 @@ struct level {
     int cols;
     int mines;
 	char mode[30];
-    int gameBoard[100][100];
-    char board[100][100];
+    int gameBoard[10][15];
+    char board[10][15];
 };
 
 struct fileInfo{
@@ -56,7 +56,7 @@ struct recent_games{
 	int time;
     int rows;
     int cols;
-	char snapshot[100][100];
+	char snapshot[10][15];
 };
 
 struct player{
@@ -668,7 +668,7 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	char mode[21];
 	char outcome[51];
 	int rows, cols, time, i ,j;
-	char val[100][100];
+	char val[10][15];
 	
 	fsource = fopen(sourceFile, "r");
 	fdest = fopen(destFile, "w");
