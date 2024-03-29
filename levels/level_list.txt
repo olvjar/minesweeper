@@ -1,5 +1,2 @@
-4
-forrest.txt
-easyreal.txt
-9by14.txt
+1
 gem.txt

@@ -544,21 +544,21 @@ int mineCount(game level, int i, int j){
 	int count = 0;
 	
 	if(level.board[i][j] != 'X'){
-		if(level.board[i-1][j] == 'X')
+		if(level.board[i-1][j] == 'X' && i > 0)
 		count++;
-		if(level.board[i+1][j] == 'X')
+		if(level.board[i+1][j] == 'X' && i < level.rows)
 		count++;
-		if(level.board[i][j-1] == 'X')
+		if(level.board[i][j-1] == 'X' && j > 0)
 		count++;
-		if(level.board[i][j+1] == 'X')
+		if(level.board[i][j+1] == 'X' && j < level.cols)
 		count++;
-		if(level.board[i-1][j-1] == 'X')
+		if(level.board[i-1][j-1] == 'X' && i > 0 && j > 0)
 		count++;
-		if(level.board[i-1][j+1] == 'X')
+		if(level.board[i-1][j+1] == 'X' && i > 0 && j < level.cols)
 		count++;
-		if(level.board[i+1][j-1] == 'X')
+		if(level.board[i+1][j-1] == 'X' && i < level.rows && j > 0)
 		count++;
-		if(level.board[i+1][j+1] == 'X')
+		if(level.board[i+1][j+1] == 'X' && i < level.rows && j < level.cols)
 		count++;
 			
 		return count;
@@ -569,7 +569,7 @@ int mineCount(game level, int i, int j){
 void cascade(game *level, int i, int j){
     if (i < 0 || i >= level->rows || j < 0 || j >= level->cols || 
         level->board[i][j] == 'X' || level->gameBoard[i][j] == FLAG || !(level->gameBoard[i][j] == HIDDEN)) {
-        return; // Base case: out of bounds or already revealed/flagged
+        return; // base case: out of bounds or already revealed/flagged
     }
     
     level->gameBoard[i][j] = mineCount(*level, i, j); // reveal mine count
@@ -913,16 +913,12 @@ void gameProper(game level, profile *currentUser){
 				printf("Invalid input. Please try again.\n");
 		}
 		
-		printf("before game checker");
 		if (alive){
 		alive = gameChecker(level, outcome);
 		}
 	}
-	printf("game ended.\n");
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
-	printf("Save snapshot passed\n");
 	updateStatistics(level, outcome, currentUser);
-	printf("update stats passed\n");
 }
 
 /* level edit */
