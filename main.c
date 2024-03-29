@@ -86,131 +86,8 @@ void delay(int time){
 	while(delay > clock());
 }
 
-/* board */
+/* controls */
 
-void printBoard(game level){
-    int i, j;
-    
-    printf("\n");
-	printf("     ");
-	for (i = 0; i < 2; i++) {
-		for(j = 0; j <  level.cols; j++) {
-			
-			if(i == 0){
-				iSetColor(I_COLOR_PURPLE);
-    			printf("%2d ", j);
-    				if(j == level.cols - 1){
-    					printf("\n");
-					}
-    		}
-    		
-    		else if (i == 1){
-    			if (j == 0){
-					printf("   ");
-				}
-    			else printf("---");
-			}
-		}
-	}
-	printf("-------");
-	
-	printf("\n");
-	
-	for (i = 0; i < level.rows; i++) {
-        for (j = -1; j <= level.cols; j++) {
-			if (j == -1){
-				iSetColor(I_COLOR_PURPLE);
-				printf(" %d | ", i);
-				}
-			else if (j == level.cols){
-				iSetColor(I_COLOR_PURPLE);
-				printf(" | ");
-			}
-			else if (level.gameBoard[i][j] == HIDDEN){ //not revealed
-				iSetColor(I_COLOR_WHITE);
-				printf(" . ");
-			}
-			else if (level.gameBoard[i][j] == FLAG){ //flag
-				iSetColor(I_COLOR_CYAN);
-				printf(" F ");
-			}
-			else{
-				iSetColor(I_COLOR_GREEN);
-				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
-			}
-				
-        }
-        printf("\n");
-    }
-    
-    iSetColor(I_COLOR_PURPLE);
-    for (i = 0; i < level.cols; i++) {
-    	if (i == 0){
-    		printf("   ");	
-		} else printf("---");
-	}
-	printf("-------\n");
-	iSetColor(I_COLOR_WHITE);
-}
-
-void printBoardChar(game level){
-    int i, j;
-    
-    printf("\n");
-	printf("     ");
-	for (i = 0; i < 2; i++) {
-		for(j = 0; j <  level.cols; j++) {
-			
-			if(i == 0){
-				iSetColor(I_COLOR_PURPLE);
-    			printf("%2d ", j);
-    				if(j == level.cols - 1){
-    					printf("\n");
-					}
-    		}
-    		
-    		else if (i == 1){
-    			if (j == 0){
-					printf("   ");
-				}
-    			else printf("---");
-			}
-		}
-	}
-	printf("-------");
-	
-	printf("\n");
-	
-	for (i = 0; i < level.rows; i++) {
-        for (j = -1; j <= level.cols; j++) {
-			if (j == -1){
-				iSetColor(I_COLOR_PURPLE);
-				printf(" %d | ", i);
-				}
-			else if (j == level.cols){
-				iSetColor(I_COLOR_PURPLE);
-				printf(" | ");
-			}
-			else if (level.board[i][j] == 'X'){ 
-				iSetColor(I_COLOR_RED);
-				printf(" X ");
-			}
-			else {
-				iSetColor(I_COLOR_WHITE);
-				printf(" . ");
-			}
-        }
-        printf("\n");
-    }
-    
-    for (i = 0; i < level.cols; i++) {
-    	if (i == 0){
-    		printf("   ");	
-		} else printf("---");
-	}
-	printf("-------\n");
-	iSetColor(I_COLOR_WHITE);
-}
 
 int controlsMenu(int *cont, int selection, int max){
 	int input;
@@ -487,6 +364,132 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 	*rowChosen = row;
 	*colChosen = col;
 	iShowCursor();
+}
+
+/* board */
+
+void printBoard(game level){
+    int i, j;
+    
+    printf("\n");
+	printf("     ");
+	for (i = 0; i < 2; i++) {
+		for(j = 0; j <  level.cols; j++) {
+			
+			if(i == 0){
+				iSetColor(I_COLOR_PURPLE);
+    			printf("%2d ", j);
+    				if(j == level.cols - 1){
+    					printf("\n");
+					}
+    		}
+    		
+    		else if (i == 1){
+    			if (j == 0){
+					printf("   ");
+				}
+    			else printf("---");
+			}
+		}
+	}
+	printf("-------");
+	
+	printf("\n");
+	
+	for (i = 0; i < level.rows; i++) {
+        for (j = -1; j <= level.cols; j++) {
+			if (j == -1){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" %d | ", i);
+				}
+			else if (j == level.cols){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" | ");
+			}
+			else if (level.gameBoard[i][j] == HIDDEN){ //not revealed
+				iSetColor(I_COLOR_WHITE);
+				printf(" . ");
+			}
+			else if (level.gameBoard[i][j] == FLAG){ //flag
+				iSetColor(I_COLOR_CYAN);
+				printf(" F ");
+			}
+			else{
+				iSetColor(I_COLOR_GREEN);
+				printf(" %d ", level.gameBoard[i][j]); //valid space & revealed
+			}
+				
+        }
+        printf("\n");
+    }
+    
+    iSetColor(I_COLOR_PURPLE);
+    for (i = 0; i < level.cols; i++) {
+    	if (i == 0){
+    		printf("   ");	
+		} else printf("---");
+	}
+	printf("-------\n");
+	iSetColor(I_COLOR_WHITE);
+}
+
+void printBoardChar(game level){
+    int i, j;
+    
+    printf("\n");
+	printf("     ");
+	for (i = 0; i < 2; i++) {
+		for(j = 0; j <  level.cols; j++) {
+			
+			if(i == 0){
+				iSetColor(I_COLOR_PURPLE);
+    			printf("%2d ", j);
+    				if(j == level.cols - 1){
+    					printf("\n");
+					}
+    		}
+    		
+    		else if (i == 1){
+    			if (j == 0){
+					printf("   ");
+				}
+    			else printf("---");
+			}
+		}
+	}
+	printf("-------");
+	
+	printf("\n");
+	
+	for (i = 0; i < level.rows; i++) {
+        for (j = -1; j <= level.cols; j++) {
+			if (j == -1){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" %d | ", i);
+				}
+			else if (j == level.cols){
+				iSetColor(I_COLOR_PURPLE);
+				printf(" | ");
+			}
+			else if (level.board[i][j] == 'X'){ 
+				iSetColor(I_COLOR_RED);
+				printf(" X ");
+			}
+			else {
+				iSetColor(I_COLOR_WHITE);
+				printf(" . ");
+			}
+        }
+        printf("\n");
+    }
+    
+    for (i = 0; i < level.cols; i++) {
+    	if (i == 0){
+    		printf("   ");	
+		} else printf("---");
+	}
+	printf("-------\n");
+	iSetColor(I_COLOR_WHITE);
 }
 
 void makeBoard(game *level){
