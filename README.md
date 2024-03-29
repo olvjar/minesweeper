@@ -10,7 +10,7 @@ A collaborative university machine project turned small passion project. This wa
 ### Features
 
 - Arrow key controls and input
-- Create, edit, and play custom board levels
+- Create, edit, and play custom game levels
 - Create player profiles
 - Persistent player data
 - Player leaderboard based on time won 🏆🎉
@@ -19,12 +19,30 @@ A collaborative university machine project turned small passion project. This wa
 
 ### Installation
 
-> wip
+Ensure [gcc]() and [make]() is installed. These are the only dependencies required to run this project.
+
+In your `~/path/` clone the repository
+
+```
+git clone https://github.com/olvjar/minesweeper.git
+```
+
+then change directory into the cloned repository
+
+```
+cd minesweeper
+```
+
+To run the game:
+
+```
+gcc -Wall -std=c99 main.c -o main
+```
 
 ### How to play
 
 > wip
 
----
+## License
 
 minesweeper by Gem Grino and Mariel Tamondong is licensed under GNU General Public License v2.0 only. To view a copy of this license, visit [https://spdx.org/licenses/GPL-2.0-only.html](https://spdx.org/licenses/GPL-2.0-only.html)
