@@ -1076,9 +1076,9 @@ void deleteLevel(customLevelList *cLevels){
 
 	    // delete level file
 		if (remove(path) != 0) {
-        	perror("Error deleting user file\n");
+        	perror("\nError deleting user file\n");
     	} else{
-			printf("%s deleted successfully.\n", filename);
+			printf("\n%s deleted successfully.\n", filename);
 		}
 	    remove(path);
 	}
@@ -1193,7 +1193,6 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	        }
 	    }
 		
-		fclose(level);
 		
     	editLevel(customLevel, minesCount); 
 
@@ -1204,9 +1203,9 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
         	printf("Level successfully edited.\n\n");
 		} else{
 			printf("Level was not saved.\n\n");
+			fclose(level);
 		}
 
-		//fclose(level);
 	}
 }
 
@@ -1770,12 +1769,12 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
     }
 
     printf("            LEADERBOARDS             \n");
-    printf(" EASY*******************************\n");
+    printf(" EASY*************************CLASSIC\n");
     printf(" [#1 %s -  %02d:%02d:%02d]\n", easyRanking[0].user, easyHours[0], easyMinutes[0], easySeconds[0]);
     printf(" [#2 %s -  %02d:%02d:%02d]\n", easyRanking[1].user, easyHours[1], easyMinutes[1], easySeconds[1]);
     printf(" [#3 %s -  %02d:%02d:%02d]\n", easyRanking[2].user, easyHours[2], easyMinutes[2], easySeconds[2]);
     printf("                                     \n");
-    printf(" DIFFICULT**************************\n");
+    printf(" DIFFICULT********************CLASSIC\n");
     printf(" [#1 %s -  %02d:%02d:%02d]\n", difficultRanking[0].user, diffHours[0], diffMinutes[0], diffSeconds[0]);
     printf(" [#2 %s -  %02d:%02d:%02d]\n", difficultRanking[1].user, diffHours[1], diffMinutes[1], diffSeconds[1]);
     printf(" [#3 %s -  %02d:%02d:%02d]\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
