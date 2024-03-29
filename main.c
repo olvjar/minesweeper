@@ -80,6 +80,12 @@ typedef struct scoreboard leaderboard[3];
 
 // FUNCTIONS
 
+/*	
+	This function delays the execution of preceding the code
+	@ param time - an integer that pertains to the delay length
+	@ return void
+	Pre-condition: time is a nonnegative integer
+*/
 void delay(int time){
 	clock_t delay;
 	delay = clock() + time;
@@ -88,6 +94,16 @@ void delay(int time){
 
 /* controls */
 
+/*	
+	This function allows the user to choose their input in a menu using arrow keys
+	@param *cont - a pointer that determines the continuation of a loop
+	@ param selection - an integer that pertains to the current selection of the arrow
+	@ param max - an integer that pertains to the max number of choices in a selection
+
+	@ return the selection of the user
+	
+	Pre-condition: *cont == 1, selection is a nonnegative integer, max is a nonnegative integer
+*/
 
 int controlsMenu(int *cont, int selection, int max){
 	int input;
@@ -115,6 +131,17 @@ int controlsMenu(int *cont, int selection, int max){
 	
 	return selection;
 }
+
+/*	
+	This function allows the user to choose their input in the game using arrow keys
+	@ param level - a structure that pertains to the information of the level
+	@ param *rowChosen - a pointer that holds the value of the row index of the array
+	@ param *colChosen - a pointer that holds the value of the column index of the array
+
+	@ return void
+	
+	Pre-condition: level has all values declared
+*/
 
 void controlsGame(game level, int *rowChosen, int *colChosen){
 	int input;
@@ -1012,7 +1039,7 @@ void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
 	controlsLevelEdit(*customLevel, &row, &col);
-    printf("MINE %d\n", (*minesCount) + 1);
+    printf("MINE %d\n", (*minesCount) - 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
