@@ -2,7 +2,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/olvjar%2Fminesweeper.svg)](https://github.com/olvjar/minesweeper) [![GitHub latest commit](https://badgen.net/github/last-commit/olvjar/minesweeper)](https://github.com/olvjar/minesweeper/commit) [![GPL license](https://img.shields.io/badge/License-GPLv2.0-blue.svg)](https://spdx.org/licenses/GPL-2.0-only.html) [![GitHub forks](https://img.shields.io/github/forks/olvjar/minesweeper.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/olvjar/minesweeper)
 
-The classic Minesweeper game written in C
+The classic Minesweeper game written in C  
 by [olvjar](https://github.com/olvjar) and [marieltmdg](https://github.com/marieltmdg)
 
 A collaborative university machine project turned small passion project. This was made with a focus on learning C programming and CLI interactions. It is a command line, ASCII-based version of minesweeper.
