@@ -101,7 +101,7 @@ int controlsMenu(int *cont, int selection, int max){
 		} else if (input == 80 && selection < max - 1){
 			selection++;
 		} else if (input == 75 || input == 77) {
-			printf("Only use up and down arrow keys.\n");
+			printf("\nOnly use up and down arrow keys.\n");
 			delay(500);
 		}
 	}
@@ -109,7 +109,7 @@ int controlsMenu(int *cont, int selection, int max){
 		*cont = 0;
 		}
 	else {
-		printf("Invalid input. Use arrow keys.\n");
+		printf("\nInvalid input. Use arrow keys.\n");
 		delay(500);
 	}
 	
@@ -352,14 +352,14 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 						} 
 	                    break;
 	                default:
-	                    printf("Unknown key pressed. Please press arrow keys.\n");
+	                    printf("\nUnknown key pressed. Please press arrow keys.\n");
 	                    break;
 	            }
 	        } else if (input == '\r') {
 	            cont = 0;
 	        }
 	        else {
-				printf("Invalid input. Use arrow keys.\n");
+				printf("\nInvalid input. Use arrow keys.\n");
 				delay(500);
 		    }
     }
@@ -922,12 +922,12 @@ int menuEditLevel(game *customLevel, int minesCount){
 				if (i == 0) printf(" > PLACE mine\n");
 				if (i == 1) printf(" > DELETE mine\n");
 				if (i == 2) printf(" > SAVE\n");
-				if (i == 3) printf(" > BACK\n");
+				if (i == 3) printf(" > GO BACK\n");
 			} else {
 				if (i == 0) printf("   PLACE mine\n");
 				if (i == 1) printf("   DELETE mine\n");
 				if (i == 2) printf("   SAVE\n");
-				if (i == 3) printf("   BACK\n");
+				if (i == 3) printf("   GO BACK\n");
 			}
 		}
 		selection = controlsMenu(&cont, selection, 4);
@@ -950,12 +950,12 @@ int menuLevelEditor(){
 				if (i == 0) printf(" > CREATE a new level\n");
 				if (i == 1) printf(" > EDIT an existing level\n");
 				if (i == 2) printf(" > DELETE an existing level\n");
-				if (i == 3) printf(" > BACK\n");
+				if (i == 3) printf(" > GO BACK\n");
 			} else {
 				if (i == 0) printf("   CREATE a new level\n");
 				if (i == 1) printf("   EDIT an existing level\n");
 				if (i == 2) printf("   DELETE an existing level\n");
-				if (i == 3) printf("   BACK\n");
+				if (i == 3) printf("   GO BACK\n");
 			}
 		}
 		selection = controlsMenu(&cont, selection, 4);
@@ -1142,7 +1142,7 @@ int editLevel(game *customLevel, int minesCount){
                 }
                 break;
             case 3:
-				printf("Returning to main menu.\n");
+				printf("\nReturning to main menu.\n");
 				quit = 1;
 				break;
 			default:
@@ -1282,7 +1282,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 				deleteLevel(cLevels);
                 break;
             case 3:
-				printf("Returning to main menu.\n");
+				printf("\nReturning to main menu.\n");
 				quit = 1;
 				break;
 			default:
@@ -1320,7 +1320,7 @@ void viewStatistics(profile *currentUser){
 	CLEARSCREEN;
 	getStatistics(currentUser);
 	
-	printf("press [ESC] to go back\n\n");
+	printf("Press [ESC] to go back\n\n");
 	printf("Name: %s\n", currentUser->name);
     printf("Classic games - Won: %d Lost: %d\n", currentUser->games_won_classic, currentUser->games_lost_classic);
     printf("Custom games - Won: %d Lost: %d\n\n", currentUser->games_won_custom, currentUser->games_lost_custom);
@@ -1406,12 +1406,12 @@ int menuProfile(profile currentUser, int *choice){
 				if (i == 0) printf(" > SELECT profile\n");
 				if (i == 1) printf(" > CREATE NEW profile\n");
 				if (i == 2) printf(" > DELETE profile\n");
-				if (i == 3) printf(" > RETURN to main menu\n");
+				if (i == 3) printf(" > GO BACK\n");
 			} else {
 				if (i == 0) printf("   SELECT profile\n");
 				if (i == 1) printf("   CREATE NEW profile\n");
 				if (i == 2) printf("   DELETE profile\n");
-				if (i == 3) printf("   RETURN to main menu\n");
+				if (i == 3) printf("   GO BACK\n");
 			}
 		}
 		selection = controlsMenu(&cont, selection, 4);
@@ -1707,7 +1707,7 @@ void changeProfile(profile *currentUser, profileList *users){
 				deleteProfile(currentUser, *users); // WORKING
                 break;
             case 3:
-				printf("Returning to main menu.\n");
+				printf("\nReturning to main menu.\n");
 				quit = 1;
 				break;
 			default:
@@ -1922,11 +1922,11 @@ void playClassic(game *level, profile *currentUser){
 				if (classicSelect == i){
 					if (i == 0) printf(" > EASY\n");
 					if (i == 1) printf(" > DIFFICULT\n");
-					if (i == 2) printf(" > BACK\n");
+					if (i == 2) printf(" > GO BACK\n");
 				} else {
 					if (i == 0) printf("   EASY\n");
 					if (i == 1) printf("   DIFFICULT\n");
-					if (i == 2) printf("   BACK\n");
+					if (i == 2) printf("   GO BACK\n");
 				}
 			}
 			classicSelect = controlsMenu(&cont, classicSelect, 3);
@@ -1954,11 +1954,11 @@ void playClassic(game *level, profile *currentUser){
 				exit = 1;
 				break;
 			case 2:
-				printf("You have opted to go back.\n\n");
+				printf("\nYou have opted to go back.\n");
 				exit = 1;
 				break;
 			default:
-				printf("Invalid input. Try again.\n");
+				printf("\nInvalid input. Try again.\n");
 			}
 		printf("Press any key to continue...\n");
 		getch();
@@ -1987,14 +1987,14 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 				} else if (i == gameSelect && i == 1){
 					printf(" > CUSTOM\n");
 				} else if (i == gameSelect && i == 2){
-					printf(" > BACK\n"); 
+					printf(" > GO BACK\n"); 
 				}
 				else if (i == 0){
 					printf("   CLASSIC\n");
 				} else if (i == 1){
 					printf("   CUSTOM\n");
 				} else if (i == 2){
-					printf("   BACK\n");
+					printf("   GO BACK\n");
 				}
 			}
 			
@@ -2014,13 +2014,13 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 					exit = 1;
 					break;
 				case 2:
-					printf("You have opted to go back.\n\n");	
+					printf("\nYou have opted to go back.\n\n");	
 					printf("Press any key to continue...\n");
 					getch();
 					exit = 1;
 					break;
 				default:
-					printf("Invalid input. Try again.\n");
+					printf("\nInvalid input. Try again.\n");
 			}
 	}
 	iShowCursor();
@@ -2041,10 +2041,10 @@ void startMenu(profile *currentUser, profileList *users){
 	if(num <= 0){
 		newProfile(currentUser, *users);
 	} else {
-		printf("CHOOSE PLAYER:\n");
 		iHideCursor();
 		while (cont){
 			CLEARSCREEN;
+			printf("CHOOSE PLAYER:\n\n");
 			printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
 			
 			for(i = 0; i < 2; i++){
