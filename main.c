@@ -1715,10 +1715,9 @@ void changeProfile(profile *currentUser, profileList *users){
 		printf("Press any key to continue...\n");
 		getch();
 	}
-	
 }
-/* leaderboard */
 
+/* leaderboard */
 
 void sortLeaderboard(leaderboard ranking) {
     int i, j, low;
