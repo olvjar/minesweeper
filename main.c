@@ -1054,9 +1054,9 @@ void deleteLevel(customLevelList *cLevels){
 
 	    // delete level file
 		if (remove(path) != 0) {
-        	perror("Error deleting user file");
+        	perror("Error deleting user file\n");
     	} else{
-			printf("%s deleted successfully.", filename);
+			printf("%s deleted successfully.\n", filename);
 		}
 	    remove(path);
 	}
