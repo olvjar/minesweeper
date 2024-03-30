@@ -2397,7 +2397,7 @@ void startMenu(profile *currentUser, profileList *users){
 /* GAME PROPER */
 int main(){
 	// initalize variables
-	profile currentUser;
+	profile currentUser = {""};
 	profileList users;
 
 	game level;
