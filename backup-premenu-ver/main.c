@@ -12,7 +12,6 @@
 #include <conio.h>
 
 #include "interface.c"
-#include "ascii.c"
 
 #define CLEARSCREEN system("cls")
 
@@ -699,14 +698,14 @@ void removeFlag(game *level){
 	Pre-condition: level has all members declared
 */
 
-int inspectBoard(game *level, char outcome[], int time) {
+int inspectBoard(game *level, char outcome[]) {
     int i, j;
     
     controlsGame(*level, &i, &j);
     
     if (i < level->rows && j < level->cols && level->gameBoard[i][j] != FLAG) {
         if (mineCount(*level, i, j) == -1) {
-            asciiGameLost(time);
+            printf("\nYou have hit a mine. Game over.\n");
             strcpy(outcome, "lose");
             level->gameBoard[i][j] = 999;
             printBoardChar(*level);
@@ -734,7 +733,7 @@ int inspectBoard(game *level, char outcome[], int time) {
 	Pre-condition: level has all members declared
 */
 
-int gameChecker(game level, char outcome[], int time){
+int gameChecker(game level, char outcome[]){
 	int totalSquares = (level.rows*level.cols)-level.mines;
 	int revealedCount = 0;
 	int i, j;
@@ -749,7 +748,7 @@ int gameChecker(game level, char outcome[], int time){
 		
 	if(revealedCount == totalSquares){
 		printBoard(level);
-		asciiGameWon(time);
+		printf("\nAll non-mine tiles revealed.\nYou win!\n");
 		strcpy(outcome, "win");
 		printBoardChar(level);
 		return 0;
@@ -1039,7 +1038,7 @@ void gameProper(game level, profile *currentUser){
 		
 		switch (choice){
 			case 0:
-				alive = inspectBoard(&level, outcome, timeElapsed);
+				alive = inspectBoard(&level, outcome);
 				break;
 			case 1:
 				placeFlag(&level);
@@ -1048,9 +1047,8 @@ void gameProper(game level, profile *currentUser){
 				removeFlag(&level);
 				break;
 			case 3:
-				CLEARSCREEN;
 				strcpy(outcome, "quit");
-				asciiGameQuit(timeElapsed);
+				printf("Game QUIT\n");
 				alive = 0;
 				break;
 			default:
@@ -1058,10 +1056,10 @@ void gameProper(game level, profile *currentUser){
 		}
 		
 		if (alive){
-		alive = gameChecker(level, outcome, timeElapsed);
+		alive = gameChecker(level, outcome);
 		}
 	}
-
+	printf("\nTIME: %02d:%02d:%02d\n\n", hours, minutes, seconds);
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
 	printf("Press any key to continue...");
@@ -1117,24 +1115,26 @@ int menuEditLevel(game *customLevel, int minesCount){
 */
 
 int menuLevelEditor(){
-	int selection = 0, cont = 1;
+	int i, selection = 0, cont = 1;
 	
 	while(cont){
 		CLEARSCREEN;
-		printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \n");
-		printf("|                                    | \n");
-		printf("|            LEVEL EDITOR            | \n");
-		printf("|  --------------------------------  | \n");
-		printf("|                                    | \n");
-		printf("|     WHAT WOULD YOU LIKE TO DO?     | \n");
-		printf("|                                    | \n");
-		printf("|                                    | \n");
-		renderMenuLevel(selection);
-		printf("|                                    | \n");
-		printf("|                                    | \n");
-		printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \n");
+		printf("[LEVEL EDITOR]\n\nWhat would you like to do?\n\n");
 		printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
 	
+		for(i = 0; i < 4; i++){
+			if (i == selection){
+				if (i == 0) printf(" > CREATE a new level\n");
+				if (i == 1) printf(" > EDIT an existing level\n");
+				if (i == 2) printf(" > DELETE an existing level\n");
+				if (i == 3) printf(" > GO BACK\n");
+			} else {
+				if (i == 0) printf("   CREATE a new level\n");
+				if (i == 1) printf("   EDIT an existing level\n");
+				if (i == 2) printf("   DELETE an existing level\n");
+				if (i == 3) printf("   GO BACK\n");
+			}
+		}
 		selection = controlsMenu(&cont, selection, 4);
 	}
 	return selection;
@@ -1169,49 +1169,22 @@ int fileExists(char *filename) {
 	Pre-condition: the integer value of the first line in the directory is greater than or equal to 0
 */
 
-int checkLevels(customLevelList *cLevels){
+void checkLevels(customLevelList *cLevels){
 	int i, numFiles;
 	FILE *dir;
 
 	dir = fopen(LVL_DIR, "r");
 	fscanf(dir, "%d", &numFiles);
-	
-	printf("|      EXISTING CUSTOM LEVELS        |\n");
+
 	for(i = 0; i < numFiles; i++){
 		fscanf(dir, "%s", cLevels[i]->filename);
-		printf("|      %d. %-20s       |  \n", i + 1, cLevels[i]->filename);
+		printf("%d. ", i + 1);
+		printf("%s\n", cLevels[i]->filename);
 	}
 
 	fclose(dir);
-	return numFiles;
 }
 
-void renderMenuLevelAsk(int mode, char *filename, customLevelList *cLevels) {
-    int num;
-	
-    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
-    printf("|                                    |  \n");
-    if(mode == 0) printf("|             PLAY CUSTOM            | \n");
-    if(mode == 1) printf("|           LEVEL CREATION           | \n");
-	if(mode == 2) printf("|           LEVEL DELETION           | \n");
-	if(mode == 3) printf("|            LEVEL EDITOR            | \n");
-    printf("|  --------------------------------  |  \n");
-	printf("|                                    |  \n");
-	num = checkLevels(cLevels);
-	printf("|                                    |  \n");
-    printf("|         PROVIDE FILE NAME          |  \n");
-    if(mode == 0 || mode == 1) printf("|           (MAX 20 CHAR):           |  \n");
-	if(mode == 2 || mode == 3) printf("|       (DO NOT INCLUDE .TXT):       | \n");
-    printf("|                                    |  \n");
-    printf("|                                    |  \n");
-    printf("|                                    |  \n");
-    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
-    iMoveCursor(11, 10+num);
-    iShowCursor();
-    scanf("%s", filename);
-    iMoveCursor(0, 13+num);
-    iHideCursor();
-}
 /*	
 	This function allows the player to place a mine on the board
 	@ param *customLevel - a structure pointer that pertains to the information of a custom level
@@ -1304,7 +1277,12 @@ void deleteLevel(customLevelList *cLevels){
 	int num, i;
 	FILE *dir;
 
-	renderMenuLevelAsk(2, filename, cLevels);
+	printf("[LEVEL DELETION]\n\nEXISTING CUSTOM LEVELS:\n");
+	checkLevels(cLevels);
+
+	printf("\nProvide level to delete (do not include .txt): ");
+	iShowCursor();
+	scanf("%s", filename);
 	iHideCursor();
 	strcat(filename, ".txt");
     strcat(path, filename);
@@ -1458,9 +1436,16 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     FILE *level;
     int minesCount = 0;
 
-	renderMenuLevelAsk(3, filename, cLevels);
+	printf("[LEVEL EDITOR]\nEXISTING CUSTOM LEVELS:\n");
+	checkLevels(cLevels);
+
+	printf("\nProvide level name to edit: ");
+	iShowCursor();
+	scanf("%s", filename);
+	iHideCursor();
     strcat(filename, ".txt");
     strcat(path, filename);
+    printf("%s\n", path);
 
     if(fileExists(path) == 0) {
         printf("\nLevel does not exist. Try again.\n");
@@ -1512,12 +1497,17 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 */
 
 void createLevel(game *customLevel, customLevelList *cLevels){
-	char filename[21];
+	char filename[20];
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
 
-	renderMenuLevelAsk(1, filename, cLevels);
+	printf("[LEVEL CREATION]\nEXISTING CUSTOM LEVELS:\n");
+	checkLevels(cLevels);
+	printf("\nProvide file name: ");
+	iShowCursor();
+    scanf("%s", filename);
+    iHideCursor();
     strcat(filename, ".txt");
     strcat(path, filename);
 
@@ -1525,44 +1515,21 @@ void createLevel(game *customLevel, customLevelList *cLevels){
         printf("\nLevel cannot be created. File already exists.\n");
     } else {
         CLEARSCREEN;
-		printf("\n  Level %s will be created.\n\n", filename);
-		delay(1500);
+		printf("\nLevel %s will be created.\n", filename);
 
 		int validNum = 0;
 		while(!validNum){
-				CLEARSCREEN;
-			    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
-			    printf("|                                    |  \n");
-			    printf("|           LEVEL CREATION           |  \n");
-			    printf("|  --------------------------------  |  \n");
-			    printf("|                                    |  \n");
-			    printf("|                                    |  \n");
-			    printf("|   ENTER NUMBER OF ROWS (5 to 10)   |  \n");
-			    printf("|       AND COLUMNS (5 to 15):       |  \n");
-			    printf("|                                    |  \n");
-			    printf("|                                    |  \n");
-			    printf("|                                    |  \n");
-			    printf("|                                    |  \n");
-			    printf("|                                    |  \n");
-			    printf("|                                    |  \n");
-			    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
-			    iMoveCursor(15,10);
+				printf("\nEnter number of rows (5 to 10) and columns (5 to 15): ");
         		iShowCursor();
 				scanf("%d %d", &customLevel->rows, &customLevel->cols);
 				iHideCursor();
 
 				if((customLevel->rows < 5 || customLevel->rows > 10) && (customLevel->cols < 5 || customLevel->cols > 15)){
-					iMoveCursor(15,15);
         			printf("\nInvalid number of rows and columns.\n\n");
-        			delay(1000);
 				} else if (customLevel->rows < 5 || customLevel->rows > 10) {
-					iMoveCursor(15,15);
             		printf("\nInvalid number of rows.\n\n");
-            		delay(1000);
         		} else if(customLevel->cols < 5 || customLevel->cols > 15){
-        			iMoveCursor(15,15);
         			printf("\nInvalid number of columns.\n\n");
-        			delay(1000);
 				} else {
 					validNum = 1;
 				}
@@ -1581,10 +1548,10 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     		saveFile(0, level, customLevel, cLevels, filename);
     		fclose(level);
     		printBoardChar(*customLevel);
-        	printf("\nLevel created successfully.\n\n");
+        	printf("Level created successfully.\n\n");
 		} else{
 			printBoardChar(*customLevel);
-			printf("\nLevel was not saved.\n\n");
+			printf("Level was not saved.\n\n");
 		}
     }
 }
@@ -1621,11 +1588,11 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 				deleteLevel(cLevels);
                 break;
             case 3:
-				printf("\n  You have opted to go back.\n");
+				printf("\nYou have opted to go back.\n");
 				quit = 1;
 				break;
 			default:
-				printf("  Invalid selection. Please choose again.\n\n");
+				printf("Invalid selection. Please choose again.\n\n");
         }
     	if (!quit){
 			printf("Press any key to continue...\n");
@@ -1662,24 +1629,11 @@ void viewStatistics(profile *currentUser){
 	getStatistics(currentUser);
 	
 	printf("Press [ESC] to go back\n\n");
-	iSetColor(I_COLOR_CYAN);
-    printf("PLAYER %-20s\n", currentUser->name);
-   	printf("*******************************\n");
-    iSetColor(I_COLOR_WHITE);
-
-    printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
-    printf("  |   CLASSIC   |   CUSTOM   |   \n");
-    printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
-    printf("  |             |            |   \n");
-    printf("  |   WON: %d    |  WON: %d    |   \n", currentUser->games_won_classic, currentUser->games_won_custom);
-    printf("  |  LOST: %d    | LOST: %d    |   \n", currentUser->games_lost_classic, currentUser->games_lost_custom);
-    printf("  |             |            |   \n");
-    printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n\n");
+	printf("Name: %s\n", currentUser->name);
+    printf("Classic games - Won: %d Lost: %d\n", currentUser->games_won_classic, currentUser->games_lost_classic);
+    printf("Custom games - Won: %d Lost: %d\n\n", currentUser->games_won_custom, currentUser->games_lost_custom);
+	printf("Recent Games:\n");
     
-    iSetColor(I_COLOR_CYAN);
-    printf("RECENT GAMES!                    \n");
-	printf("*******************************\n\n");
-	iSetColor(I_COLOR_WHITE);
     for(i = 0; i < 3; i++) {
         recentgames = fopen(currentUser->recentgame[i].path, "r");
 
@@ -1747,23 +1701,26 @@ void viewStatistics(profile *currentUser){
 /* profile */
 
 int menuProfile(profile currentUser, int *choice){
-	int selection = 0, cont = 1;
+	int i, selection = 0, cont = 1;
 	
 	while(cont){
 		CLEARSCREEN;
-	    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \n");
-	    printf("|                                    | \n");
-	    printf("|            CHANGE PROFILE          | \n");
-	    printf("|  --------------------------------  | \n");
-	    printf("|                                    | \n");
-	    printf("|     WHAT WOULD YOU LIKE TO DO?     | \n");
-	    printf("|                                    | \n");
-	    printf("|                                    | \n");
-		renderMenuProfile(selection);
-	    printf("|                                    | \n");
-	    printf("|                                    | \n");
-	    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \n");
-	    printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
+		printf("[CHANGE PROFILE]\nCURRENT USER: %s\n\nWhat would you like to do?\n\n", currentUser.name);
+		printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
+	
+		for(i = 0; i < 4; i++){
+			if (i == selection){
+				if (i == 0) printf(" > SELECT profile\n");
+				if (i == 1) printf(" > CREATE NEW profile\n");
+				if (i == 2) printf(" > DELETE profile\n");
+				if (i == 3) printf(" > GO BACK\n");
+			} else {
+				if (i == 0) printf("   SELECT profile\n");
+				if (i == 1) printf("   CREATE NEW profile\n");
+				if (i == 2) printf("   DELETE profile\n");
+				if (i == 3) printf("   GO BACK\n");
+			}
+		}
 		selection = controlsMenu(&cont, selection, 4);
 	}
 	return selection;
@@ -1818,7 +1775,7 @@ void sortProfiles(profileList users){
     fclose(dir);
 }
 
-int checkProfiles(profileList users){
+void checkProfiles(profileList users){
 	int i, numFiles;
 	FILE *dir;
 
@@ -1826,41 +1783,16 @@ int checkProfiles(profileList users){
 	dir = fopen(USER_DIR, "r");
 	fscanf(dir, "%d", &numFiles);
 
-	printf("|         EXISTING PROFILES:         |\n");
 	for(i = 0; i < numFiles; i++){
 		fscanf(dir, "%s", users[i].name);
-		printf("|      %d. %-20s       |  \n", i + 1, users[i].name);
+		printf("%d. ", i + 1);
+
+		if(strcmp(users[i].name, "") == 0){
+			printf("< empty >\n");
+		} else printf("%s\n", users[i].name);
 	}
 
 	fclose(dir);
-	return numFiles;
-}
-
-void renderMenuProfileAsk(int mode, char *filename, profile currentUser, profileList users) {
-    int num;
-	
-    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
-    printf("|                                    |  \n");
-    if(mode == 1) printf("|         PROFILE CREATION           | \n");
-	if(mode == 2) printf("|          PROFILE DELETION          | \n");
-	if(mode == 3) printf("|          PROFILE SELECTION         | \n");
-    printf("|  --------------------------------  |  \n");
-    printf("|  CURRENT USER: %-20s|\n", currentUser.name);
-	printf("|                                    |  \n");
-	num = checkProfiles(users);
-	printf("|                                    |  \n");
-    printf("|         PROVIDE FILE NAME          |  \n");
-    if(mode == 1) printf("|           (MAX 20 CHAR):           |  \n");
-	if(mode == 2 || mode == 3) printf("|       (DO NOT INCLUDE .TXT):       | \n");
-    printf("|                                    |  \n");
-    printf("|                                    |  \n");
-    printf("|                                    |  \n");
-    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
-    iMoveCursor(11, 11+num);
-    iShowCursor();
-    scanf("%s", filename);
-    iMoveCursor(0, 14+num);
-    iHideCursor();
 }
 
 int selectProfile(profile *currentUser, profileList *users){
@@ -1868,7 +1800,13 @@ int selectProfile(profile *currentUser, profileList *users){
 	char filename[21];
 	char path[] = USER_PATH;
 
-	renderMenuProfileAsk(3, name, *currentUser, *users);
+	printf("[PROFILE SELECTION]\nCURRENT USER: %s\n", currentUser->name);
+	checkProfiles(*users);
+
+	printf("\nSELECT PROFILE TO USE: ");
+	iShowCursor();
+	scanf("%s", name);
+	iHideCursor();
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
@@ -1894,6 +1832,9 @@ void newProfile(profile *currentUser, profileList users){
     int num, i;
     FILE *user;
     FILE *dir;
+
+	printf("[PROFILE CREATION]\nEXISTING USER PROFILES:\n");
+	checkProfiles(users);
 	
 	dir = fopen(USER_DIR, "r");
     fscanf(dir, " %d", &num);
@@ -1904,7 +1845,10 @@ void newProfile(profile *currentUser, profileList users){
 		return;
 	}
 
-    renderMenuProfileAsk(1, name, *currentUser, users);
+    printf("\nName must be:\n[1] 3 to 20 characters\n[2] Uppercase letters only\n\nProvide profile name: ");
+	iShowCursor();
+	scanf(" %s", name);
+	iHideCursor();
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
@@ -1983,7 +1927,13 @@ void deleteProfile(profile *currentUser, profileList users){
     int num, i;
     FILE *dir;
 
-	renderMenuProfileAsk(2, name, *currentUser, users);
+    printf("[PROFILE DELETION]\nEXISTING USER PROFILES:\n");
+    checkProfiles(users);
+
+    printf("\nSELECT PROFILE TO DELETE: ");
+    iShowCursor();
+    scanf(" %s", name);
+    iHideCursor();
     strcpy(filename, name);
     strcat(filename, ".txt");
     strcat(path, filename);
@@ -2132,16 +2082,18 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
         diffMinutes[i] = (difficultTime[i] % 3600) / 60;
         diffSeconds[i] = difficultTime[i] % 60;
     }
-    
-    printf("|   EASY**********************LEADERBOARD   |\n");
-    printf("|   [#1 %-20s -  %02d:%02d:%02d]   |\n", easyRanking[0].user, easyHours[0], easyMinutes[0], easySeconds[0]);
-    printf("|   [#2 %-20s -  %02d:%02d:%02d]   |\n", easyRanking[1].user, easyHours[1], easyMinutes[1], easySeconds[1]);
-    printf("|   [#3 %-20s -  %02d:%02d:%02d]   |\n", easyRanking[2].user, easyHours[2], easyMinutes[2], easySeconds[2]);
-    printf("|   DIFFICULT*****************LEADERBOARD   |\n");
-    printf("|   [#1 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[0].user, diffHours[0], diffMinutes[0], diffSeconds[0]);
-    printf("|   [#2 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[1].user, diffHours[1], diffMinutes[1], diffSeconds[1]);
-    printf("|   [#3 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
 
+    printf("            LEADERBOARDS             \n");
+    printf(" EASY*************************CLASSIC\n");
+    printf(" [#1 %s -  %02d:%02d:%02d]\n", easyRanking[0].user, easyHours[0], easyMinutes[0], easySeconds[0]);
+    printf(" [#2 %s -  %02d:%02d:%02d]\n", easyRanking[1].user, easyHours[1], easyMinutes[1], easySeconds[1]);
+    printf(" [#3 %s -  %02d:%02d:%02d]\n", easyRanking[2].user, easyHours[2], easyMinutes[2], easySeconds[2]);
+    printf("                                     \n");
+    printf(" DIFFICULT********************CLASSIC\n");
+    printf(" [#1 %s -  %02d:%02d:%02d]\n", difficultRanking[0].user, diffHours[0], diffMinutes[0], diffSeconds[0]);
+    printf(" [#2 %s -  %02d:%02d:%02d]\n", difficultRanking[1].user, diffHours[1], diffMinutes[1], diffSeconds[1]);
+    printf(" [#3 %s -  %02d:%02d:%02d]\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
+    printf("                                     \n");
 }
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
@@ -2232,7 +2184,13 @@ void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevel
     FILE *chosenLevel;
     customLevel->mines = 0;
 
-	renderMenuLevelAsk(0, filename, cLevels);
+	printf("EXISTING CUSTOM LEVELS:\n");
+	checkLevels(cLevels);
+
+	printf("\nSELECT CUSTOM LEVEL: ");
+	iShowCursor();
+	scanf("%s", filename);
+	iHideCursor();
     strcat(filename, ".txt");
     strcat(path, filename);
 
@@ -2268,25 +2226,25 @@ void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevel
 void playClassic(game *level, profile *currentUser){
 	int classicSelect;
 	int exit = 0;
-	int cont = 1;
+	int i, cont = 1;
 	
 	while (!exit){
 		while(cont){
 			CLEARSCREEN;
-		    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    \n");
-		    printf("|                                    |    \n");
-		    printf("|           START THE GAME           |    \n");
-		    printf("|  --------------------------------  |    \n");
-		    printf("|                                    |    \n");
-		    printf("|     [CLASSIC] PICK DIFFICULTY      |    \n");
-		    printf("|                                    |    \n");
-		    printf("|                                    |    \n");
-			renderMenuPlayClassic(classicSelect);
-		    printf("|                                    |    \n");
-		    printf("|                                    |    \n");
-		    printf("|                                    |    \n");
-		    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    \n");
-		    printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
+			printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
+			printf("Choose DIFFICULTY:\n");
+			
+			for(i = 0; i < 3;i++){
+				if (classicSelect == i){
+					if (i == 0) printf(" > EASY\n");
+					if (i == 1) printf(" > DIFFICULT\n");
+					if (i == 2) printf(" > GO BACK\n");
+				} else {
+					if (i == 0) printf("   EASY\n");
+					if (i == 1) printf("   DIFFICULT\n");
+					if (i == 2) printf("   GO BACK\n");
+				}
+			}
 			classicSelect = controlsMenu(&cont, classicSelect, 3);
 		}
 		
@@ -2324,27 +2282,35 @@ void playClassic(game *level, profile *currentUser){
 void play(profile currentUser, game level, game customLevel, customLevelList *cLevels)
 {
 	int gameSelect = 0;
+	int i;
 	int cont = 1;
+	int max = 3;
 	int exit = 0;
 
 	while (!exit){
 		while (cont) {
 			CLEARSCREEN;
-		    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    \n");
-		    printf("|                                    |    \n");
-		    printf("|           START THE GAME           |    \n");
-		    printf("|  --------------------------------  |    \n");
-		    printf("|                                    |    \n");
-		    printf("|       CHOOSE YOUR GAME MODE!       |    \n");
-		    printf("|                                    |    \n");
-		    printf("|                                    |    \n");
-			renderMenuPlay(gameSelect);
-		    printf("|                                    |    \n");
-		    printf("|                                    |    \n");
-		    printf("|                                    |    \n");
-		    printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    \n");
 			printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
-			gameSelect = controlsMenu(&cont, gameSelect, 3);
+			printf("Choose GAME TYPE:\n");
+			
+			for(i = 0; i < max; i++){
+				if (i == gameSelect && i == 0){
+					printf(" > CLASSIC\n");
+				} else if (i == gameSelect && i == 1){
+					printf(" > CUSTOM\n");
+				} else if (i == gameSelect && i == 2){
+					printf(" > GO BACK\n"); 
+				}
+				else if (i == 0){
+					printf("   CLASSIC\n");
+				} else if (i == 1){
+					printf("   CUSTOM\n");
+				} else if (i == 2){
+					printf("   GO BACK\n");
+				}
+			}
+			
+			gameSelect = controlsMenu(&cont, gameSelect, max);
 		}
 			
 			switch (gameSelect)
@@ -2370,11 +2336,13 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 	
 }
 
+
 void startMenu(profile *currentUser, profileList *users){
 	int num, i, selection = 0, cont = 1, valid = 0;
 	FILE *dir;
 	
-	asciiStartMenu();
+	printf("Welcome to Minesweeper!\n");
+	delay(1000);
 	
 	dir = fopen(USER_DIR, "r");
 	fscanf(dir, " %d", &num);
@@ -2392,13 +2360,9 @@ void startMenu(profile *currentUser, profileList *users){
 			
 		for(i = 0; i < 2; i++){
 			if (selection == i && i == 0){
-				iSetColor(I_COLOR_YELLOW);
 				printf(" > NEW PROFILE\n");
-				iSetColor(I_COLOR_WHITE);
 			} else if (selection == i && i == 1){
-				iSetColor(I_COLOR_YELLOW);
 				printf(" > SELECT PROFILE\n");
-				iSetColor(I_COLOR_WHITE);
 			} else if (i == 0){
 				printf("   NEW PROFILE\n");
 			} else if (i == 1){
@@ -2433,7 +2397,7 @@ void startMenu(profile *currentUser, profileList *users){
 /* GAME PROPER */
 int main(){
 	// initalize variables
-	profile currentUser = {""};
+	profile currentUser;
 	profileList users;
 
 	game level;
@@ -2445,7 +2409,7 @@ int main(){
 
 	// start
 	iHideCursor();
-	int menuSelect, cont;
+	int menuSelect, i, cont;
 	int exit = 0;
 	startMenu(&currentUser, &users);
 	delay(300);
@@ -2454,17 +2418,26 @@ int main(){
 		cont = 1;
 		while (cont){
 			CLEARSCREEN;
-		 	printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
-		    printf("|                                           |\n");
-		    printf("|                MAIN MENU                  |\n");
-		    printf("|  ---------------------------------------  |\n");
-		    printf("|     CURRENT USER: %-20s    |\n",currentUser.name);
-		    printf("|                                           |\n");
+	    	printf("CURRENT USER: %s\n", currentUser.name);
+	    	printf("[MAIN MENU]\n\n");
+	    	
 			makeLeaderboard(easyRanking, difficultRanking, users);
-			renderMainMenu(menuSelect);
-			printf("|                                           |\n");
-    		printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
 	
+			for (i = 0; i < 5;i++){
+				if (i == menuSelect){
+					if (i == 0) printf(" > PLAY\n");
+					if (i == 1) printf(" > LEVEL EDITOR\n");
+					if (i == 2) printf(" > CHANGE PROFILE\n");
+					if (i == 3) printf(" > VIEW STATISTICS\n");
+					if (i == 4) printf(" > QUIT\n");
+				} else {
+					if (i == 0) printf("   PLAY\n");
+					if (i == 1) printf("   LEVEL EDITOR\n");
+					if (i == 2) printf("   CHANGE PROFILE\n");
+					if (i == 3) printf("   VIEW STATISTICS\n");
+					if (i == 4) printf("   QUIT\n");
+				}
+			}
 			menuSelect = controlsMenu(&cont, menuSelect, 5);
 		}
 			

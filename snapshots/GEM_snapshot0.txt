@@ -1,4 +1,4 @@
-QUIT 3
+QUIT 8
 CLASSIC-DIFFICULT 10 15
 . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . 
