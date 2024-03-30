@@ -1,0 +1,8 @@
+NOTMOLLY
+0
+2
+1
+2
+snapshots/NOTMOLLY_snapshot0.txt
+snapshots/NOTMOLLY_snapshot1.txt
+snapshots/NOTMOLLY_snapshot2.txt

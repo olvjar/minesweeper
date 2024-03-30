@@ -594,19 +594,19 @@ int mineCount(game level, int i, int j){
 	if(level.board[i][j] != 'X'){
 		if(level.board[i-1][j] == 'X' && i > 0)
 		count++;
-		if(level.board[i+1][j] == 'X' && i < level.rows)
+		if(level.board[i+1][j] == 'X' && i < level.rows - 1)
 		count++;
 		if(level.board[i][j-1] == 'X' && j > 0)
 		count++;
-		if(level.board[i][j+1] == 'X' && j < level.cols)
+		if(level.board[i][j+1] == 'X' && j < level.cols - 1)
 		count++;
 		if(level.board[i-1][j-1] == 'X' && i > 0 && j > 0)
 		count++;
-		if(level.board[i-1][j+1] == 'X' && i > 0 && j < level.cols)
+		if(level.board[i-1][j+1] == 'X' && i > 0 && j < level.cols - 1)
 		count++;
-		if(level.board[i+1][j-1] == 'X' && i < level.rows && j > 0)
+		if(level.board[i+1][j-1] == 'X' && i < level.rows - 1 && j > 0)
 		count++;
-		if(level.board[i+1][j+1] == 'X' && i < level.rows && j < level.cols)
+		if(level.board[i+1][j+1] == 'X' && i < level.rows -1 && j < level.cols - 1)
 		count++;
 			
 		return count;
@@ -709,8 +709,6 @@ int inspectBoard(game *level, char outcome[]) {
             strcpy(outcome, "lose");
             level->gameBoard[i][j] = 999;
             printBoardChar(*level);
-            printf("Press any key to continue...");
-			getch();
             return 0;    
         } else {
             cascade(level, i, j);
@@ -753,8 +751,6 @@ int gameChecker(game level, char outcome[]){
 		printf("\nAll non-mine tiles revealed.\nYou win!\n");
 		strcpy(outcome, "win");
 		printBoardChar(level);
-		printf("Press any key to continue...");
-		getch();
 		return 0;
 	}
 	else return 1;
@@ -782,7 +778,14 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fdest = fopen(destFile, "w");
 	
 	fscanf(fsource, " %s", outcome);
-	if (outcome[0] == '0') return; 
+	
+	if (strcmp(outcome, "0") == 0) {
+		fprintf(fdest, "0");
+		fclose(fsource);
+		fclose(fdest);
+		return;
+	} 
+	
 	fscanf(fsource, " %d", &time);
 	fscanf(fsource, " %s", mode);
 	fscanf(fsource, " %d", &rows);
@@ -972,7 +975,7 @@ void updateStatistics(game level, char outcome[], profile *currentUser){
 }
 
 /*	
-	This function generates the gameBoard, starts the time, 
+	This function generates the gameBoard, keeps track of the time elapsed, 
 	and continuously asks the player to inspect, flag, or remove a flag until the game ends or the player quits.
 	After the game ending, it will save the snapshot of the board and updates the statistics of the user.
 	@ param level - a structure that pertains to the information of the level
@@ -1056,11 +1059,24 @@ void gameProper(game level, profile *currentUser){
 		alive = gameChecker(level, outcome);
 		}
 	}
+	printf("\nTIME: %02d:%02d:%02d\n\n", hours, minutes, seconds);
 	saveSnapshot(level, outcome, *currentUser, timeElapsed);
 	updateStatistics(level, outcome, currentUser);
+	printf("Press any key to continue...");
+	getch();
 }
 
 /* level edit */
+
+/*	
+	This function prints the menu for editing a level and allows for arrow key input from the user
+	@ param customLevel - a structure pointer that pertains to the information of a custom level
+	@ param minesCount - an integer that holds the amount of mines of a custom level
+
+	@ return the selection of the user
+	
+	Pre-condition: *customLevel has all members declared (except for gameBoard), minesCount is a nonnegative integer
+*/
 
 int menuEditLevel(game *customLevel, int minesCount){
 	int i, selection = 0, cont = 1;
@@ -1091,6 +1107,13 @@ int menuEditLevel(game *customLevel, int minesCount){
 	return selection;
 }
 
+/*	
+	This function prints the menu for the level editor menu and allows for arrow key input from the user
+	@ return the selection of the user
+	
+	Pre-condition: none
+*/
+
 int menuLevelEditor(){
 	int i, selection = 0, cont = 1;
 	
@@ -1117,6 +1140,14 @@ int menuLevelEditor(){
 	return selection;
 }
 
+/*	
+	This function checks if a file exists 
+	@ param *fileName - a string that holds the path of the file			 
+
+	@ return the boolean value if the file exists. 1 for true and 0 for false.
+	
+	Pre-condition: none
+*/
 
 int fileExists(char *filename) {
     FILE *file = fopen(filename, "r");
@@ -1128,6 +1159,15 @@ int fileExists(char *filename) {
         return 0; // null
     }
 }
+
+/*	
+	This function opens the level directory, scans and puts them cLevels, and prints the levels
+	@ param *cLevels - a 1D string array that holds the information of each level file			 
+
+	@ return the boolean value if the file exists. 1 for true and 0 for false.
+	
+	Pre-condition: the integer value of the first line in the directory is greater than or equal to 0
+*/
 
 void checkLevels(customLevelList *cLevels){
 	int i, numFiles;
@@ -1145,6 +1185,16 @@ void checkLevels(customLevelList *cLevels){
 	fclose(dir);
 }
 
+/*	
+	This function allows the player to place a mine on the board
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	
+	@ return void
+	
+	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
+*/
+
 void placeMine(game *customLevel, int *minesCount) {
     int row, col;
 
@@ -1160,6 +1210,16 @@ void placeMine(game *customLevel, int *minesCount) {
 		printf("Invalid position. Mine not placed.\n\n");
     }
 }
+
+/*	
+	This function allows the player to delete a mine on the board
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	
+	@ return void
+	
+	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
+*/
 
 void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
@@ -1177,6 +1237,17 @@ void deleteMine(game *customLevel, int *minesCount) {
     }
 }
 
+/*	
+	This function checks if a custom level is valid for saving.
+	A level is invalid if (1) every cell is a mine, and (2) there are no mines.
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	
+	@ return a boolean value determining if a level is valid. 1 for true and 0 for false.
+	
+	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
+*/
+
 int checkValidity(game *customLevel, int *minesCount){
 	int cells = customLevel->rows * customLevel->cols;
 
@@ -1190,6 +1261,15 @@ int checkValidity(game *customLevel, int *minesCount){
 		return 1;
 	}
 }
+
+/*	
+	This function deletes a level from the level directory and also deletes the level file
+	@ param *cLevels - a 1D string array that holds the information of each level file			 
+
+	@ return void
+	
+	Pre-condition: the integer value of the first line in the directory is greater than or equal to 0
+*/
 
 void deleteLevel(customLevelList *cLevels){
 	char filename[21];
