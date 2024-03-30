@@ -5,7 +5,7 @@
 The classic Minesweeper game written in C  
 by [olvjar](https://github.com/olvjar) and [marieltmdg](https://github.com/marieltmdg)
 
-A collaborative university machine project turned small passion project. This was made with a focus on learning C programming and CLI interactions. It is a command line, ASCII-based version of minesweeper.
+A collaborative university machine project turned small passion project. This was made with a focus on learning C programming and CLI interactions. It is a command line, ASCII version of minesweeper.
 
 ### Features
 
