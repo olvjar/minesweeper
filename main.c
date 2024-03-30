@@ -1162,7 +1162,7 @@ int fileExists(char *filename) {
 
 /*	
 	This function opens the level directory, scans and puts them cLevels, and prints the levels
-	@ param *cLevels - a 1D string array that holds the information of each level file			 
+	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
 
 	@ return the boolean value if the file exists. 1 for true and 0 for false.
 	
@@ -1264,7 +1264,7 @@ int checkValidity(game *customLevel, int *minesCount){
 
 /*	
 	This function deletes a level from the level directory and also deletes the level file
-	@ param *cLevels - a 1D string array that holds the information of each level file			 
+	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level	 
 
 	@ return void
 	
@@ -1319,6 +1319,20 @@ void deleteLevel(customLevelList *cLevels){
 	}
 }
 
+/*	
+	This function saves the level. 
+	It opens and reads the level directory and rewrites it with the addition of the file to be saved.
+	@ param mode - an integer that corresponds to whether the file is new or old
+	@ param *file - a file pointer that points to a file containing the custom level
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level			 
+	@ param *fileName - a string that holds the path of the file
+
+	@ return void
+	
+	Pre-condition: there is no duplicate file name in the directory
+*/
+
 void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels, char *filename) {
 	fprintf(file, "%d %d\n", customLevel->rows, customLevel->cols);
 
@@ -1350,6 +1364,18 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
     	fclose(dir);
 	}
 }
+
+/*	
+	This function directs to functions that edit a level, depending on the user's selection.
+	Specifically, (1) placing a mine, (2) deleting a mine, and (3) saving the level. 
+	It opens and reads the level directory and rewrites it with the addition of the file to be saved.
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+
+	@ return an integer to determine if the level is valid. 1 for true
+	
+	Pre-condition: *customLevel has rows, cols, mode, and board declared, and minesCount is a nonnegative integer
+*/
 
 int editLevel(game *customLevel, int minesCount){
     int save;
@@ -1392,6 +1418,17 @@ int editLevel(game *customLevel, int minesCount){
 
 	return save;
 }
+
+/*	
+	This function allows the player to edit a level that was already created.
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+
+	@ return void
+	
+	Pre-condition: *customLevel has all members declared (except for gameBoard), 
+					and the integer value of the first line in the directory is greater than or equal to 0
+*/
 
 void loadLevel(game *customLevel, customLevelList *cLevels){
 	char filename[20];
@@ -1449,6 +1486,16 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	}
 }
 
+/*	
+	This function allows the player to create a new custom level
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+
+	@ return void
+	
+	Pre-condition: none
+*/
+
 void createLevel(game *customLevel, customLevelList *cLevels){
 	char filename[20];
     char path[100] = LVL_PATH;
@@ -1465,10 +1512,10 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     strcat(path, filename);
 
     if (fileExists(path) == 1) {
-        printf("Level cannot be created. File already exists.\n");
+        printf("\nLevel cannot be created. File already exists.\n");
     } else {
         CLEARSCREEN;
-		printf("Level %s will be created.\n", filename);
+		printf("\nLevel %s will be created.\n", filename);
 
 		int validNum = 0;
 		while(!validNum){
@@ -1508,6 +1555,17 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 		}
     }
 }
+
+/*	
+	This function directs to functions for custom levels, depending on the user's selection.
+	Specifically, (1) creating a new level, (2) editing a previously created level, and (3) deleting a level. 
+	@ param *customLevel - a structure pointer that pertains to the information of a custom level
+	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+
+	@ return void
+	
+	Pre-condition: none
+*/
 
 void levelEditor(game *customLevel, customLevelList *cLevels) {
     int quit = 0, choice;
