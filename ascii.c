@@ -102,6 +102,9 @@ void asciiStartMenu() {
 }
 
 void renderMainMenu(int selection) {
+	int values[] = {3, 5, 6};
+	int choice = rand() % 3;
+	int color = values[choice];
 	char *menuMessage[] = {
     	"|                                           |",
     	"",
@@ -126,8 +129,9 @@ void renderMainMenu(int selection) {
     for (int i = 0; i < 3; i++) {
         if (i == 1) {
         	printf("|   ");
-        	iSetColor(rand() % (6 - 3 + 1) + 3); // randomly choose from range 3 to 6 of iSetColors
-            printf("%s", messages[selection]);
+        	//iSetColor(rand() % (6 - 3 + 1) + 3); // randomly choose from range 3 to 6 of iSetColors
+            iSetColor(color);
+			printf("%s", messages[selection]);
             iSetColor(I_COLOR_WHITE);
             printf("   |\n");
         } else {
