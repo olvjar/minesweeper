@@ -2,7 +2,7 @@
 	Description: <describe what this program does briefly >
 	Author: GRINO, Mary Eunice E. and TAMONDONG, Mariel M.
 	Section: S17B
-	Last Modified: March 25, 2024
+	Last Modified: March 31, 2024
 	Acknowledgments: Thomas Tiam-Lee
 */
 #include <stdio.h>
@@ -83,8 +83,8 @@ typedef struct scoreboard leaderboard[3];
 
 /*	
 	This function delays the execution of preceding the code
-	@ param time - an integer that pertains to the delay length
-	@ return void
+	@param time - an integer that pertains to the delay length
+	@return void
 	Pre-condition: time is a nonnegative integer
 */
 void delay(int time){
@@ -98,10 +98,10 @@ void delay(int time){
 /*	
 	This function allows the user to choose their input in a menu using arrow keys
 	@param *cont - an integer pointer that determines the continuation of a loop
-	@ param selection - an integer that pertains to the current selection of the arrow
-	@ param max - an integer that pertains to the max number of choices in a selection
+	@param selection - an integer that pertains to the current selection of the arrow
+	@param max - an integer that pertains to the max number of choices in a selection
 
-	@ return the selection of the user
+	@return the selection of the user
 	
 	Pre-condition: *cont == 1, selection is a nonnegative integer, and max is a nonnegative integer
 */
@@ -135,11 +135,11 @@ int controlsMenu(int *cont, int selection, int max){
 
 /*	
 	This function allows the user to choose their input in the game using arrow keys
-	@ param level - a structure that pertains to the information of the level
-	@ param *rowChosen - an integer pointer that holds the value of the row index of the array
-	@ param *colChosen - an integer pointer that holds the value of the column index of the array
+	@param level - a structure that pertains to the information of the level
+	@param *rowChosen - an integer pointer that holds the value of the row index of the array
+	@param *colChosen - an integer pointer that holds the value of the column index of the array
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared
 */
@@ -276,11 +276,11 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 
 /*	
 	This function allows the user to choose their input in the level editor using arrow keys
-	@ param level - a structure that pertains to the information of the level
-	@ param *rowChosen - an integer pointer that holds the value of the row index of the array
-	@ param *colChosen - an integer pointer that holds the value of the column index of the array
+	@param level - a structure that pertains to the information of the level
+	@param *rowChosen - an integer pointer that holds the value of the row index of the array
+	@param *colChosen - an integer pointer that holds the value of the column index of the array
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared
 */
@@ -408,9 +408,9 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 
 /*	
 	This function prints the board that is visible to the player while playing
-	@ param level - a structure that pertains to the information of the level
+	@param level - a structure that pertains to the information of the level
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared
 */
@@ -482,8 +482,8 @@ void printBoard(game level){
 
 /*	
 	This function prints the board that is not visible to the player (i.e. the board comprprised of '.' and 'X')
-	@ param level - a structure that pertains to the information of the level
-	@ return void
+	@param level - a structure that pertains to the information of the level
+	@return void
 	
 	Pre-condition: level has all memebrs declared
 */
@@ -549,9 +549,9 @@ void printBoardChar(game level){
 
 /*	
 	This function randomly generates a board, given the variables level->mines, level->cols, and level->rows
-	@ param *level - a structure pointer that pertains to the information of the level
+	@param *level - a structure pointer that pertains to the information of the level
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, except for board[][] and gameBoard[][]
 */
@@ -580,11 +580,11 @@ void makeBoard(game *level){
 
 /*	
 	This function checks if a cell contains a mine. If not, it counts the amount of adjacent mines
-	@ param level - a structure that pertains to the information of the level
-	@ param i - the row index of the cell to inspect
-	@ param j - the column index of the cell to inspect
+	@param level - a structure that pertains to the information of the level
+	@param i - the row index of the cell to inspect
+	@param j - the column index of the cell to inspect
 
-	@ return -1 if the cell is a mine. If not, the amount of adjacent mines
+	@return -1 if the cell is a mine. If not, the amount of adjacent mines
 	
 	Pre-condition: level has a level.board declared, and i and j are nonnegative integers
 */
@@ -617,11 +617,11 @@ int mineCount(game level, int i, int j){
 
 /*	
 	This is a recursive function that reveals the gameBoard in a cascading manner from the original tile
-	@ param *level - a structure pointer that pertains to the information of the level
-	@ param i - the row index of the cell to inspect
-	@ param j - the column index of the cell to inspect
+	@param *level - a structure pointer that pertains to the information of the level
+	@param i - the row index of the cell to inspect
+	@param j - the column index of the cell to inspect
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has a level.board declared, and i and j are nonnegative integers
 */
@@ -644,9 +644,9 @@ void cascade(game *level, int i, int j){
 
 /*	
 	This function allows the player to place a flag on the gameBoard
-	@ param *level - a structure pointer that pertains to the information of the level
+	@param *level - a structure pointer that pertains to the information of the level
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, except for gameBoard
 */
@@ -668,9 +668,9 @@ void placeFlag(game *level){
 
 /*	
 	This function allows the player to remove a flag on the gameBoard
-	@ param *level - a structure pointer that pertains to the information of the level
+	@param *level - a structure pointer that pertains to the information of the level
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, except for gameBoard
 */
@@ -691,10 +691,10 @@ void removeFlag(game *level){
 /*	
 	This function allows the player to inspect the board.
 	It ends the game when the player inspects a mine, and triggers cascade if not.
-	@ param *level - a structure pointer that pertains to the information of the level
-	@ param outcome[] - a string that holds the outcome of the game
+	@param *level - a structure pointer that pertains to the information of the level
+	@param outcome[] - a string that holds the outcome of the game
 
-	@ return the boolean value determining the game continues. 1 for true, 0 for false
+	@return the boolean value determining the game continues. 1 for true, 0 for false
 	
 	Pre-condition: level has all members declared
 */
@@ -726,10 +726,10 @@ int inspectBoard(game *level, char outcome[], int time) {
 
 /*	
 	This function checks if the player wins the game, given that they have revealed all non-mine tiles
-	@ param level - a structure that pertains to the information of the level
-	@ param outcome[] - a string that holds the outcome of the game
+	@param level - a structure that pertains to the information of the level
+	@param outcome[] - a string that holds the outcome of the game
 
-	@ return the boolean value determining the game continues. 1 for true, 0 for false
+	@return the boolean value determining the game continues. 1 for true, 0 for false
 	
 	Pre-condition: level has all members declared
 */
@@ -759,10 +759,10 @@ int gameChecker(game level, char outcome[], int time){
 
 /*	
 	This function reads and writes a given snapshot of a recent game from one file to another.
-	@ param destFile[] - a string that holds the path of the destination of the file to be overwritten
-	@ param sourceFile[] - a string that holds the path of the file to be copied from
+	@param destFile[] - a string that holds the path of the destination of the file to be overwritten
+	@param sourceFile[] - a string that holds the path of the file to be copied from
 
-	@ return void
+	@return void
 	
 	Pre-condition: destFile[] and sourceFile[] are valid paths
 */
@@ -817,12 +817,12 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 
 /*	
 	This function saves a snapshot of the final board in a text file containing the player's most recent game
-	@ param level - a structure that pertains to the information of the level
-	@ param outcome[] - a string that holds the outcome of the game
-	@ param currentUser - a structure that contains the information of the current user
-	@ param time - an integer that holds the amount of time the game was played from start to end
+	@param level - a structure that pertains to the information of the level
+	@param outcome[] - a string that holds the outcome of the game
+	@param currentUser - a structure that contains the information of the current user
+	@param time - an integer that holds the amount of time the game was played from start to end
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, outcome is valid, currentUser is declared, and time is a nonnegative integer
 */
@@ -910,11 +910,11 @@ void saveSnapshot(game level, char outcome[], profile currentUser, int time){
 
 /*	
 	This function updates the player's statistics after a game ends.
-	@ param level - a structure that pertains to the information of the level
-	@ param outcome[] - a string that holds the outcome of the game
-	@ param *currentUser - a structure pointer that contains the information of the current user
+	@param level - a structure that pertains to the information of the level
+	@param outcome[] - a string that holds the outcome of the game
+	@param *currentUser - a structure pointer that contains the information of the current user
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, outcome is valid, and currentUser is declared
 */
@@ -979,10 +979,10 @@ void updateStatistics(game level, char outcome[], profile *currentUser){
 	This function generates the gameBoard, keeps track of the time elapsed, 
 	and continuously asks the player to inspect, flag, or remove a flag until the game ends or the player quits.
 	After the game ending, it will save the snapshot of the board and updates the statistics of the user.
-	@ param level - a structure that pertains to the information of the level
-	@ param *currentUser - a structure pointer that contains the information of the current user
+	@param level - a structure that pertains to the information of the level
+	@param *currentUser - a structure pointer that contains the information of the current user
 
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, *currentUser has all members declared
 */
@@ -1072,10 +1072,10 @@ void gameProper(game level, profile *currentUser){
 
 /*	
 	This function prints the menu for editing a level and allows for arrow key input from the user
-	@ param customLevel - a structure pointer that pertains to the information of a custom level
-	@ param minesCount - an integer that holds the amount of mines of a custom level
+	@param customLevel - a structure pointer that pertains to the information of a custom level
+	@param minesCount - an integer that holds the amount of mines of a custom level
 
-	@ return the selection of the user
+	@return the selection of the user
 	
 	Pre-condition: *customLevel has all members declared (except for gameBoard), minesCount is a nonnegative integer
 */
@@ -1111,7 +1111,7 @@ int menuEditLevel(game *customLevel, int minesCount){
 
 /*	
 	This function prints the menu for the level editor menu and allows for arrow key input from the user
-	@ return the selection of the user
+	@return the selection of the user
 	
 	Pre-condition: none
 */
@@ -1142,9 +1142,9 @@ int menuLevelEditor(){
 
 /*	
 	This function checks if a file exists 
-	@ param *fileName - a string that holds the path of the file			 
+	@param *fileName - a string that holds the path of the file			 
 
-	@ return the boolean value if the file exists. 1 for true and 0 for false.
+	@return the boolean value if the file exists. 1 for true and 0 for false.
 	
 	Pre-condition: none
 */
@@ -1162,9 +1162,9 @@ int fileExists(char *filename) {
 
 /*	
 	This function opens the level directory, scans and puts them cLevels, and prints the levels
-	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+	@param *cLevels - a 1D structure array of that holds the information file name and path of each level
 
-	@ return the boolean value if the file exists. 1 for true and 0 for false.
+	@return the boolean value if the file exists. 1 for true and 0 for false.
 	
 	Pre-condition: the integer value of the first line in the directory is greater than or equal to 0
 */
@@ -1214,10 +1214,10 @@ void renderMenuLevelAsk(int mode, char *filename, customLevelList *cLevels) {
 }
 /*	
 	This function allows the player to place a mine on the board
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *minesCount - an integer pointer that holds the amount of mines of a custom level
 	
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
 */
@@ -1240,10 +1240,10 @@ void placeMine(game *customLevel, int *minesCount) {
 
 /*	
 	This function allows the player to delete a mine on the board
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *minesCount - an integer pointer that holds the amount of mines of a custom level
 	
-	@ return void
+	@return void
 	
 	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
 */
@@ -1267,10 +1267,10 @@ void deleteMine(game *customLevel, int *minesCount) {
 /*	
 	This function checks if a custom level is valid for saving.
 	A level is invalid if (1) every cell is a mine, and (2) there are no mines.
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *minesCount - an integer pointer that holds the amount of mines of a custom level
 	
-	@ return a boolean value determining if a level is valid. 1 for true and 0 for false.
+	@return a boolean value determining if a level is valid. 1 for true and 0 for false.
 	
 	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
 */
@@ -1291,9 +1291,9 @@ int checkValidity(game *customLevel, int *minesCount){
 
 /*	
 	This function deletes a level from the level directory and also deletes the level file
-	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level	 
+	@param *cLevels - a 1D structure array of that holds the information file name and path of each level	 
 
-	@ return void
+	@return void
 	
 	Pre-condition: the integer value of the first line in the directory is greater than or equal to 0
 */
@@ -1344,13 +1344,13 @@ void deleteLevel(customLevelList *cLevels){
 /*	
 	This function saves the level. 
 	It opens and reads the level directory and rewrites it with the addition of the file to be saved.
-	@ param mode - an integer that corresponds to whether the file is new or old
-	@ param *file - a file pointer that points to a file containing the custom level
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level			 
-	@ param *fileName - a string that holds the path of the file
+	@param mode - an integer that corresponds to whether the file is new or old
+	@param *file - a file pointer that points to a file containing the custom level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *cLevels - a 1D structure array of that holds the information file name and path of each level			 
+	@param *fileName - a string that holds the path of the file
 
-	@ return void
+	@return void
 	
 	Pre-condition: there is no duplicate file name in the directory
 */
@@ -1391,10 +1391,10 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
 	This function directs to functions that edit a level, depending on the user's selection.
 	Specifically, (1) placing a mine, (2) deleting a mine, and (3) saving the level. 
 	It opens and reads the level directory and rewrites it with the addition of the file to be saved.
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *minesCount - an integer pointer that holds the amount of mines of a custom level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *minesCount - an integer pointer that holds the amount of mines of a custom level
 
-	@ return an integer to determine if the level is valid. 1 for true
+	@return an integer to determine if the level is valid. 1 for true
 	
 	Pre-condition: *customLevel has rows, cols, mode, and board declared, and minesCount is a nonnegative integer
 */
@@ -1443,10 +1443,10 @@ int editLevel(game *customLevel, int minesCount){
 
 /*	
 	This function allows the player to edit a level that was already created.
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *cLevels - a 1D structure array of that holds the information file name and path of each level
 
-	@ return void
+	@return void
 	
 	Pre-condition: *customLevel has all members declared (except for gameBoard), 
 					and the integer value of the first line in the directory is greater than or equal to 0
@@ -1503,10 +1503,10 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 
 /*	
 	This function allows the player to create a new custom level
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *cLevels - a 1D structure array of that holds the information file name and path of each level
 
-	@ return void
+	@return void
 	
 	Pre-condition: none
 */
@@ -1592,10 +1592,10 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 /*	
 	This function directs to functions for custom levels, depending on the user's selection.
 	Specifically, (1) creating a new level, (2) editing a previously created level, and (3) deleting a level. 
-	@ param *customLevel - a structure pointer that pertains to the information of a custom level
-	@ param *cLevels - a 1D structure array of that holds the information file name and path of each level
+	@param *customLevel - a structure pointer that pertains to the information of a custom level
+	@param *cLevels - a 1D structure array of that holds the information file name and path of each level
 
-	@ return void
+	@return void
 	
 	Pre-condition: none
 */
@@ -1636,6 +1636,14 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 
 /* statistics */
 
+/*	
+	This function gets the game data and recent games of the current user.
+	@param *currentUser - a structure pointer that contains the information of the current user
+
+	@return void
+	
+	Pre-condition: *currentUser has all members declared
+*/
 void getStatistics(profile *currentUser){
 	FILE *user;
 	char path[] = USER_PATH;
@@ -1652,6 +1660,14 @@ void getStatistics(profile *currentUser){
 	fclose(user);
 }
 
+/*	
+	This function allows the current user to view their statistics.
+	@param *currentUser - a structure pointer that contains the information of the current user
+
+	@return void
+	
+	Pre-condition: *currentUser has all members declared
+*/
 void viewStatistics(profile *currentUser){
 	int choice, quit = 0;
     int i, j, k, b, c;
@@ -1746,6 +1762,14 @@ void viewStatistics(profile *currentUser){
 
 /* profile */
 
+/*	
+	This function allows the current user to view their statistics.
+	@param currentUser - a structure that contains the information of the current user
+
+	@return the selection of the user
+	
+	Pre-condition: *currentUser has all members declared
+*/
 int menuProfile(profile currentUser, int *choice){
 	int selection = 0, cont = 1;
 	
@@ -1769,6 +1793,13 @@ int menuProfile(profile currentUser, int *choice){
 	return selection;
 }
 
+/*	
+	This function allows the current user to view their statistics.
+	@param name[] - a string that holds the name input of the user
+	@return 1 if name is capitalized, 0 otherwise
+	
+	Pre-condition: name is not empty
+*/
 int checkCapital(char name[]){
 	int i;
 	
@@ -1779,6 +1810,14 @@ int checkCapital(char name[]){
 	return 1;
 }
 
+/*	
+	This function sorts the profile list alphabetically.
+	@param  users - a 1D array that contains the player profiles
+
+	@return void
+	
+	Pre-condition: users is not empty
+*/
 void sortProfiles(profileList users){
 	int i, j, num;
 	int low;
@@ -1818,6 +1857,14 @@ void sortProfiles(profileList users){
     fclose(dir);
 }
 
+/*	
+	This function checks the currently existing users/profiles;
+	@param  users - a 1D array that contains the player profiles
+
+	@return number of existing users/profiles
+	
+	Pre-condition: users is not empty
+*/
 int checkProfiles(profileList users){
 	int i, numFiles;
 	FILE *dir;
@@ -1835,6 +1882,20 @@ int checkProfiles(profileList users){
 	fclose(dir);
 	return numFiles;
 }
+
+/*	
+	This function displays a menu for profile creation, deletion, or selection. 
+	It prompts the user for a file name, and updates the cursor position for input.
+	
+	@param mode - an integer that indicates the purpose of the menu being displayed
+	@param *filename - a string that holds the path of the file
+	@param currentUser - a structure that contains the information of the current user
+	@param users - a 1D array that contains the player profiles
+
+	@return void
+	
+	Pre-condition: no parameters are empty
+*/
 
 void renderMenuProfileAsk(int mode, char *filename, profile currentUser, profileList users) {
     int num;
@@ -1863,6 +1924,16 @@ void renderMenuProfileAsk(int mode, char *filename, profile currentUser, profile
     iHideCursor();
 }
 
+/*
+    This function allows the user to select an existing profile and updates the current user.
+
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param *users - a pointer to an array of structures containing player profiles
+    
+	@return 1 if profile selection is successful, else returns 0
+
+    Pre-condition: currentUser and users are not empty
+*/
 int selectProfile(profile *currentUser, profileList *users){
 	char name[21];
 	char filename[21];
@@ -1886,6 +1957,16 @@ int selectProfile(profile *currentUser, profileList *users){
 	}
 }
 
+/*
+    This function allows the user to create a new profile and updates the list of profiles.
+
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param users - a structure containing an array of player profiles
+
+    @return void
+
+    Pre-condition: currentUser and users are not empty
+*/
 void newProfile(profile *currentUser, profileList users){
 	char name[21];
 	char filename[21];
@@ -1895,20 +1976,24 @@ void newProfile(profile *currentUser, profileList users){
     FILE *user;
     FILE *dir;
 	
+	// read number of users
 	dir = fopen(USER_DIR, "r");
     fscanf(dir, " %d", &num);
     fclose(dir);
     
+	// check if max number of users is reached
     if(num > 9){
 		printf("\nMax number of profiles reached. (10 profiles)\n");
 		return;
 	}
 
+	// render menu and get user input
     renderMenuProfileAsk(1, name, *currentUser, users);
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
 
+	// validation
     if(strlen(name) > 20){
     	printf("\nName is over 20 characters.\n");
     	return;
@@ -1975,6 +2060,15 @@ void newProfile(profile *currentUser, profileList users){
 	}
 }
 
+/*
+    This function allows the user to delete an existing profile and associated game snapshots.
+
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param users - a structure containing an array of player profiles
+    @return void
+
+    Pre-condition: currentUser and users are not empty
+*/
 void deleteProfile(profile *currentUser, profileList users){
     char name[21];
     char filename[21];
@@ -2049,6 +2143,15 @@ void deleteProfile(profile *currentUser, profileList users){
 	}
 }
 
+/*
+    This function displays the change profile menu to change profile, create a new profile, and delete any existing profiles.
+
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param *users - a pointer to an array of structures containing player profiles
+    @return void
+
+    Pre-condition: currentUser and level has all members declared
+*/
 void changeProfile(profile *currentUser, profileList *users){
 	int choice, quit = 0;
 
@@ -2226,6 +2329,16 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
 
 /* play */
 
+/*
+    This function allows the player to play a custom level. 
+
+    @param *customLevel - a pointer to a structure containing custom level details
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param *cLevels - a pointer to a structure containing a list of custom levels
+    @return void
+
+	Pre-condition: currentUser, customLevel, and level has all members declared
+*/
 void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevels){
 	char filename[20];
     char path[100] = LVL_PATH;
@@ -2265,6 +2378,15 @@ void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevel
 	}	
 }
 
+/*
+    This function allows the player to play a classic level.
+
+    @param *level - a pointer to a structure containing classic level details
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @return void
+
+    Pre-condition: currentUser and level has all members declared
+*/
 void playClassic(game *level, profile *currentUser){
 	int classicSelect;
 	int exit = 0;
@@ -2320,7 +2442,17 @@ void playClassic(game *level, profile *currentUser){
 		}
 	}
 
+/*
+    This function displays a menu for the player to choose between the classic or custom gamemode.
 
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param *level - a pointer to a structure containing classic level details
+    @param *customLevel - a pointer to a structure containing custom level details
+    @param *cLevels - a pointer to a structure containing a list of custom levels
+    @return void
+
+    Pre-condition: currentUser, level, customLevel, and cLevels has all members declared
+*/
 void play(profile currentUser, game level, game customLevel, customLevelList *cLevels)
 {
 	int gameSelect = 0;
@@ -2370,6 +2502,15 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 	
 }
 
+/*
+    This function displays the start menu the game, prompting the user between profile creation or selection.
+
+    @param *currentUser - a pointer to a structure containing the information of the current user
+    @param *users - a pointer to an array of structures containing player profiles
+    @return void
+
+    Pre-condition: currentUser and users are declared
+*/
 void startMenu(profile *currentUser, profileList *users){
 	int num, i, selection = 0, cont = 1, valid = 0;
 	FILE *dir;
