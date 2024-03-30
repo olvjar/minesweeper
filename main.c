@@ -96,13 +96,13 @@ void delay(int time){
 
 /*	
 	This function allows the user to choose their input in a menu using arrow keys
-	@param *cont - a pointer that determines the continuation of a loop
+	@param *cont - an integer pointer that determines the continuation of a loop
 	@ param selection - an integer that pertains to the current selection of the arrow
 	@ param max - an integer that pertains to the max number of choices in a selection
 
 	@ return the selection of the user
 	
-	Pre-condition: *cont == 1, selection is a nonnegative integer, max is a nonnegative integer
+	Pre-condition: *cont == 1, selection is a nonnegative integer, and max is a nonnegative integer
 */
 
 int controlsMenu(int *cont, int selection, int max){
@@ -135,12 +135,12 @@ int controlsMenu(int *cont, int selection, int max){
 /*	
 	This function allows the user to choose their input in the game using arrow keys
 	@ param level - a structure that pertains to the information of the level
-	@ param *rowChosen - a pointer that holds the value of the row index of the array
-	@ param *colChosen - a pointer that holds the value of the column index of the array
+	@ param *rowChosen - an integer pointer that holds the value of the row index of the array
+	@ param *colChosen - an integer pointer that holds the value of the column index of the array
 
 	@ return void
 	
-	Pre-condition: level has all values declared
+	Pre-condition: level has all members declared
 */
 
 void controlsGame(game level, int *rowChosen, int *colChosen){
@@ -273,6 +273,17 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	*colChosen = col;
 }
 
+/*	
+	This function allows the user to choose their input in the level editor using arrow keys
+	@ param level - a structure that pertains to the information of the level
+	@ param *rowChosen - an integer pointer that holds the value of the row index of the array
+	@ param *colChosen - an integer pointer that holds the value of the column index of the array
+
+	@ return void
+	
+	Pre-condition: level has all members declared
+*/
+
 void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 	int input;
     int cont = 1;
@@ -394,6 +405,15 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 
 /* board */
 
+/*	
+	This function prints the board that is visible to the player while playing
+	@ param level - a structure that pertains to the information of the level
+
+	@ return void
+	
+	Pre-condition: level has all members declared
+*/
+
 void printBoard(game level){
     int i, j;
     
@@ -459,6 +479,14 @@ void printBoard(game level){
 	iSetColor(I_COLOR_WHITE);
 }
 
+/*	
+	This function prints the board that is not visible to the player (i.e. the board comprprised of '.' and 'X')
+	@ param level - a structure that pertains to the information of the level
+	@ return void
+	
+	Pre-condition: level has all memebrs declared
+*/
+
 void printBoardChar(game level){
     int i, j;
     
@@ -518,6 +546,15 @@ void printBoardChar(game level){
 	iSetColor(I_COLOR_WHITE);
 }
 
+/*	
+	This function randomly generates a board, given the variables level->mines, level->cols, and level->rows
+	@ param *level - a structure pointer that pertains to the information of the level
+
+	@ return void
+	
+	Pre-condition: level has all members declared, except for board[][] and gameBoard[][]
+*/
+
 void makeBoard(game *level){
     srand(time(0));
 	int minesCount;
@@ -539,6 +576,17 @@ void makeBoard(game *level){
     }
     printf("\n");
 }
+
+/*	
+	This function checks if a cell contains a mine. If not, it counts the amount of adjacent mines
+	@ param level - a structure that pertains to the information of the level
+	@ param i - the row index of the cell to inspect
+	@ param j - the column index of the cell to inspect
+
+	@ return -1 if the cell is a mine. If not, the amount of adjacent mines
+	
+	Pre-condition: level has a level.board declared, and i and j are nonnegative integers
+*/
 
 int mineCount(game level, int i, int j){
 	int count = 0;
@@ -566,6 +614,17 @@ int mineCount(game level, int i, int j){
 	else return -1;
 }
 
+/*	
+	This is a recursive function that reveals the gameBoard in a cascading manner from the original tile
+	@ param *level - a structure pointer that pertains to the information of the level
+	@ param i - the row index of the cell to inspect
+	@ param j - the column index of the cell to inspect
+
+	@ return void
+	
+	Pre-condition: level has a level.board declared, and i and j are nonnegative integers
+*/
+
 void cascade(game *level, int i, int j){
     if (i < 0 || i >= level->rows || j < 0 || j >= level->cols || 
         level->board[i][j] == 'X' || level->gameBoard[i][j] == FLAG || !(level->gameBoard[i][j] == HIDDEN)) {
@@ -582,6 +641,15 @@ void cascade(game *level, int i, int j){
     }
 }
 
+/*	
+	This function allows the player to place a flag on the gameBoard
+	@ param *level - a structure pointer that pertains to the information of the level
+
+	@ return void
+	
+	Pre-condition: level has all members declared, except for gameBoard
+*/
+
 void placeFlag(game *level){
 	int i, j;
 	
@@ -597,6 +665,15 @@ void placeFlag(game *level){
 	else printf("Tile is already revealed. Try again.\n");
 }
 
+/*	
+	This function allows the player to remove a flag on the gameBoard
+	@ param *level - a structure pointer that pertains to the information of the level
+
+	@ return void
+	
+	Pre-condition: level has all members declared, except for gameBoard
+*/
+
 void removeFlag(game *level){
 	int i, j;
 	
@@ -609,6 +686,17 @@ void removeFlag(game *level){
 		printf("Input is out of bounds\n");
 	else printf("Tile is not flagged. Try again.\n");
 }
+
+/*	
+	This function allows the player to inspect the board.
+	It ends the game when the player inspects a mine, and triggers cascade if not.
+	@ param *level - a structure pointer that pertains to the information of the level
+	@ param outcome[] - a string that holds the outcome of the game
+
+	@ return the boolean value determining the game continues. 1 for true, 0 for false
+	
+	Pre-condition: level has all members declared
+*/
 
 int inspectBoard(game *level, char outcome[]) {
     int i, j;
@@ -637,6 +725,16 @@ int inspectBoard(game *level, char outcome[]) {
     }
 }
 
+/*	
+	This function checks if the player wins the game, given that they have revealed all non-mine tiles
+	@ param level - a structure that pertains to the information of the level
+	@ param outcome[] - a string that holds the outcome of the game
+
+	@ return the boolean value determining the game continues. 1 for true, 0 for false
+	
+	Pre-condition: level has all members declared
+*/
+
 int gameChecker(game level, char outcome[]){
 	int totalSquares = (level.rows*level.cols)-level.mines;
 	int revealedCount = 0;
@@ -661,6 +759,16 @@ int gameChecker(game level, char outcome[]){
 	}
 	else return 1;
 }
+
+/*	
+	This function reads and writes a given snapshot of a recent game from one file to another.
+	@ param destFile[] - a string that holds the path of the destination of the file to be overwritten
+	@ param sourceFile[] - a string that holds the path of the file to be copied from
+
+	@ return void
+	
+	Pre-condition: destFile[] and sourceFile[] are valid paths
+*/
 
 void transferSnapshot(char destFile[], char sourceFile[]){
 	FILE *fsource;
@@ -703,7 +811,19 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	fclose(fdest);
 }
 
-int saveSnapshot(game level, char outcome[], profile currentUser, int time){
+/*	
+	This function saves a snapshot of the final board in a text file containing the player's most recent game
+	@ param level - a structure that pertains to the information of the level
+	@ param outcome[] - a string that holds the outcome of the game
+	@ param currentUser - a structure that contains the information of the current user
+	@ param time - an integer that holds the amount of time the game was played from start to end
+
+	@ return void
+	
+	Pre-condition: level has all members declared, outcome is valid, currentUser is declared, and time is a nonnegative integer
+*/
+
+void saveSnapshot(game level, char outcome[], profile currentUser, int time){
 	int i, j;
     FILE *fgame;
 
@@ -731,7 +851,6 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		fprintf(fgame, "\n");
 	}
 		fclose(fgame);
-		return 1;
 	}
 	
 	else if (strcmp(outcome, "lose") == 0){
@@ -759,7 +878,6 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		fprintf(fgame, "\n");
 		}
 		fclose(fgame);
-		return 1;
 	}
 	
 	else if (strcmp(outcome, "quit") == 0){
@@ -781,12 +899,21 @@ int saveSnapshot(game level, char outcome[], profile currentUser, int time){
 		fprintf(fgame, "\n");
 		}
 		fclose(fgame);
-		return 1;
 	}
     
     fclose(fgame);
-    return 1;
 }
+
+/*	
+	This function updates the player's statistics after a game ends.
+	@ param level - a structure that pertains to the information of the level
+	@ param outcome[] - a string that holds the outcome of the game
+	@ param *currentUser - a structure pointer that contains the information of the current user
+
+	@ return void
+	
+	Pre-condition: level has all members declared, outcome is valid, and currentUser is declared
+*/
 
 void updateStatistics(game level, char outcome[], profile *currentUser){
 	char path[101] = USER_PATH;
@@ -843,6 +970,18 @@ void updateStatistics(game level, char outcome[], profile *currentUser){
 
 	fclose(user);
 }
+
+/*	
+	This function generates the gameBoard, starts the time, 
+	and continuously asks the player to inspect, flag, or remove a flag until the game ends or the player quits.
+	After the game ending, it will save the snapshot of the board and updates the statistics of the user.
+	@ param level - a structure that pertains to the information of the level
+	@ param *currentUser - a structure pointer that contains the information of the current user
+
+	@ return void
+	
+	Pre-condition: level has all members declared, *currentUser has all members declared
+*/
 
 void gameProper(game level, profile *currentUser){
 	int i, j, cont = 1, alive = 1;
@@ -923,22 +1062,13 @@ void gameProper(game level, profile *currentUser){
 
 /* level edit */
 
-void printCustomBoard(game *customLevel) {
-    for (int i = 0; i < customLevel->rows; i++) {
-        for (int j = 0; j < customLevel->cols; j++) {
-            printf(" %c ", customLevel->board[i][j]);
-        }
-        printf("\n");
-    }
-}
-
 int menuEditLevel(game *customLevel, int minesCount){
 	int i, selection = 0, cont = 1;
 	
 	while(cont){
 		CLEARSCREEN;
 		printf("\n");
-    	printCustomBoard(customLevel);
+    	printBoardChar(*customLevel);
     	printf("\nGRID: %dx%d\t", customLevel->rows, customLevel->cols);
     	printf("MINES: %d\n\n", minesCount);
     	printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
@@ -1023,10 +1153,10 @@ void placeMine(game *customLevel, int *minesCount) {
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
-        printCustomBoard(customLevel);
+        printBoardChar(*customLevel);
         printf("Mine placed.\n");
     } else {
-        printCustomBoard(customLevel);
+        printBoardChar(*customLevel);
 		printf("Invalid position. Mine not placed.\n\n");
     }
 }
@@ -1039,10 +1169,10 @@ void deleteMine(game *customLevel, int *minesCount) {
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
-        printCustomBoard(customLevel);
+        printBoardChar(*customLevel);
 		printf("Mine removed.\n");
     } else {
-        printCustomBoard(customLevel);
+        printBoardChar(*customLevel);
 		printf("Invalid position. There is no mine.\n\n");
     }
 }
@@ -1071,7 +1201,9 @@ void deleteLevel(customLevelList *cLevels){
 	checkLevels(cLevels);
 
 	printf("\nProvide level to delete (do not include .txt): ");
+	iShowCursor();
 	scanf("%s", filename);
+	iHideCursor();
 	strcat(filename, ".txt");
     strcat(path, filename);
 
@@ -1165,16 +1297,17 @@ int editLevel(game *customLevel, int minesCount){
                 }
                 break;
             case 3:
-				printf("\nReturning to main menu.\n");
+				printf("\nYou have opted to go back.\n");
 				quit = 1;
 				break;
 			default:
             	CLEARSCREEN;
 				printf("Invalid selection. Please choose again.\n");
         }
-        
-        printf("Press any key to continue...\n");
-		getch();
+        if (!quit){
+	        printf("Press any key to continue...\n");
+			getch();
+		}
 	}
 
 	return save;
@@ -1190,7 +1323,9 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	checkLevels(cLevels);
 
 	printf("\nProvide level name to edit: ");
+	iShowCursor();
 	scanf("%s", filename);
+	iHideCursor();
     strcat(filename, ".txt");
     strcat(path, filename);
     printf("%s\n", path);
@@ -1223,8 +1358,10 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     		level = fopen(path, "w");
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
+    		printBoardChar(*customLevel);
         	printf("Level successfully edited.\n\n");
 		} else{
+			printBoardChar(*customLevel);
 			printf("Level was not saved.\n\n");
 			fclose(level);
 		}
@@ -1238,27 +1375,34 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     FILE *level;
     int minesCount = 0;
 
-	printf("[LEVEL CREATION]\n\nProvide file name: ");
+	printf("[LEVEL CREATION]\nEXISTING CUSTOM LEVELS:\n");
+	checkLevels(cLevels);
+	printf("\nProvide file name: ");
+	iShowCursor();
     scanf("%s", filename);
+    iHideCursor();
     strcat(filename, ".txt");
     strcat(path, filename);
 
     if (fileExists(path) == 1) {
         printf("Level cannot be created. File already exists.\n");
     } else {
-        printf("Level %s will be created.\n", filename);
+        CLEARSCREEN;
+		printf("Level %s will be created.\n", filename);
 
 		int validNum = 0;
 		while(!validNum){
-				printf("Enter number of rows (5 to 10) and columns (5 to 15): ");
-        		scanf("%d %d", &customLevel->rows, &customLevel->cols);
+				printf("\nEnter number of rows (5 to 10) and columns (5 to 15): ");
+        		iShowCursor();
+				scanf("%d %d", &customLevel->rows, &customLevel->cols);
+				iHideCursor();
 
 				if((customLevel->rows < 5 || customLevel->rows > 10) && (customLevel->cols < 5 || customLevel->cols > 15)){
-        			printf("Invalid number of rows and columns.\n\n");
+        			printf("\nInvalid number of rows and columns.\n\n");
 				} else if (customLevel->rows < 5 || customLevel->rows > 10) {
-            		printf("Invalid number of rows.\n\n");
+            		printf("\nInvalid number of rows.\n\n");
         		} else if(customLevel->cols < 5 || customLevel->cols > 15){
-        			printf("Invalid number of columns.\n\n");
+        			printf("\nInvalid number of columns.\n\n");
 				} else {
 					validNum = 1;
 				}
@@ -1276,8 +1420,10 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     		level = fopen(path, "w");
     		saveFile(0, level, customLevel, cLevels, filename);
     		fclose(level);
+    		printBoardChar(*customLevel);
         	printf("Level created successfully.\n\n");
 		} else{
+			printBoardChar(*customLevel);
 			printf("Level was not saved.\n\n");
 		}
     }
@@ -1304,14 +1450,16 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 				deleteLevel(cLevels);
                 break;
             case 3:
-				printf("\nReturning to main menu.\n");
+				printf("\nYou have opted to go back.\n");
 				quit = 1;
 				break;
 			default:
 				printf("Invalid selection. Please choose again.\n\n");
         }
-    	printf("Press any key to continue...\n");
-		getch();
+    	if (!quit){
+			printf("Press any key to continue...\n");
+			getch();
+		}
 	}
 }
 
@@ -1518,7 +1666,9 @@ int selectProfile(profile *currentUser, profileList *users){
 	checkProfiles(*users);
 
 	printf("\nSELECT PROFILE TO USE: ");
+	iShowCursor();
 	scanf("%s", name);
+	iHideCursor();
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
@@ -1558,21 +1708,23 @@ void newProfile(profile *currentUser, profileList users){
 	}
 
     printf("\nName must be:\n[1] 3 to 20 characters\n[2] Uppercase letters only\n\nProvide profile name: ");
+	iShowCursor();
 	scanf(" %s", name);
+	iHideCursor();
 	strcpy(filename, name);
 	strcat(filename, ".txt");
 	strcat(path, filename);
 
     if(strlen(name) > 20){
-    	printf("Name is over 20 characters.\n");
+    	printf("\nName is over 20 characters.\n");
     	return;
 	}else if(strlen(name) < 3){
-		printf("Name is less than 3 characters.\n");
+		printf("\nName is less than 3 characters.\n");
     	return;
 	}else if(fileExists(path) != 0) {
-        printf("Profile already exists.\n");
+        printf("\nProfile already exists.\n");
 	}else if(!(checkCapital(name))){
-		printf("Name is not all uppercase letters.\n");
+		printf("\nName is not all uppercase letters.\n");
 	}else{
         printf("\nUser profile [%s] created.\n\n", name);
 
@@ -1641,7 +1793,9 @@ void deleteProfile(profile *currentUser, profileList users){
     checkProfiles(users);
 
     printf("\nSELECT PROFILE TO DELETE: ");
+    iShowCursor();
     scanf(" %s", name);
+    iHideCursor();
     strcpy(filename, name);
     strcat(filename, ".txt");
     strcat(path, filename);
@@ -1650,7 +1804,7 @@ void deleteProfile(profile *currentUser, profileList users){
         printf("\nUser does not exist. Try again.\n\n");
         return;
     } else if(!(checkCapital(name))){
-        printf("Name is not all uppercase letters.\n");
+        printf("\nName is not all uppercase letters.\n\n");
 	} else {
 		// delete user file | WORKING
 		strcpy(filename, name);
@@ -1662,7 +1816,7 @@ void deleteProfile(profile *currentUser, profileList users){
 		if (fileExists(path) == 0){
 			printf("\nProfile [%s] deleted successfully.\n\n", name);
 		} else {
-		printf("Profile not deleted successfully.\n\n");
+		printf("\nProfile not deleted successfully.\n\n");
         return;
     	}
 
@@ -1727,14 +1881,17 @@ void changeProfile(profile *currentUser, profileList *users){
 				deleteProfile(currentUser, *users); // WORKING
                 break;
             case 3:
-				printf("\nReturning to main menu.\n");
+				printf("\nYou have opted to go back.\n");
 				quit = 1;
 				break;
 			default:
 				printf("Invalid selection. Please choose again.\n\n");
 		}
-		printf("Press any key to continue...\n");
-		getch();
+		
+		if(!quit){
+			printf("Press any key to continue...\n");
+			getch();
+		}
 	}
 }
 
@@ -1893,7 +2050,9 @@ void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevel
 	checkLevels(cLevels);
 
 	printf("\nSELECT CUSTOM LEVEL: ");
+	iShowCursor();
 	scanf("%s", filename);
+	iHideCursor();
     strcat(filename, ".txt");
     strcat(path, filename);
 
@@ -1978,8 +2137,6 @@ void playClassic(game *level, profile *currentUser){
 			default:
 				printf("\nInvalid input. Try again.\n");
 			}
-		printf("Press any key to continue...\n");
-		getch();
 		}
 	}
 
@@ -2032,8 +2189,6 @@ void play(profile currentUser, game level, game customLevel, customLevelList *cL
 					break;
 				case 2:
 					printf("\nYou have opted to go back.\n\n");	
-					printf("Press any key to continue...\n");
-					getch();
 					exit = 1;
 					break;
 				default:
@@ -2056,47 +2211,47 @@ void startMenu(profile *currentUser, profileList *users){
 	fclose(dir);
 
 	if(num <= 0){
-		newProfile(currentUser, *users);
-	} else {
-		while (cont){
-			CLEARSCREEN;
-			printf("CHOOSE PLAYER:\n\n");
-			printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
-			
-			for(i = 0; i < 2; i++){
-				if (selection == i && i == 0){
-					printf(" > NEW PROFILE\n");
-				} else if (selection == i && i == 1){
-					printf(" > SELECT PROFILE\n");
-				} else if (i == 0){
-					printf("   NEW PROFILE\n");
-				} else if (i == 1){
-					printf("   SELECT PROFILE\n");
-				}
-			}
-			selection = controlsMenu(&cont, selection, 2);
-		}
-		
-		while (!valid){
-			switch(selection){
-				case 0:
-					CLEARSCREEN;
-					newProfile(currentUser, *users);
-					if (strcmp(currentUser->name, "") == 0){
-						valid = 0;
-					} else valid = 1;
-					break;
-				case 1:
-					CLEARSCREEN;
-					valid = selectProfile(currentUser, users);
-					break;
-				default:
-					printf("Invalid input. Try again.\n");
-			}
-			printf("Press any key to continue...\n");
-			getch();
-		}
+		cont = 0;
+		selection = 0;
+	} 
 	
+	while (cont){
+		CLEARSCREEN;
+		printf("CHOOSE PLAYER:\n\n");
+		printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
+			
+		for(i = 0; i < 2; i++){
+			if (selection == i && i == 0){
+				printf(" > NEW PROFILE\n");
+			} else if (selection == i && i == 1){
+				printf(" > SELECT PROFILE\n");
+			} else if (i == 0){
+				printf("   NEW PROFILE\n");
+			} else if (i == 1){
+				printf("   SELECT PROFILE\n");
+			}
+		}
+		selection = controlsMenu(&cont, selection, 2);
+	}
+	
+	while (!valid){
+		switch(selection){
+			case 0:
+				CLEARSCREEN;
+				newProfile(currentUser, *users);
+				if (strcmp(currentUser->name, "") == 0){
+					valid = 0;
+				} else valid = 1;
+				break;
+			case 1:
+				CLEARSCREEN;
+				valid = selectProfile(currentUser, users);
+				break;
+			default:
+				printf("Invalid input. Try again.\n");
+		}
+		printf("Press any key to continue...\n");
+		getch();
 	}
 	getStatistics(currentUser);
 }
@@ -2115,6 +2270,7 @@ int main(){
 	leaderboard difficultRanking;
 
 	// start
+	iHideCursor();
 	int menuSelect, i, cont;
 	int exit = 0;
 	startMenu(&currentUser, &users);
@@ -2172,7 +2328,7 @@ int main(){
 				printf("Invalid input. Try again.\n");
 			}
 		
-		delay(1500);
+		delay(1300);
 	}
 }
 
