@@ -98,13 +98,26 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
 }
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
-    FILE *user;
-    FILE *dir;
-    FILE *recentgames;
-    int i, b, c, numFiles;
+    FILE *user, *dir, *recentgames;
+    int i, j, b, c, numFiles, easyCount = 0, difficultCount = 0;
     char path[100];
+    struct scoreboard tempEasy[MAX_PROFILES * 3];
+    struct scoreboard tempDifficult[MAX_PROFILES * 3];
 
-    // check and scan all existing profiles
+    // initialize clean leaderboard
+    for (i = 0; i < MAX_PROFILES * 3; i++) {
+        if (i < 3) { // only the first 3 entries are used in the final leaderboards
+            easyRanking[i].time = 0;
+            difficultRanking[i].time = 0;
+            easyRanking[i].user[0] = '\0'
+            difficultRanking[i].user[0] = '\0';
+        }
+        tempEasy[i].time = 0;
+        tempDifficult[i].time = 0;
+        tempEasy[i].user[0] = '\0';
+        tempDifficult[i].user[0] = '\0';
+    }
+
     dir = fopen(USER_DIR, "r");
     if (dir == NULL) {
         printf("Error opening profile directory.\n");
@@ -128,7 +141,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             }
             fscanf(user, "%s", users[i].name);
             fscanf(user, "%d\n%d\n%d\n%d", &users[i].games_won_classic, &users[i].games_lost_classic, &users[i].games_won_custom, &users[i].games_lost_custom);
-            for (int j = 0; j < 3; j++) {
+            for (j = 0; j < 3; j++) {
                 fscanf(user, "%s\n", users[i].recentgame[j].path);
             }
             fclose(user);
@@ -138,7 +151,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
 
     // check all scanned profiles existing recent games
     for (i = 0; i < numFiles; i++) { // go through all profiles
-        for (int j = 0; j < 3; j++) { // go through recent games
+        for (j = 0; j < 3; j++) { // go through recent games
             recentgames = fopen(users[i].recentgame[j].path, "r");
             if (recentgames == NULL) {
                 printf("Error opening recent game file %s.\n", users[i].recentgame[j].path);
@@ -160,19 +173,30 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             // write leaderboard
             if (strcmp(users[i].recentgame[j].outcome, "WON") == 0) {
                 if (strcmp(users[i].recentgame[j].mode, CLASSIC_EASY) == 0) {
-                    strcpy(easyRanking[i].user, users[i].name);
-                    easyRanking[i].time = users[i].recentgame[j].time;
+                    strcpy(tempEasy[easyCount].user, users[i].name);
+                    tempEasy[easyCount].time = users[i].recentgame[j].time;
+                    easyCount++;
                 } else if (strcmp(users[i].recentgame[j].mode, CLASSIC_DIFFICULT) == 0) {
-                    strcpy(difficultRanking[i].user, users[i].name);
-                    difficultRanking[i].time = users[i].recentgame[j].time;
+                    strcpy(tempDifficult[difficultCount].user, users[i].name);
+                    tempDifficult[difficultCount].time = users[i].recentgame[j].time;
+                    difficultCount++;
                 }
             }
         }
     }
 
-    // sort leaderboards
-    sortLeaderboard(easyRanking);
-    sortLeaderboard(difficultRanking);
+    // set the temporary leaderboards
+    sortLeaderboard(tempEasy);
+    sortLeaderboard(tempDifficult);
+
+    // copy the top entries to the final leaderboards
+    for (i = 0; i < 3 && i < easyCount; i++) {
+        easyRanking[i] = tempEasy[i];
+    }
+    for (i = 0; i < 3 && i < difficultCount; i++) {
+        difficultRanking[i] = tempDifficult[i];
+    }
+
     // print leaderboard
     printLeaderboard(easyRanking, difficultRanking);
 }
@@ -185,4 +209,3 @@ int main() {
     makeLeaderboard(easyRanking, difficultRanking, users);
     return 0; // Added return statement
 }
-
