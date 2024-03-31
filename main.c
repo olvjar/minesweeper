@@ -1,5 +1,9 @@
 /*
-	Description: <describe what this program does briefly >
+	Description: This program simulates the game Minesweeper, a classic single player computer game.
+				 The goal of the game is to uncover all of the non-mine tiles, without being blown up by a mine.
+				 This program has 2 game modes: classic and custom. Classic randomly generates a board each time, depending on the difficulty.
+				 Meanwhile, custom allows for the user to create their own levels.
+				 This program also includes player profiles that save the statistics of a player and the snapshots of their 3 mpst
 	Author: GRINO, Mary Eunice E. and TAMONDONG, Mariel M.
 	Section: S17B
 	Last Modified: March 31, 2024
@@ -1418,8 +1422,8 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
 */
 
 int editLevel(game *customLevel, int minesCount){
-    int save = 0;
-    int quit = 0;
+    int save;
+    int quit;
     int choice;
 
 	CLEARSCREEN;
@@ -1474,7 +1478,6 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
-    int edit;
 
 	renderMenuLevelAsk(3, filename, cLevels);
     strcat(filename, ".txt");
@@ -1502,9 +1505,9 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	    }
 		fclose(level);
 
-		edit = editLevel(customLevel, minesCount);
+		editLevel(customLevel, minesCount);
 
-    	if(edit == 1){
+    	if(editLevel(customLevel, minesCount) == 1){
     		level = fopen(path, "w");
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
@@ -1766,10 +1769,12 @@ void viewStatistics(profile *currentUser){
 			iSetColor(I_COLOR_WHITE);
 		}
     }
-    choice = getch();
 	while(!quit){
-		if(choice == 27){ // escape
-                quit = 1;
+		if(kbhit()){
+            choice = getch();
+                if(choice == 27){ // escape
+                    quit = 1;
+				}
 		}
 	}
 }
