@@ -1,5 +1,12 @@
 #include <stdio.h>
 
+/*
+This function displays ASCII art when player loses the game, showing the time elapsed in hours, minutes, and seconds.
+@param time - total time elapsed in seconds when the game was won
+@return void
+Pre-condition: time is a nonnegative integer 
+*/
+
 void asciiGameLost(int time) {
 	int hours, minutes, seconds;
 	
@@ -19,6 +26,12 @@ void asciiGameLost(int time) {
     iSetColor(I_COLOR_WHITE);
 }
 
+/*
+This function displays ASCII art when player wins the game, showing the time elapsed in hours, minutes, and seconds.
+@param time - total time elapsed in seconds when the game was won.
+@return void
+Pre-condition: time is a nonnegative integer 
+*/
 void asciiGameWon(int time) {
 	int hours, minutes, seconds;
 	
@@ -45,7 +58,12 @@ void asciiGameWon(int time) {
     iSetColor(I_COLOR_WHITE);
 }
 
-
+/*
+This function displays ASCII art when player quit the game, showing the time elapsed in hours, minutes, and seconds.
+@param time - total time elapsed in seconds when the game was quit.
+@return void
+Pre-condition: time is a nonnegative integer 
+*/
 void asciiGameQuit(int time){
 	int hours, minutes, seconds;
 	
@@ -73,6 +91,11 @@ void asciiGameQuit(int time){
     iSetColor(I_COLOR_WHITE);
 }
 
+/*
+This function displays ASCII art start menu when the user first opens the program.
+@return void
+Pre-condition: none
+*/
 void asciiStartMenu() {
 	int quit;
 	iSetColor(I_COLOR_YELLOW);
@@ -101,6 +124,12 @@ void asciiStartMenu() {
 	}
 }
 
+/*
+This function renders the menu outputs when the user is selecting through options in the main menu.
+@param selection - an integer that pertains to the current selection of the arrow
+@return void
+Pre-condition: selection is a non-negative integer 
+*/
 void renderMainMenu(int selection) {
 	int values[] = {3, 5, 6};
 	int choice = rand() % 3;
@@ -184,6 +213,12 @@ void renderMainMenu(int selection) {
     }
 }
 
+/*
+This function renders the menu outputs when the user is selecting through gamemode options in the play menu
+@param selection - an integer that pertains to the current selection of the arrow
+@return void
+Pre-condition: selection is a non-negative integer 
+*/
 void renderMenuPlay(int selection) {
 	char *menu[] = {
         "|              CLASSIC               |",
@@ -220,6 +255,12 @@ void renderMenuPlay(int selection) {
     }
 }
 
+/*
+This function renders the menu outputs when the user is selecting through difficulty options in the playClassic menu
+@param selection - an integer that pertains to the current selection of the arrow
+@return void
+Pre-condition: selection is a non-negative integer 
+*/
 void renderMenuPlayClassic(int selection) {
 	char *menu[] = {
         "|              EASY                  |",
@@ -256,6 +297,12 @@ void renderMenuPlayClassic(int selection) {
     }
 }
 
+/*
+This function renders the menu outputs when the user is selecting through options in the levelEditor menu
+@param selection - an integer that pertains to the current selection of the arrow
+@return void
+Pre-condition: selection is a non-negative integer 
+*/
 void renderMenuLevel(int selection) {
 	char *menu[] = {
 	    "|        CREATE a new level          |",
@@ -300,6 +347,12 @@ void renderMenuLevel(int selection) {
     }
 }
 
+/*
+This function renders the menu outputs when the user is selecting through options in the changeProfile menu
+@param selection - an integer that pertains to the current selection of the arrow
+@return void
+Pre-condition: selection is a non-negative integer 
+*/
 void renderMenuProfile(int selection) {
     char *menu[] = {
         "|         SELECT profile             |",
