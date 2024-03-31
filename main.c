@@ -1684,7 +1684,7 @@ void viewStatistics(profile *currentUser){
 	printf("Press [ESC] to go back\n\n");
 	iSetColor(I_COLOR_CYAN);
     printf("PLAYER %-20s\n", currentUser->name);
-   	printf("*******************************\n");
+   	printf("*******************************\n\n");
     iSetColor(I_COLOR_WHITE);
 
     printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
@@ -1915,7 +1915,7 @@ void renderMenuProfileAsk(int mode, char *filename, profile currentUser, profile
 	num = checkProfiles(users);
 	printf("|                                    |  \n");
     printf("|         PROVIDE FILE NAME          |  \n");
-    if(mode == 1) printf("|           (MAX 20 CHAR):           |  \n");
+    if(mode == 1) printf("|      (MAX 20 UPPERCASE CHAR):      |  \n");
 	if(mode == 2 || mode == 3) printf("|       (DO NOT INCLUDE .TXT):       | \n");
     printf("|                                    |  \n");
     printf("|                                    |  \n");
