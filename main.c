@@ -1559,7 +1559,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     fclose(dir);
     
 	// check if max number of levels is reached
-    if(num > 20){
+    if(num >= 20){
 		printf("\nMax number of levels reached. (20 levels)\n");
 		return;
 	}
