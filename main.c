@@ -1528,6 +1528,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     		printBoardChar(*customLevel);
         	printf("\nLevel successfully edited.\n\n");
 		} else{
+			CLEARSCREEN;
 			printBoardChar(*customLevel);
 			printf("\nLevel was not saved.\n\n");
 		}
@@ -2519,7 +2520,8 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
         printf("Error opening profile directory.\n");
         return;
     }
-    fscanf(dir, "%d", &numFiles);
+    
+	fscanf(dir, "%d", &numFiles);
 
     for (i = 0; i < numFiles; i++) {
         fscanf(dir, "%s", users[i].name);
@@ -2527,9 +2529,11 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
         if (strcmp(users[i].name, "") == 0) {
             return;
         } else {
+			// make path
             strcpy(path, USER_PATH);
             strcat(path, users[i].name);
             strcat(path, ".txt");
+			// open path
             user = fopen(path, "r");
             if (user == NULL) {
                 printf("Error opening user file %s.\n", path);
@@ -2560,7 +2564,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             if(strcmp(users[i].recentgame[j].outcome, "0") == 0){
             	fclose(recentgames);
 			} else {
-            
+				//read snapshot data
 	            fscanf(recentgames, "%d", &users[i].recentgame[j].time);
 	            fscanf(recentgames, "%s", users[i].recentgame[j].mode);
 	            fscanf(recentgames, "%d %d", &users[i].recentgame[j].rows, &users[i].recentgame[j].cols);
