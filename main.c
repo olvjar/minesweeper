@@ -141,7 +141,7 @@ int controlsMenu(int *cont, int selection, int max){
 
 	@return void
 	
-	Pre-condition: level has all members declared
+	Pre-condition: level has all members initialized
 */
 
 void controlsGame(game level, int *rowChosen, int *colChosen){
@@ -282,7 +282,7 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 
 	@return void
 	
-	Pre-condition: level has all members declared
+	Pre-condition: level has all members initialized
 */
 
 void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
@@ -412,7 +412,7 @@ void controlsLevelEdit(game level, int *rowChosen, int *colChosen){
 
 	@return void
 	
-	Pre-condition: level has all members declared
+	Pre-condition: level has all members initialized
 */
 
 void printBoard(game level){
@@ -485,7 +485,7 @@ void printBoard(game level){
 	@param level - a structure that pertains to the information of the level
 	@return void
 	
-	Pre-condition: level has all memebrs declared
+	Pre-condition: level has all memebers initialized
 */
 
 void printBoardChar(game level){
@@ -553,7 +553,7 @@ void printBoardChar(game level){
 
 	@return void
 	
-	Pre-condition: level has all members declared, except for board[][] and gameBoard[][]
+	Pre-condition: level has all members initialized, except for board[][] and gameBoard[][]
 */
 
 void makeBoard(game *level){
@@ -586,7 +586,7 @@ void makeBoard(game *level){
 
 	@return -1 if the cell is a mine. If not, the amount of adjacent mines
 	
-	Pre-condition: level has a level.board declared, and i and j are nonnegative integers
+	Pre-condition: level has a level.board initialized, and i and j are nonnegative integers
 */
 
 int mineCount(game level, int i, int j){
@@ -2084,9 +2084,9 @@ void deleteProfile(profile *currentUser, profileList users){
     strcat(path, filename);
 
 	if(!(checkCapital(name))){
-        printf("\nName is not all uppercase letters.\n\n");
+        printf("\nName is not all uppercase letters.\n");
 	} else if(fileExists(path) == 0) {
-        printf("\nUser does not exist. Try again.\n\n");
+        printf("\nProfile does not exist. Try again.\n");
         return;
     } else {
 		// delete user file | WORKING
