@@ -1948,11 +1948,11 @@ int selectProfile(profile *currentUser, profileList *users){
 	strcat(filename, ".txt");
 	strcat(path, filename);
 	
-	if(fileExists(path) == 0) {
-	    printf("\nProfile does not exist. Try again.\n");
-		return 0;
-	} else if(!(checkCapital(name))) {
+	if(!(checkCapital(name))) {
 		printf("\nName is not all uppercase letters.\n");
+		return 0;
+	}else if(fileExists(path) == 0) {
+	    printf("\nProfile does not exist. Try again.\n");
 		return 0;
 	} else{
 	    strcpy(currentUser->name, name);
@@ -2083,12 +2083,12 @@ void deleteProfile(profile *currentUser, profileList users){
     strcat(filename, ".txt");
     strcat(path, filename);
 
-    if(fileExists(path) == 0) {
+	if(!(checkCapital(name))){
+        printf("\nName is not all uppercase letters.\n\n");
+	} else if(fileExists(path) == 0) {
         printf("\nUser does not exist. Try again.\n\n");
         return;
-    } else if(!(checkCapital(name))){
-        printf("\nName is not all uppercase letters.\n\n");
-	} else {
+    } else {
 		// delete user file | WORKING
 		strcpy(filename, name);
 		strcat(filename, ".txt");
