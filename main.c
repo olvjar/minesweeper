@@ -623,7 +623,7 @@ int mineCount(game level, int i, int j){
 
 	@return void
 	
-	Pre-condition: level has a level.board declared, and i and j are nonnegative integers
+	Pre-condition: level has a level.board initialized, and i and j are nonnegative integers
 */
 
 void cascade(game *level, int i, int j){
@@ -648,7 +648,7 @@ void cascade(game *level, int i, int j){
 
 	@return void
 	
-	Pre-condition: level has all members declared, except for gameBoard
+	Pre-condition: level has all members initialized, except for gameBoard
 */
 
 void placeFlag(game *level){
@@ -672,7 +672,7 @@ void placeFlag(game *level){
 
 	@return void
 	
-	Pre-condition: level has all members declared, except for gameBoard
+	Pre-condition: level has all members initialized, except for gameBoard
 */
 
 void removeFlag(game *level){
@@ -696,7 +696,7 @@ void removeFlag(game *level){
 
 	@return the boolean value determining the game continues. 1 for true, 0 for false
 	
-	Pre-condition: level has all members declared
+	Pre-condition: level has all members initialized
 */
 
 int inspectBoard(game *level, char outcome[], int time) {
@@ -731,7 +731,7 @@ int inspectBoard(game *level, char outcome[], int time) {
 
 	@return the boolean value determining the game continues. 1 for true, 0 for false
 	
-	Pre-condition: level has all members declared and alive == 1
+	Pre-condition: level has all members initialized and alive == 1
 */
 
 int gameChecker(game level, char outcome[], int time){
@@ -848,7 +848,7 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 
 	@return void
 	
-	Pre-condition: level has all members declared, outcome is valid, currentUser is declared, and time is a nonnegative integer
+	Pre-condition: level has all members initialized, outcome is valid, currentUser is initialized, and time is a nonnegative integer
 */
 
 void saveSnapshot(game level, char outcome[], profile currentUser, int time){
@@ -940,7 +940,7 @@ void saveSnapshot(game level, char outcome[], profile currentUser, int time){
 
 	@return void
 	
-	Pre-condition: level has all members declared, outcome is valid, and currentUser is declared
+	Pre-condition: level has all members initialized, outcome is valid, and currentUser is initialized
 */
 
 void updateStatistics(game level, char outcome[], profile *currentUser){
@@ -1008,7 +1008,7 @@ void updateStatistics(game level, char outcome[], profile *currentUser){
 
 	@return void
 	
-	Pre-condition: level has all members declared, *currentUser has all members declared
+	Pre-condition: level has all members initialized, *currentUser has all members initialized
 */
 
 void gameProper(game level, profile *currentUser){
@@ -1101,7 +1101,7 @@ void gameProper(game level, profile *currentUser){
 
 	@return the selection of the user
 	
-	Pre-condition: *customLevel has all members declared (except for gameBoard), minesCount is a nonnegative integer
+	Pre-condition: *customLevel has all members initialized (except for gameBoard), minesCount is a nonnegative integer
 */
 
 int menuEditLevel(game *customLevel, int minesCount){
@@ -1223,7 +1223,7 @@ void renderMenuLevelAsk(int mode, char *filename, customLevelList *cLevels) {
 	
 	@return void
 	
-	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
+	Pre-condition: level has all members initialized, except for gameBoard, and *minesCount is a nonnegative integer
 */
 
 void placeMine(game *customLevel, int *minesCount) {
@@ -1249,7 +1249,7 @@ void placeMine(game *customLevel, int *minesCount) {
 	
 	@return void
 	
-	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
+	Pre-condition: level has all members initialized, except for gameBoard, and *minesCount is a nonnegative integer
 */
 
 void deleteMine(game *customLevel, int *minesCount) {
@@ -1276,7 +1276,7 @@ void deleteMine(game *customLevel, int *minesCount) {
 	
 	@return a boolean value determining if a level is valid. 1 for true and 0 for false.
 	
-	Pre-condition: level has all members declared, except for gameBoard, and *minesCount is a nonnegative integer
+	Pre-condition: level has all members initialized, except for gameBoard, and *minesCount is a nonnegative integer
 */
 
 int checkValidity(game *customLevel, int *minesCount){
@@ -1400,7 +1400,7 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
 
 	@return an integer to determine if the level is valid. 1 for true
 	
-	Pre-condition: *customLevel has rows, cols, mode, and board declared, and minesCount is a nonnegative integer
+	Pre-condition: *customLevel has rows, cols, mode, and board initialized, and minesCount is a nonnegative integer
 */
 
 int editLevel(game *customLevel, int minesCount){
@@ -1452,7 +1452,7 @@ int editLevel(game *customLevel, int minesCount){
 
 	@return void
 	
-	Pre-condition: *customLevel has all members declared (except for gameBoard), 
+	Pre-condition: *customLevel has all members initialized (except for gameBoard), 
 					and the integer value of the first line in the directory is greater than or equal to 0
 */
 
@@ -1646,7 +1646,7 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 
 	@return void
 	
-	Pre-condition: *currentUser has all members declared
+	Pre-condition: *currentUser has all members initialized
 */
 void getStatistics(profile *currentUser){
 	FILE *user;
@@ -1670,7 +1670,7 @@ void getStatistics(profile *currentUser){
 
 	@return void
 	
-	Pre-condition: *currentUser has all members declared
+	Pre-condition: *currentUser has all members initialized
 */
 void viewStatistics(profile *currentUser){
 	int choice, quit = 0;
@@ -1772,7 +1772,7 @@ void viewStatistics(profile *currentUser){
 
 	@return the selection of the user
 	
-	Pre-condition: *currentUser has all members declared
+	Pre-condition: *currentUser has all members initialized
 */
 int menuProfile(profile currentUser, int *choice){
 	int selection = 0, cont = 1;
@@ -2151,7 +2151,7 @@ void deleteProfile(profile *currentUser, profileList users){
     @param *users - a pointer to an array of structures containing player profiles
     @return void
 
-    Pre-condition: currentUser and level has all members declared
+    Pre-condition: currentUser and level has all members initialized
 */
 void changeProfile(profile *currentUser, profileList *users){
 	int choice, quit = 0;
@@ -2338,7 +2338,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
     @param *cLevels - a pointer to a structure containing a list of custom levels
     @return void
 
-	Pre-condition: currentUser, customLevel, and level has all members declared
+	Pre-condition: currentUser, customLevel, and level has all members initialized
 */
 void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevels){
 	char filename[20];
