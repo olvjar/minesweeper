@@ -2551,20 +2551,27 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             recentgames = fopen(users[i].recentgame[j].path, "r");
             if (recentgames == NULL) {
                 printf("Error opening recent game file %s.\n", users[i].recentgame[j].path);
+                fclose(recentgames);
                 return;
             }
-
+			
             fscanf(recentgames, "%s", users[i].recentgame[j].outcome);
-            fscanf(recentgames, "%d", &users[i].recentgame[j].time);
-            fscanf(recentgames, "%s", users[i].recentgame[j].mode);
-            fscanf(recentgames, "%d %d", &users[i].recentgame[j].rows, &users[i].recentgame[j].cols);
-
-            for (b = 0; b < users[i].recentgame[j].rows; b++) {
-                for (c = 0; c < users[i].recentgame[j].cols; c++) {
-                    fscanf(recentgames, " %c", &users[i].recentgame[j].snapshot[b][c]);
-                }
-            }
-            fclose(recentgames);
+            
+            if(strcmp(users[i].recentgame[j].outcome, "0") == 0){
+            	fclose(recentgames);
+			} else {
+            
+	            fscanf(recentgames, "%d", &users[i].recentgame[j].time);
+	            fscanf(recentgames, "%s", users[i].recentgame[j].mode);
+	            fscanf(recentgames, "%d %d", &users[i].recentgame[j].rows, &users[i].recentgame[j].cols);
+	
+	            for (b = 0; b < users[i].recentgame[j].rows; b++) {
+	                for (c = 0; c < users[i].recentgame[j].cols; c++) {
+	                    fscanf(recentgames, " %c", &users[i].recentgame[j].snapshot[b][c]);
+	                }
+	            }
+	            fclose(recentgames);
+        	}
 
             // write temp leaderboards
             if (strcmp(users[i].recentgame[j].outcome, "WON") == 0) {
