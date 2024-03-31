@@ -51,7 +51,7 @@ struct fileInfo{
 
 typedef struct level game;
 typedef struct fileInfo file;
-typedef file customLevelList[100];
+typedef file customLevelList[20];
 typedef game recentGame;
 
 struct recent_games{
@@ -1199,7 +1199,7 @@ int checkLevels(customLevelList *cLevels){
 	
 	printf("|      EXISTING CUSTOM LEVELS        |\n");
 	for(i = 0; i < numFiles; i++){
-		fscanf(dir, "%20s", cLevels[i]->filename);
+		fscanf(dir, " %s", cLevels[i]->filename);
 		printf("|      %d. %-20s       |  \n", i + 1, cLevels[i]->filename);
 	}
 
@@ -1550,8 +1550,19 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 	char filename[25];
     char path[100] = LVL_PATH;
     FILE *level;
+    FILE *dir;
     int minesCount = 0;
-    int edit;
+    int edit, num;
+	
+	dir = fopen(LVL_DIR, "r");
+    fscanf(dir, " %d", &num);
+    fclose(dir);
+    
+	// check if max number of levels is reached
+    if(num > 20){
+		printf("\nMax number of levels reached. (20 levels)\n");
+		return;
+	}
 
 	renderMenuLevelAsk(1, name, cLevels);
 	strcpy(filename, name);
@@ -1915,7 +1926,7 @@ int checkProfiles(profileList users){
 
 	printf("|         EXISTING PROFILES:         |\n");
 	for(i = 0; i < numFiles; i++){
-		fscanf(dir, "%20s", users[i].name);
+		fscanf(dir, "%s", users[i].name);
 		printf("|      %d. %-20s       |  \n", i + 1, users[i].name);
 	}
 
