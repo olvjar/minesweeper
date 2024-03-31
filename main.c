@@ -1239,18 +1239,17 @@ void placeMine(game *customLevel, int *minesCount) {
     int row, col;
 
 	controlsLevelEdit(*customLevel, &row, &col);
-    printf("MINES: %d\n", (*minesCount) + 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
         printBoardChar(*customLevel);
-        printf("Mine placed.\n");
+        printf("\nMine placed.\n");
     } else {
         printBoardChar(*customLevel);
-		printf("Invalid position. Mine not placed.\n\n");
+		printf("\nInvalid position. Mine not placed.\n");
     }
    
-    printf("Press any key to continue...");
+    printf("Press any key to continue...\n");
     getch();
 }
 
@@ -1268,18 +1267,17 @@ void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
 	controlsLevelEdit(*customLevel, &row, &col);
-    printf("MINES: %d\n", (*minesCount) - 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
         printBoardChar(*customLevel);
-		printf("Mine removed.\n");
+		printf("\nMine removed.\n");
     } else {
         printBoardChar(*customLevel);
-		printf("Invalid position. There is no mine.\n\n");
+		printf("\nInvalid position. There is no mine.\n");
     }
     
-    printf("Press any key to continue...");
+    printf("Press any key to continue...\n");
     getch();
 }
 
@@ -1298,10 +1296,10 @@ int checkValidity(game *customLevel, int *minesCount){
 	int cells = customLevel->rows * customLevel->cols;
 
 	if(cells == *minesCount){
-		printf("Invalid level: Every cell contains a mine.\n");
+		printf("\nInvalid level: Every cell contains a mine.\n");
 		return 0;
 	} else if(*minesCount == 0){
-		printf("Invalid level: There are no mines placed.\n");
+		printf("\nInvalid level: There are no mines placed.\n");
 		return 0;
 	} else{
 		return 1;
@@ -1438,24 +1436,23 @@ int editLevel(game *customLevel, int minesCount){
 				deleteMine(customLevel, &minesCount);
                 break;
             case 2:
-            	CLEARSCREEN;
 				if(checkValidity(customLevel, &minesCount) == 1) {
             		save = 1;
             		quit = 1;
-                }
+                } else {
+					printf("\nPress any key to continue...\n");
+					getch();
+				}
                 break;
             case 3:
 				printf("\nYou have opted to go back.\n");
 				quit = 1;
+				delay(500);
 				break;
 			default:
             	CLEARSCREEN;
 				printf("Invalid selection. Please choose again.\n");
         }
-        if (!quit){
-	        printf("Press any key to continue...\n");
-			getch();
-		}
 	}
 
 	return save;
@@ -1502,6 +1499,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     			}
 	        }
 	    }
+		fclose(level);
 
 		editLevel(customLevel, minesCount);
 
@@ -1510,11 +1508,10 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
     		printBoardChar(*customLevel);
-        	printf("Level successfully edited.\n\n");
+        	printf("\nLevel successfully edited.\n\n");
 		} else{
 			printBoardChar(*customLevel);
-			printf("Level was not saved.\n\n");
-			fclose(level);
+			printf("\nLevel was not saved.\n\n");
 		}
 	}
 }
