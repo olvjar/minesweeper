@@ -37,15 +37,14 @@ struct scoreboard {
 };
 typedef struct scoreboard leaderboard[3];
 
-
-void sortLeaderboard(leaderboard ranking) {
+void sortLeaderboard(leaderboard ranking, int count) {
     int i, j, low;
     int temp_time;
     char temp_user[21];
 
-    for (i = 0; i < 3 - 1; i++) {
+    for (i = 0; i < count - 1; i++) {
         low = i;
-        for (j = i + 1; j < 3; j++) {
+        for (j = i + 1; j < count; j++) {
             if (ranking[low].time > ranking[j].time) {
                 low = j;
             }
@@ -99,17 +98,18 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
     FILE *user, *dir, *recentgames;
-    int i, j, b, c, numFiles, easyCount = 0, difficultCount = 0;
+    int i, j, b, c, numFiles;
+    int easyCount = 0, difficultCount = 0; // valid entries
     char path[100];
     struct scoreboard tempEasy[MAX_PROFILES * 3];
     struct scoreboard tempDifficult[MAX_PROFILES * 3];
 
     // initialize clean leaderboard
     for (i = 0; i < MAX_PROFILES * 3; i++) {
-        if (i < 3) { // only the first 3 entries are used in the final leaderboards
+        if (i < 3) {
             easyRanking[i].time = 0;
             difficultRanking[i].time = 0;
-            easyRanking[i].user[0] = '\0'
+            easyRanking[i].user[0] = '\0';
             difficultRanking[i].user[0] = '\0';
         }
         tempEasy[i].time = 0;
@@ -170,7 +170,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             }
             fclose(recentgames);
 
-            // write leaderboard
+            // write temp leaderboards
             if (strcmp(users[i].recentgame[j].outcome, "WON") == 0) {
                 if (strcmp(users[i].recentgame[j].mode, CLASSIC_EASY) == 0) {
                     strcpy(tempEasy[easyCount].user, users[i].name);
@@ -186,15 +186,26 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
     }
 
     // set the temporary leaderboards
-    sortLeaderboard(tempEasy);
-    sortLeaderboard(tempDifficult);
+    sortLeaderboard(tempEasy, easyCount); 
+    sortLeaderboard(tempDifficult, difficultCount);
 
-    // copy the top entries to the final leaderboards
-    for (i = 0; i < 3 && i < easyCount; i++) {
-        easyRanking[i] = tempEasy[i];
+    // fill remaining rankings if not enough valid entries
+    if (easyCount > 0) {
+        for (i = 0; i < 3 && i < easyCount; i++) {
+            easyRanking[i] = tempEasy[i];
+        }
+        for (; i < 3; i++) {
+            easyRanking[i] = tempEasy[0]; // use the best time for remaining ranks
+        }
     }
-    for (i = 0; i < 3 && i < difficultCount; i++) {
-        difficultRanking[i] = tempDifficult[i];
+
+    if (difficultCount > 0) {
+        for (i = 0; i < 3 && i < difficultCount; i++) {
+            difficultRanking[i] = tempDifficult[i];
+        }
+        for (; i < 3; i++) {
+            difficultRanking[i] = tempDifficult[0];
+        }
     }
 
     // print leaderboard
