@@ -1949,7 +1949,7 @@ int selectProfile(profile *currentUser, profileList *users){
 	strcat(path, filename);
 	
 	if(fileExists(path) == 0) {
-	    printf("\nProfile does not exist. Try again.\n\n");
+	    printf("\nProfile does not exist. Try again.\n");
 		return 0;
 	} else if(!(checkCapital(name))) {
 		printf("\nName is not all uppercase letters.\n");
@@ -1998,16 +1998,14 @@ void newProfile(profile *currentUser, profileList users){
 	strcat(path, filename);
 
 	// validation
-    if(strlen(name) > 20){
+    if(!(checkCapital(name))){
+		printf("\nName is not all uppercase letters.\n");
+	}else if(strlen(name) > 20){
     	printf("\nName is over 20 characters.\n");
-    	return;
 	}else if(strlen(name) < 3){
 		printf("\nName is less than 3 characters.\n");
-    	return;
 	}else if(fileExists(path) != 0) {
         printf("\nProfile already exists.\n");
-	}else if(!(checkCapital(name))){
-		printf("\nName is not all uppercase letters.\n");
 	}else{
         printf("\nUser profile [%s] created.\n\n", name);
 
@@ -2028,7 +2026,6 @@ void newProfile(profile *currentUser, profileList users){
 		fprintf(dir, "%s\n", name);
     	fclose(dir);
     	
-
     	user = fopen(path, "w");
 		// user details
 		fprintf(user, "%s\n", name);
