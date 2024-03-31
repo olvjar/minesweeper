@@ -1,8 +1,8 @@
 DEBUG
 2
 1
-1
-0
+2
+2
 snapshots/DEBUG_snapshot0.txt
 snapshots/DEBUG_snapshot1.txt
 snapshots/DEBUG_snapshot2.txt

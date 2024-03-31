@@ -1199,7 +1199,7 @@ int checkLevels(customLevelList *cLevels){
 	
 	printf("|      EXISTING CUSTOM LEVELS        |\n");
 	for(i = 0; i < numFiles; i++){
-		fscanf(dir, "%s", cLevels[i]->filename);
+		fscanf(dir, "%20s", cLevels[i]->filename);
 		printf("|      %d. %-20s       |  \n", i + 1, cLevels[i]->filename);
 	}
 
@@ -1324,13 +1324,14 @@ int checkValidity(game *customLevel, int *minesCount){
 */
 
 void deleteLevel(customLevelList *cLevels){
-	char filename[21];
+	char name[21];
+	char filename[25];
 	char path[100] = LVL_PATH;
 	int num, i;
 	FILE *dir;
 
-	renderMenuLevelAsk(2, filename, cLevels);
-	iHideCursor();
+	renderMenuLevelAsk(2, name, cLevels);
+	strcpy(filename, name);
 	strcat(filename, ".txt");
     strcat(path, filename);
 
@@ -1359,7 +1360,7 @@ void deleteLevel(customLevelList *cLevels){
 		dir = fopen(LVL_DIR, "w");
 		fprintf(dir, "%d\n", num - 1);
 		for(i = 0; i < num; i++){
-			if(strcmp(cLevels[i]->filename, filename) != 0){
+			if(strcmp(cLevels[i]->filename, name) != 0){
 				fprintf(dir, "%s\n", cLevels[i]->filename);
 			}
 		}
@@ -1482,13 +1483,15 @@ int editLevel(game *customLevel, int minesCount){
 */
 
 void loadLevel(game *customLevel, customLevelList *cLevels){
-	char filename[21];
+	char name[21];
+	char filename[25];
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
     int edit;
 
-	renderMenuLevelAsk(3, filename, cLevels);
+	renderMenuLevelAsk(3, name, cLevels);
+	strcpy(filename, name);
     strcat(filename, ".txt");
     strcat(path, filename);
 
@@ -1518,7 +1521,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 
     	if(edit == 1){
     		level = fopen(path, "w");
-    		saveFile(1, level, customLevel, cLevels, filename);
+    		saveFile(1, level, customLevel, cLevels, name);
     		fclose(level);
     		
     		CLEARSCREEN;
@@ -1542,19 +1545,23 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 */
 
 void createLevel(game *customLevel, customLevelList *cLevels){
-	char filename[21];
+	char name[21];
+	char filename[25];
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
     int edit;
 
-	renderMenuLevelAsk(1, filename, cLevels);
+	renderMenuLevelAsk(1, name, cLevels);
+	strcpy(filename, name);
     strcat(filename, ".txt");
     strcat(path, filename);
 
     if (fileExists(path) == 1) {
-        printf("\nLevel cannot be created. File already exists.\n");
-    } else {
+        printf("\nLevel cannot be created: File already exists.\n");
+    } else if(strlen(name) > 20){
+    	printf("\nLevel cannot be created: Filename is over 20 characters.");
+	}else{
         CLEARSCREEN;
 		printf("\n  Level %s will be created.\n\n", filename);
 		delay(1000);
@@ -1609,7 +1616,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 
         if(edit == 1){
     		level = fopen(path, "w");
-    		saveFile(0, level, customLevel, cLevels, filename);
+    		saveFile(0, level, customLevel, cLevels, name);
     		fclose(level);
     		
     		CLEARSCREEN;
@@ -1907,7 +1914,7 @@ int checkProfiles(profileList users){
 
 	printf("|         EXISTING PROFILES:         |\n");
 	for(i = 0; i < numFiles; i++){
-		fscanf(dir, "%s", users[i].name);
+		fscanf(dir, "%20s", users[i].name);
 		printf("|      %d. %-20s       |  \n", i + 1, users[i].name);
 	}
 
@@ -1968,7 +1975,7 @@ void renderMenuProfileAsk(int mode, char *filename, profile currentUser, profile
 */
 int selectProfile(profile *currentUser, profileList *users){
 	char name[21];
-	char filename[21];
+	char filename[25];
 	char path[] = USER_PATH;
 
 	renderMenuProfileAsk(3, name, *currentUser, *users);
@@ -2001,7 +2008,7 @@ int selectProfile(profile *currentUser, profileList *users){
 */
 void newProfile(profile *currentUser, profileList users){
 	char name[21];
-	char filename[21];
+	char filename[25];
     char path[] = USER_PATH;
     char gamePath[] = GAME_PATH;
     int num, i;
@@ -2100,7 +2107,7 @@ void newProfile(profile *currentUser, profileList users){
 */
 void deleteProfile(profile *currentUser, profileList users){
     char name[21];
-    char filename[21];
+    char filename[25];
     char path[] = USER_PATH;
     char gamePath[] = GAME_PATH;
     int num, i;
