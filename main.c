@@ -731,7 +731,7 @@ int inspectBoard(game *level, char outcome[], int time) {
 
 	@return the boolean value determining the game continues. 1 for true, 0 for false
 	
-	Pre-condition: level has all members declared
+	Pre-condition: level has all members declared and alive == 1
 */
 
 int gameChecker(game level, char outcome[], int time){
@@ -758,6 +758,26 @@ int gameChecker(game level, char outcome[], int time){
 }
 
 /*	
+	This function checks if a file exists 
+	@param *fileName - a string that holds the path of the file			 
+
+	@return the boolean value if the file exists. 1 for true and 0 for false.
+	
+	Pre-condition: none
+*/
+
+int fileExists(char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file) {
+        fclose(file);
+        return 1; // exists
+    } else {
+    	fclose(file);
+        return 0; // null
+    }
+}
+
+/*	
 	This function reads and writes a given snapshot of a recent game from one file to another.
 	@param destFile[] - a string that holds the path of the destination of the file to be overwritten
 	@param sourceFile[] - a string that holds the path of the file to be copied from
@@ -775,9 +795,13 @@ void transferSnapshot(char destFile[], char sourceFile[]){
 	int rows, cols, time, i ,j;
 	char val[10][15];
 	
+	if(fileExists(sourceFile) == 0) {
+		return;
+	}
+	
 	fsource = fopen(sourceFile, "r");
 	fdest = fopen(destFile, "w");
-	
+
 	fscanf(fsource, " %s", outcome);
 	
 	if (strcmp(outcome, "0") == 0) {
@@ -1138,26 +1162,6 @@ int menuLevelEditor(){
 		selection = controlsMenu(&cont, selection, 4);
 	}
 	return selection;
-}
-
-/*	
-	This function checks if a file exists 
-	@param *fileName - a string that holds the path of the file			 
-
-	@return the boolean value if the file exists. 1 for true and 0 for false.
-	
-	Pre-condition: none
-*/
-
-int fileExists(char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (file) {
-        fclose(file);
-        return 1; // exists
-    } else {
-    	fclose(file);
-        return 0; // null
-    }
 }
 
 /*	
@@ -2516,6 +2520,7 @@ void startMenu(profile *currentUser, profileList *users){
 	FILE *dir;
 	
 	asciiStartMenu();
+	getch();
 	
 	dir = fopen(USER_DIR, "r");
 	fscanf(dir, " %d", &num);
