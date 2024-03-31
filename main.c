@@ -1516,6 +1516,8 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     		level = fopen(path, "w");
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
+    		
+    		CLEARSCREEN;
     		printBoardChar(*customLevel);
         	printf("\nLevel successfully edited.\n\n");
 		} else{
@@ -1551,7 +1553,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     } else {
         CLEARSCREEN;
 		printf("\n  Level %s will be created.\n\n", filename);
-		delay(1500);
+		delay(1000);
 
 		int validNum = 0;
 		while(!validNum){
@@ -1605,6 +1607,8 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     		level = fopen(path, "w");
     		saveFile(0, level, customLevel, cLevels, filename);
     		fclose(level);
+    		
+    		CLEARSCREEN;
     		printBoardChar(*customLevel);
         	printf("\nLevel created successfully.\n\n");
 		} else{
@@ -1775,12 +1779,11 @@ void viewStatistics(profile *currentUser){
 			iSetColor(I_COLOR_WHITE);
 		}
     }
+    
+    choice = getch();
 	while(!quit){
-		if(kbhit()){
-            choice = getch();
-                if(choice == 27){ // escape
-                    quit = 1;
-				}
+        if(choice == 27){ // escape
+            quit = 1;
 		}
 	}
 }
@@ -2210,6 +2213,17 @@ void changeProfile(profile *currentUser, profileList *users){
 
 /* leaderboard */
 
+/*
+    This function sorts leaderboard rankings by best time
+
+    @param ranking - a structure that contains the game information of leaderboard entry
+    @param count - an integer indicating the valid entries of players
+    
+	@return void
+
+    Pre-condition: ranking has all members initialized and count is a non-negative integer
+*/
+
 void sortLeaderboard(leaderboard ranking, int count) {
     int i, j, low;
     int temp_time;
@@ -2236,6 +2250,17 @@ void sortLeaderboard(leaderboard ranking, int count) {
         }
     }
 }
+
+/*
+    This function sorts displays the leaderboard for both easy and difficult levels, showing the top 3 players.
+
+    @param easyRanking - a structure that contains the top 3 leaderboard for classic easy
+    @param difficultRanking -  a structure that contains the top 3 leaderboard for classic difficult
+    
+	@return void
+
+    Pre-condition: easyRanking and difficultRanking has all members decalred 
+*/
 
 void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
     int easyHours[3], easyMinutes[3], easySeconds[3];
@@ -2268,6 +2293,18 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
     printf("|   [#3 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
 
 }
+
+/*
+    This function creates the leardboard by reading through all existing players recent game snapshots then updating temporary leaderboards based on game won time. It then sorts and outputs top 3 entries to the final leaderboard to be printed for both easy and difficult.
+
+    @param easyRanking - a structure that contains the top 3 leaderboard for classic easy
+    @param difficultRanking -  a structure that contains the top 3 leaderboard for classic difficult
+	@param users - a 1D array that contains the player profiles
+
+	@return void
+
+    Pre-condition: easyRanking, difficultRanking, and users has all members decalred 
+*/
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
     FILE *user, *dir, *recentgames;
