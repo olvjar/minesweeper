@@ -1221,7 +1221,7 @@ void renderMenuLevelAsk(int mode, char *filename, customLevelList *cLevels) {
     printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
     iMoveCursor(11, 10+num);
     iShowCursor();
-    scanf("%s", filename);
+    scanf("%20s", filename);
     iMoveCursor(0, 13+num);
     iHideCursor();
 }
@@ -1239,7 +1239,7 @@ void placeMine(game *customLevel, int *minesCount) {
     int row, col;
 
 	controlsLevelEdit(*customLevel, &row, &col);
-    printf("MINE %d\n", (*minesCount) + 1);
+    printf("MINES: %d\n", (*minesCount) + 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == '.') {
         customLevel->board[row][col] = 'X'; // Place mine
         (*minesCount)++;
@@ -1268,7 +1268,7 @@ void deleteMine(game *customLevel, int *minesCount) {
     int row, col;
 
 	controlsLevelEdit(*customLevel, &row, &col);
-    printf("MINE %d\n", (*minesCount) - 1);
+    printf("MINES: %d\n", (*minesCount) - 1);
     if (row >= 0 && row < customLevel->rows && col >= 0 && col < customLevel->cols && customLevel->board[row][col] == 'X') {
         customLevel->board[row][col] = '.'; // Delete mine
         (*minesCount)--;
@@ -1332,6 +1332,15 @@ void deleteLevel(customLevelList *cLevels){
         printf("\nLevel does not exist. Try again.\n");
         return;
     } else {
+		// delete level file
+		if (remove(path) != 0) {
+        	perror("\nError deleting user file\n");
+			return;
+    	} else{
+			printf("\n%s deleted successfully.\n", filename);
+		}
+	    remove(path);
+		
 		// read list
 	    dir = fopen(LVL_DIR, "r");
 	    fscanf(dir, "%d", &num);
@@ -1341,22 +1350,14 @@ void deleteLevel(customLevelList *cLevels){
 		fclose(dir);
 
 		// update list
-	    dir = fopen(LVL_DIR, "w");
-	    fprintf(dir, "%d\n", num - 1);
-	    for(i = 0; i < num; i++){
-	    	if(strcmp(cLevels[i]->filename, filename) == 0){
-	    		fprintf(dir, "%s", "");
-			} else fprintf(dir, "%s\n", cLevels[i]->filename);
+		dir = fopen(LVL_DIR, "w");
+		fprintf(dir, "%d\n", num - 1);
+		for(i = 0; i < num; i++){
+			if(strcmp(cLevels[i]->filename, filename) != 0){
+				fprintf(dir, "%s\n", cLevels[i]->filename);
+			}
 		}
-	    fclose(dir);
-
-	    // delete level file
-		if (remove(path) != 0) {
-        	perror("\nError deleting user file\n");
-    	} else{
-			printf("\n%s deleted successfully.\n", filename);
-		}
-	    remove(path);
+		fclose(dir);
 	}
 }
 
@@ -1472,7 +1473,7 @@ int editLevel(game *customLevel, int minesCount){
 */
 
 void loadLevel(game *customLevel, customLevelList *cLevels){
-	char filename[20];
+	char filename[21];
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
@@ -1501,9 +1502,8 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     			}
 	        }
 	    }
-		
-		
-    	editLevel(customLevel, minesCount); 
+
+		editLevel(customLevel, minesCount);
 
     	if(editLevel(customLevel, minesCount) == 1){
     		level = fopen(path, "w");
@@ -1516,7 +1516,6 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 			printf("Level was not saved.\n\n");
 			fclose(level);
 		}
-
 	}
 }
 
@@ -1938,7 +1937,7 @@ void renderMenuProfileAsk(int mode, char *filename, profile currentUser, profile
     printf("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  \n");
     iMoveCursor(11, 11+num);
     iShowCursor();
-    scanf("%s", filename);
+    scanf("%20s", filename);
     iMoveCursor(0, 14+num);
     iHideCursor();
 }
@@ -2392,7 +2391,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
 	Pre-condition: currentUser, customLevel, and level has all members initialized
 */
 void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevels){
-	char filename[20];
+	char filename[21];
     char path[100] = LVL_PATH;
     FILE *chosenLevel;
     customLevel->mines = 0;
