@@ -15,6 +15,14 @@ A collaborative university machine project turned small passion project. This wa
 - Persistent player data
 - Player leaderboard based on time won 🏆🎉
 
+### To-do
+
+No longer bounded by restrictions, we are revamping the project with these goals in mind:
+
+- [ ] Key inputs for flag and inspecting on gameplay and level editing
+- [ ] Persistent game timer
+- [ ] Rewriting more efficient modules
+
 ## Documentation
 
 ### Installation
