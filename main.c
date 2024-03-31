@@ -1057,8 +1057,7 @@ void gameProper(game level, profile *currentUser){
 	        minutes = (timeElapsed % 3600) / 60;
 	        seconds = timeElapsed % 60;
 			
-			printBoardChar(level); // for testing DELETE
-			printf("\nTIME: %02d:%02d:%02d", hours, minutes, seconds);
+			printf("\nTIME: %02d:%02d:%02d\n", hours, minutes, seconds);
 			printBoard(level);
 			
 			for (i = 0; i < 4; i++){
@@ -1092,6 +1091,7 @@ void gameProper(game level, profile *currentUser){
 				CLEARSCREEN;
 				strcpy(outcome, "quit");
 				asciiGameQuit(timeElapsed);
+				printBoardChar(level);
 				alive = 0;
 				break;
 			default:

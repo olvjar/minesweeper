@@ -1,0 +1,8 @@
+DELETE
+0
+1
+0
+1
+snapshots/DELETE_snapshot0.txt
+snapshots/DELETE_snapshot1.txt
+snapshots/DELETE_snapshot2.txt
