@@ -64,6 +64,17 @@ void sortLeaderboard(leaderboard ranking, int count) {
     }
 }
 
+/*
+    This function sorts displays the leaderboard for both easy and difficult levels, showing the top 3 players.
+
+    @param easyRanking - a structure that contains the top 3 leaderboard for classic easy
+    @param difficultRanking -  a structure that contains the top 3 leaderboard for classic difficult
+    
+	@return void
+
+    Pre-condition: easyRanking and difficultRanking has all members decalred 
+*/
+
 void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
     int easyHours[3], easyMinutes[3], easySeconds[3];
     int diffHours[3], diffMinutes[3], diffSeconds[3];
@@ -95,6 +106,18 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
     printf("|   [#3 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
 
 }
+
+/*
+    This function creates the leardboard by reading through all existing players recent game snapshots then updating temporary leaderboards based on game won time. It then sorts and outputs top 3 entries to the final leaderboard to be printed for both easy and difficult.
+
+    @param easyRanking - a structure that contains the top 3 leaderboard for classic easy
+    @param difficultRanking -  a structure that contains the top 3 leaderboard for classic difficult
+	@param users - a 1D array that contains the player profiles
+
+	@return void
+
+    Pre-condition: easyRanking, difficultRanking, and users has all members decalred 
+*/
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
     FILE *user, *dir, *recentgames;
@@ -189,34 +212,23 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
     sortLeaderboard(tempEasy, easyCount); 
     sortLeaderboard(tempDifficult, difficultCount);
 
-    // fill remaining rankings if not enough valid entries
-    if (easyCount > 0) {
-        for (i = 0; i < 3 && i < easyCount; i++) {
+    // fill the final leaderboards with sorted and valid entries
+    for (i = 0; i < 3; i++) {
+        if (i < easyCount) {
             easyRanking[i] = tempEasy[i];
+        } else { // if not enough entries, leave other ranks empty
+            easyRanking[i].time = 0;
+            easyRanking[i].user[0] = '\0';
         }
-        for (; i < 3; i++) {
-            easyRanking[i] = tempEasy[0]; // use the best time for remaining ranks
-        }
-    }
 
-    if (difficultCount > 0) {
-        for (i = 0; i < 3 && i < difficultCount; i++) {
+        if (i < difficultCount) {
             difficultRanking[i] = tempDifficult[i];
-        }
-        for (; i < 3; i++) {
-            difficultRanking[i] = tempDifficult[0];
+        } else {
+            difficultRanking[i].time = 0;
+            difficultRanking[i].user[0] = '\0';
         }
     }
 
     // print leaderboard
     printLeaderboard(easyRanking, difficultRanking);
-}
-
-int main() {
-    leaderboard easyRanking;
-    leaderboard difficultRanking;
-    profileList users;
-
-    makeLeaderboard(easyRanking, difficultRanking, users);
-    return 0; // Added return statement
 }

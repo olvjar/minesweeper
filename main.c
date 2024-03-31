@@ -2399,22 +2399,20 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
     sortLeaderboard(tempEasy, easyCount); 
     sortLeaderboard(tempDifficult, difficultCount);
 
-    // fill remaining rankings if not enough valid entries
-    if (easyCount > 0) {
-        for (i = 0; i < 3 && i < easyCount; i++) {
+    // fill the final leaderboards with sorted and valid entries
+    for (i = 0; i < 3; i++) {
+        if (i < easyCount) {
             easyRanking[i] = tempEasy[i];
+        } else { // if not enough entries, leave other ranks empty
+            easyRanking[i].time = 0;
+            easyRanking[i].user[0] = '\0';
         }
-        for (; i < 3; i++) {
-            easyRanking[i] = tempEasy[0]; // use the best time for remaining ranks
-        }
-    }
 
-    if (difficultCount > 0) {
-        for (i = 0; i < 3 && i < difficultCount; i++) {
+        if (i < difficultCount) {
             difficultRanking[i] = tempDifficult[i];
-        }
-        for (; i < 3; i++) {
-            difficultRanking[i] = tempDifficult[0];
+        } else {
+            difficultRanking[i].time = 0;
+            difficultRanking[i].user[0] = '\0';
         }
     }
 
