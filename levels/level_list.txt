@@ -1,4 +1,5 @@
-3
+4
 hello.txt
 world.txt
 testmax1.txt
+testmin.txt

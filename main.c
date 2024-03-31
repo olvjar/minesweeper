@@ -643,6 +643,10 @@ void cascade(game *level, int i, int j){
         cascade(level, i + 1, j); // down
         cascade(level, i, j - 1); // left
         cascade(level, i, j + 1); // right
+        cascade(level, i - 1, j - 1); // up left
+        cascade(level, i - 1, j + 1); // up right
+        cascade(level, i + 1, j - 1); // bottom left
+        cascade(level, i + 1, j + 1); // bottom right
     }
 }
 

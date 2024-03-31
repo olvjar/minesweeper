@@ -1,7 +1,7 @@
 MOLLY
+1
 0
-0
-0
+1
 0
 snapshots/MOLLY_snapshot0.txt
 snapshots/MOLLY_snapshot1.txt
