@@ -1418,8 +1418,8 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
 */
 
 int editLevel(game *customLevel, int minesCount){
-    int save;
-    int quit;
+    int save = 0;
+    int quit = 0;
     int choice;
 
 	CLEARSCREEN;
@@ -1474,6 +1474,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
+    int edit;
 
 	renderMenuLevelAsk(3, filename, cLevels);
     strcat(filename, ".txt");
@@ -1501,9 +1502,9 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	    }
 		fclose(level);
 
-		editLevel(customLevel, minesCount);
+		edit = editLevel(customLevel, minesCount);
 
-    	if(editLevel(customLevel, minesCount) == 1){
+    	if(edit == 1){
     		level = fopen(path, "w");
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
@@ -1765,12 +1766,10 @@ void viewStatistics(profile *currentUser){
 			iSetColor(I_COLOR_WHITE);
 		}
     }
+    choice = getch();
 	while(!quit){
-		if(kbhit()){
-            choice = getch();
-                if(choice == 27){ // escape
-                    quit = 1;
-				}
+		if(choice == 27){ // escape
+                quit = 1;
 		}
 	}
 }
