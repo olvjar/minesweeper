@@ -1,8 +1,0 @@
-MOLLY
-0
-2
-4
-1
-snapshots/MOLLY_snapshot0.txt
-snapshots/MOLLY_snapshot1.txt
-snapshots/MOLLY_snapshot2.txt

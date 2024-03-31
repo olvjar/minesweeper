@@ -1,8 +1,0 @@
-GEMOLLY
-0
-0
-2
-0
-snapshots/GEMOLLY_snapshot0.txt
-snapshots/GEMOLLY_snapshot1.txt
-snapshots/GEMOLLY_snapshot2.txt
