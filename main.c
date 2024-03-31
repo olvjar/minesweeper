@@ -1422,12 +1422,13 @@ void saveFile(int mode, FILE *file, game *customLevel, customLevelList *cLevels,
 */
 
 int editLevel(game *customLevel, int minesCount){
-    int save;
-    int quit;
+    int save = 0;
+    int quit = 0;
+    int check;
     int choice;
 
 	CLEARSCREEN;
-    while(quit != 1){
+    while(!quit){
 		choice = menuEditLevel(customLevel, minesCount);
 
         switch(choice){
@@ -1440,9 +1441,12 @@ int editLevel(game *customLevel, int minesCount){
 				deleteMine(customLevel, &minesCount);
                 break;
             case 2:
-				if(checkValidity(customLevel, &minesCount) == 1) {
+				check = checkValidity(customLevel, &minesCount);
+				
+				if(check == 1) {
             		save = 1;
             		quit = 1;
+            		return save;
                 } else {
 					printf("\nPress any key to continue...\n");
 					getch();
@@ -1478,6 +1482,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
+    int edit;
 
 	renderMenuLevelAsk(3, filename, cLevels);
     strcat(filename, ".txt");
@@ -1492,7 +1497,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 		// read level data
 		fscanf(level, "%d %d", &customLevel->rows, &customLevel->cols);
 		for(int i = 0; i < customLevel->rows; i++) {
-			fscanf(level, "%s", customLevel->board[i]);
+			fscanf(level, " %s", customLevel->board[i]);
     	}
     	
     	// count mines
@@ -1505,9 +1510,9 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 	    }
 		fclose(level);
 
-		editLevel(customLevel, minesCount);
+		edit = editLevel(customLevel, minesCount);
 
-    	if(editLevel(customLevel, minesCount) == 1){
+    	if(edit == 1){
     		level = fopen(path, "w");
     		saveFile(1, level, customLevel, cLevels, filename);
     		fclose(level);
@@ -1535,6 +1540,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     char path[100] = LVL_PATH;
     FILE *level;
     int minesCount = 0;
+    int edit;
 
 	renderMenuLevelAsk(1, filename, cLevels);
     strcat(filename, ".txt");
@@ -1593,9 +1599,9 @@ void createLevel(game *customLevel, customLevelList *cLevels){
         	}
     	}
 
-        editLevel(customLevel, minesCount);
+        edit = editLevel(customLevel, minesCount);
 
-        if(editLevel(customLevel, minesCount) == 1){
+        if(edit == 1){
     		level = fopen(path, "w");
     		saveFile(0, level, customLevel, cLevels, filename);
     		fclose(level);
