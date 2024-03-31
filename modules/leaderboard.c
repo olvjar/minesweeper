@@ -85,18 +85,16 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
         diffMinutes[i] = (difficultTime[i] % 3600) / 60;
         diffSeconds[i] = difficultTime[i] % 60;
     }
+    
+    printf("|   EASY**********************LEADERBOARD   |\n");
+    printf("|   [#1 %-20s -  %02d:%02d:%02d]   |\n", easyRanking[0].user, easyHours[0], easyMinutes[0], easySeconds[0]);
+    printf("|   [#2 %-20s -  %02d:%02d:%02d]   |\n", easyRanking[1].user, easyHours[1], easyMinutes[1], easySeconds[1]);
+    printf("|   [#3 %-20s -  %02d:%02d:%02d]   |\n", easyRanking[2].user, easyHours[2], easyMinutes[2], easySeconds[2]);
+    printf("|   DIFFICULT*****************LEADERBOARD   |\n");
+    printf("|   [#1 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[0].user, diffHours[0], diffMinutes[0], diffSeconds[0]);
+    printf("|   [#2 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[1].user, diffHours[1], diffMinutes[1], diffSeconds[1]);
+    printf("|   [#3 %-20s -  %02d:%02d:%02d]   |\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
 
-    printf("            LEADERBOARDS             \n");
-    printf(" EASY*******************************\n");
-    printf(" [#1 %s -  %02d:%02d:%02d]\n", easyRanking[0].user, easyHours[0], easyMinutes[0], easySeconds[0]);
-    printf(" [#2 %s -  %02d:%02d:%02d]\n", easyRanking[1].user, easyHours[1], easyMinutes[1], easySeconds[1]);
-    printf(" [#3 %s -  %02d:%02d:%02d]\n", easyRanking[2].user, easyHours[2], easyMinutes[2], easySeconds[2]);
-    printf("                                     \n");
-    printf(" DIFFICULT**************************\n");
-    printf(" [#1 %s -  %02d:%02d:%02d]\n", difficultRanking[0].user, diffHours[0], diffMinutes[0], diffSeconds[0]);
-    printf(" [#2 %s -  %02d:%02d:%02d]\n", difficultRanking[1].user, diffHours[1], diffMinutes[1], diffSeconds[1]);
-    printf(" [#3 %s -  %02d:%02d:%02d]\n", difficultRanking[2].user, diffHours[2], diffMinutes[2], diffSeconds[2]);
-    printf("                                     \n");
 }
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
