@@ -1049,6 +1049,7 @@ void gameProper(game level, profile *currentUser){
 	        minutes = (timeElapsed % 3600) / 60;
 	        seconds = timeElapsed % 60;
 			
+			printBoardChar(level); // for testing DELETE
 			printf("\nTIME: %02d:%02d:%02d", hours, minutes, seconds);
 			printBoard(level);
 			
@@ -2203,14 +2204,14 @@ void changeProfile(profile *currentUser, profileList *users){
 
 /* leaderboard */
 
-void sortLeaderboard(leaderboard ranking) {
+void sortLeaderboard(leaderboard ranking, int count) {
     int i, j, low;
     int temp_time;
     char temp_user[21];
 
-    for (i = 0; i < 3 - 1; i++) {
+    for (i = 0; i < count - 1; i++) {
         low = i;
-        for (j = i + 1; j < 3; j++) {
+        for (j = i + 1; j < count; j++) {
             if (ranking[low].time > ranking[j].time) {
                 low = j;
             }
@@ -2263,13 +2264,27 @@ void printLeaderboard(leaderboard easyRanking, leaderboard difficultRanking) {
 }
 
 void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, profileList users) {
-    FILE *user;
-    FILE *dir;
-    FILE *recentgames;
-    int i, b, c, numFiles;
+    FILE *user, *dir, *recentgames;
+    int i, j, b, c, numFiles;
+    int easyCount = 0, difficultCount = 0; // valid entries
     char path[100];
+    struct scoreboard tempEasy[MAX_PROFILES * 3];
+    struct scoreboard tempDifficult[MAX_PROFILES * 3];
 
-    // check and scan all existing profiles
+    // initialize clean leaderboard
+    for (i = 0; i < MAX_PROFILES * 3; i++) {
+        if (i < 3) {
+            easyRanking[i].time = 0;
+            difficultRanking[i].time = 0;
+            easyRanking[i].user[0] = '\0';
+            difficultRanking[i].user[0] = '\0';
+        }
+        tempEasy[i].time = 0;
+        tempDifficult[i].time = 0;
+        tempEasy[i].user[0] = '\0';
+        tempDifficult[i].user[0] = '\0';
+    }
+
     dir = fopen(USER_DIR, "r");
     if (dir == NULL) {
         printf("Error opening profile directory.\n");
@@ -2293,7 +2308,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             }
             fscanf(user, "%s", users[i].name);
             fscanf(user, "%d\n%d\n%d\n%d", &users[i].games_won_classic, &users[i].games_lost_classic, &users[i].games_won_custom, &users[i].games_lost_custom);
-            for (int j = 0; j < 3; j++) {
+            for (j = 0; j < 3; j++) {
                 fscanf(user, "%s\n", users[i].recentgame[j].path);
             }
             fclose(user);
@@ -2303,7 +2318,7 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
 
     // check all scanned profiles existing recent games
     for (i = 0; i < numFiles; i++) { // go through all profiles
-        for (int j = 0; j < 3; j++) { // go through recent games
+        for (j = 0; j < 3; j++) { // go through recent games
             recentgames = fopen(users[i].recentgame[j].path, "r");
             if (recentgames == NULL) {
                 printf("Error opening recent game file %s.\n", users[i].recentgame[j].path);
@@ -2322,22 +2337,44 @@ void makeLeaderboard(leaderboard easyRanking, leaderboard difficultRanking, prof
             }
             fclose(recentgames);
 
-            // write leaderboard
+            // write temp leaderboards
             if (strcmp(users[i].recentgame[j].outcome, "WON") == 0) {
                 if (strcmp(users[i].recentgame[j].mode, CLASSIC_EASY) == 0) {
-                    strcpy(easyRanking[i].user, users[i].name);
-                    easyRanking[i].time = users[i].recentgame[j].time;
+                    strcpy(tempEasy[easyCount].user, users[i].name);
+                    tempEasy[easyCount].time = users[i].recentgame[j].time;
+                    easyCount++;
                 } else if (strcmp(users[i].recentgame[j].mode, CLASSIC_DIFFICULT) == 0) {
-                    strcpy(difficultRanking[i].user, users[i].name);
-                    difficultRanking[i].time = users[i].recentgame[j].time;
+                    strcpy(tempDifficult[difficultCount].user, users[i].name);
+                    tempDifficult[difficultCount].time = users[i].recentgame[j].time;
+                    difficultCount++;
                 }
             }
         }
     }
 
-    // sort leaderboards
-    sortLeaderboard(easyRanking);
-    sortLeaderboard(difficultRanking);
+    // set the temporary leaderboards
+    sortLeaderboard(tempEasy, easyCount); 
+    sortLeaderboard(tempDifficult, difficultCount);
+
+    // fill remaining rankings if not enough valid entries
+    if (easyCount > 0) {
+        for (i = 0; i < 3 && i < easyCount; i++) {
+            easyRanking[i] = tempEasy[i];
+        }
+        for (; i < 3; i++) {
+            easyRanking[i] = tempEasy[0]; // use the best time for remaining ranks
+        }
+    }
+
+    if (difficultCount > 0) {
+        for (i = 0; i < 3 && i < difficultCount; i++) {
+            difficultRanking[i] = tempDifficult[i];
+        }
+        for (; i < 3; i++) {
+            difficultRanking[i] = tempDifficult[0];
+        }
+    }
+
     // print leaderboard
     printLeaderboard(easyRanking, difficultRanking);
 }
