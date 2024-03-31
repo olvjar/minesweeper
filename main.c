@@ -3,7 +3,7 @@
 				 The goal of the game is to uncover all of the non-mine tiles, without being blown up by a mine.
 				 This program has 2 game modes: classic and custom. Classic randomly generates a board each time, depending on the difficulty.
 				 Meanwhile, custom allows for the user to create their own levels.
-				 This program also includes player profiles that save the statistics of a player and the snapshots of their 3 mpst
+				 This program also includes player profiles that save the statistics of a player and the snapshots of their 3 most recent games.
 	Author: GRINO, Mary Eunice E. and TAMONDONG, Mariel M.
 	Section: S17B
 	Last Modified: March 31, 2024
@@ -1780,8 +1780,8 @@ void viewStatistics(profile *currentUser){
 		}
     }
     
-    choice = getch();
 	while(!quit){
+		choice = getch();
         if(choice == 27){ // escape
             quit = 1;
 		}
