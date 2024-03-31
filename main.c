@@ -658,12 +658,16 @@ void placeFlag(game *level){
 
 	if(level->gameBoard[i][j] == HIDDEN){
 		level->gameBoard[i][j] = FLAG;
+		return; 
 	}
 	else if (level->gameBoard[i][j] == FLAG)
 		printf("Tile is already flagged. Try again.\n");
 	else if (i >= level->rows || j >= level->cols)
 		printf("Input is out of bounds\n");
 	else printf("Tile is already revealed. Try again.\n");
+	
+	printf("Press any key to continue...");
+	getch();
 }
 
 /*	
@@ -682,11 +686,16 @@ void removeFlag(game *level){
 	
 	if(level->gameBoard[i][j] == FLAG){
 		level->gameBoard[i][j] = HIDDEN;
+		return;
 	}
 	else if (i >= level->rows || j >= level->cols)
 		printf("Input is out of bounds\n");
 	else printf("Tile is not flagged. Try again.\n");
+	
+	printf("Press any key to continue...");
+	getch();
 }
+
 
 /*	
 	This function allows the player to inspect the board.
@@ -1032,7 +1041,6 @@ void gameProper(game level, profile *currentUser){
 		cont = 1;
 		while(cont){
 			CLEARSCREEN;
-			printBoardChar(level); //REMOVE THIS
 
 			time(&timeEnd);
 	        timeElapsed = difftime(timeEnd, timeStart);
@@ -1240,6 +1248,9 @@ void placeMine(game *customLevel, int *minesCount) {
         printBoardChar(*customLevel);
 		printf("Invalid position. Mine not placed.\n\n");
     }
+   
+    printf("Press any key to continue...");
+    getch();
 }
 
 /*	
@@ -1266,6 +1277,9 @@ void deleteMine(game *customLevel, int *minesCount) {
         printBoardChar(*customLevel);
 		printf("Invalid position. There is no mine.\n\n");
     }
+    
+    printf("Press any key to continue...");
+    getch();
 }
 
 /*	
@@ -1625,11 +1639,11 @@ void levelEditor(game *customLevel, customLevelList *cLevels) {
 				deleteLevel(cLevels);
                 break;
             case 3:
-				printf("\n  You have opted to go back.\n");
+				printf("\nYou have opted to go back.\n");
 				quit = 1;
 				break;
 			default:
-				printf("  Invalid selection. Please choose again.\n\n");
+				printf("Invalid selection. Please choose again.\n\n");
         }
     	if (!quit){
 			printf("Press any key to continue...\n");

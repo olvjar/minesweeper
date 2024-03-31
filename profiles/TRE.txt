@@ -1,0 +1,8 @@
+TRE
+0
+1
+0
+0
+snapshots/TRE_snapshot0.txt
+snapshots/TRE_snapshot1.txt
+snapshots/TRE_snapshot2.txt
