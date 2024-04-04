@@ -1546,7 +1546,7 @@ void loadLevel(game *customLevel, customLevelList *cLevels){
 */
 
 void createLevel(game *customLevel, customLevelList *cLevels){
-	char name[21];
+	char name[100];
 	char filename[25];
     char path[100] = LVL_PATH;
     FILE *level;
@@ -2019,7 +2019,7 @@ int selectProfile(profile *currentUser, profileList *users){
     Pre-condition: currentUser and users are not empty
 */
 void newProfile(profile *currentUser, profileList users){
-	char name[21];
+	char name[100];
 	char filename[25];
     char path[] = USER_PATH;
     char gamePath[] = GAME_PATH;
