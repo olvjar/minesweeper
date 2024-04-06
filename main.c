@@ -1430,7 +1430,7 @@ int editLevel(game *customLevel, int minesCount){
     int save = 0;
     int quit = 0;
     int check;
-    int choice;
+    int choice = 0;
 
 	CLEARSCREEN;
     while(!quit){
@@ -1653,7 +1653,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
 */
 
 void levelEditor(game *customLevel, customLevelList *cLevels) {
-    int quit = 0, choice;
+    int quit = 0, choice = 0;
 
 	CLEARSCREEN;
 	while(!quit){
@@ -1721,7 +1721,7 @@ void getStatistics(profile *currentUser){
 	Pre-condition: *currentUser has all members initialized
 */
 void viewStatistics(profile *currentUser){
-	int choice, quit = 0;
+	int choice = 0, quit = 0;
     int i, j, k, b, c;
     int time, hours, minutes, seconds;
     FILE *recentgames;
@@ -2201,7 +2201,7 @@ void deleteProfile(profile *currentUser, profileList users){
     Pre-condition: currentUser and level has all members initialized
 */
 void changeProfile(profile *currentUser, profileList *users){
-	int choice, quit = 0;
+	int choice = 0, quit = 0;
 
 	CLEARSCREEN;
 	while(!quit){
@@ -2295,7 +2295,7 @@ void playCustom(game *customLevel, profile *currentUser, customLevelList *cLevel
     Pre-condition: currentUser and level has all members declared
 */
 void playClassic(game *level, profile *currentUser){
-	int classicSelect;
+	int classicSelect = 0;
 	int exit = 0;
 	int cont = 1;
 	
@@ -2703,18 +2703,18 @@ void startMenu(profile *currentUser, profileList *users){
 int main(){
 	// initalize variables
 	profile currentUser = {""};
-	profileList users;
+	profileList users = {{""}};
 
 	game level;
 	game customLevel;
-	customLevelList customLvls;
+	customLevelList customLvls = {{""}};
 	
 	leaderboard easyRanking;
 	leaderboard difficultRanking;
 
 	// start
 	iHideCursor();
-	int menuSelect, cont;
+	int menuSelect = 0, cont;
 	int exit = 0;
 	startMenu(&currentUser, &users);
 	delay(300);
