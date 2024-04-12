@@ -1635,6 +1635,7 @@ void createLevel(game *customLevel, customLevelList *cLevels){
     		printBoardChar(*customLevel);
         	printf("\nLevel created successfully.\n\n");
 		} else{
+			CLEARSCREEN;
 			printBoardChar(*customLevel);
 			printf("\nLevel was not saved.\n\n");
 		}
