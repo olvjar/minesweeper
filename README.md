@@ -20,8 +20,11 @@ A collaborative university machine project turned small passion project. This wa
 No longer bounded by restrictions, we are revamping the project with these goals in mind:
 
 - [ ] Key inputs for flag and inspecting on gameplay and level editing
+- [ ] Arrow keys for selecting profiles and custom levels
 - [ ] Persistent game timer
 - [ ] Rewriting more efficient modules
+- [ ] Make instructions page
+- [ ] Make consistent instructions for each page
 
 ## Documentation
 
