@@ -22,6 +22,7 @@ No longer bounded by restrictions, we are revamping the project with these goals
 - [ ] Key inputs for flag and inspecting on gameplay and level editing
 - [ ] Arrow keys for selecting profiles and custom levels
 - [ ] Persistent game timer
+- [ ] New leaderboard
 - [ ] Rewriting more efficient modules
 - [ ] Make instructions page
 - [ ] Make consistent instructions for each page
