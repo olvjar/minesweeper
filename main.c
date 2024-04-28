@@ -148,17 +148,28 @@ int controlsMenu(int *cont, int selection, int max){
 	Pre-condition: level has all members initialized
 */
 
-void controlsGame(game level, int *rowChosen, int *colChosen){
+int controlsGame(game level, int *rowChosen, int *colChosen, time_t timeStart, int *timeElapsed){
 	int input;
     int cont = 1;
     int i, j;
-    int row = 0;
-    int col = 0;
+    int row = *rowChosen;
+    int col = *colChosen;
+	int choice, hours, minutes, seconds;
+	time_t timeEnd;
 
 	while (cont) {
 		CLEARSCREEN;
+		
+			time(&timeEnd);
+	        *timeElapsed = difftime(timeEnd, timeStart);
+		hours = *timeElapsed / 3600;
+	        minutes = (*timeElapsed % 3600) / 60;
+	        seconds = *timeElapsed % 60;
+		
 	    
-	    printf("Use [ARROW KEYS] and [ENTER] to select\n\n");
+	    printf("\t [ARROW KEYS]\n[1] INSPECT       [2] FLAG\n[3] REMOVE FLAG   [ESC] QUIT \n\n");
+	    printf("\nTIME: %02d:%02d:%02d\n", hours, minutes, seconds);
+	    
 	    
 	    printf("\n");
 		printf("     ");
@@ -264,8 +275,12 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	                    delay(500);
 	                    break;
 	            }
-	        } else if (input == '\r') {
+	        } else if (input == '1' || input == '2' || input == '3' || input == 27) {
 	            cont = 0;
+				if (input == '1') choice = 0;
+				if (input == '2') choice = 1;
+				if (input == '3') choice = 2;
+				if (input == 27) choice = 3;
 	        }
 	        else {
 				printf("Invalid input. Use arrow keys.\n");
@@ -276,6 +291,7 @@ void controlsGame(game level, int *rowChosen, int *colChosen){
 	CLEARSCREEN;
 	*rowChosen = row;
 	*colChosen = col;
+	return choice;
 }
 
 /*	
@@ -659,10 +675,7 @@ void cascade(game *level, int i, int j){
 	Pre-condition: level has all members initialized, except for gameBoard
 */
 
-void placeFlag(game *level){
-	int i, j;
-	
-	controlsGame(*level, &i, &j);
+void placeFlag(game *level, int i, int j){
 
 	if(level->gameBoard[i][j] == HIDDEN){
 		level->gameBoard[i][j] = FLAG;
@@ -687,10 +700,7 @@ void placeFlag(game *level){
 	Pre-condition: level has all members initialized, except for gameBoard
 */
 
-void removeFlag(game *level){
-	int i, j;
-	
-	controlsGame(*level, &i, &j);
+void removeFlag(game *level, int i, int j){
 	
 	if(level->gameBoard[i][j] == FLAG){
 		level->gameBoard[i][j] = HIDDEN;
@@ -716,10 +726,7 @@ void removeFlag(game *level){
 	Pre-condition: level has all members initialized
 */
 
-int inspectBoard(game *level, char outcome[], int time) {
-    int i, j;
-    
-    controlsGame(*level, &i, &j);
+int inspectBoard(game *level, char outcome[], int time, int i, int j) {
     
     if (i < level->rows && j < level->cols && level->gameBoard[i][j] != FLAG) {
         if (mineCount(*level, i, j) == -1) {
@@ -1029,7 +1036,7 @@ void updateStatistics(game level, char outcome[], profile *currentUser){
 */
 
 void gameProper(game level, profile *currentUser){
-	int i, j, cont = 1, alive = 1;
+	int i, j, alive = 1;
 	int choice = 0;
 	char outcome[11];
 
@@ -1041,51 +1048,26 @@ void gameProper(game level, profile *currentUser){
     }
     
     CLEARSCREEN;
-	time_t timeStart, timeEnd;
-	int timeElapsed, hours, minutes, seconds;
+    time_t timeStart;
+	int timeElapsed;
+	
+	i = j = 0;
 	
 	time(&timeStart);
 	while(alive){
-		cont = 1;
-		while(cont){
-			CLEARSCREEN;
+			//CLEARSCREEN;
 
-			time(&timeEnd);
-	        timeElapsed = difftime(timeEnd, timeStart);
-	        
-	        hours = timeElapsed / 3600;
-	        minutes = (timeElapsed % 3600) / 60;
-	        seconds = timeElapsed % 60;
-			
-			printf("\nTIME: %02d:%02d:%02d\n", hours, minutes, seconds);
-			printBoard(level);
-			
-			for (i = 0; i < 4; i++){
-				if (i == choice){
-					if (i==0) printf(" > INSPECT tile\n");
-					if (i==1) printf(" > FLAG tile\n");
-					if (i==2) printf(" > REMOVE flag\n");
-					if (i==3) printf(" > QUIT current game\n");
-				} else {
-					if (i==0) printf("   INSPECT tile\n");
-					if (i==1) printf("   FLAG tile\n");
-					if (i==2) printf("   REMOVE flag\n");
-					if (i==3) printf("   QUIT current game\n");
-				}
-			}
-			
-			choice = controlsMenu(&cont, choice, 4);
-			}
+		choice = controlsGame(level, &i, &j, timeStart, &timeElapsed);
 		
 		switch (choice){
 			case 0:
-				alive = inspectBoard(&level, outcome, timeElapsed);
+				alive = inspectBoard(&level, outcome, timeElapsed, i ,j);
 				break;
 			case 1:
-				placeFlag(&level);
+				placeFlag(&level, i, j);
 				break;
 			case 2:
-				removeFlag(&level);
+				removeFlag(&level, i, j);
 				break;
 			case 3:
 				CLEARSCREEN;
