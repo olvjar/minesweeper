@@ -288,7 +288,6 @@ int controlsGame(game level, int *rowChosen, int *colChosen, time_t timeStart, i
 		    }
     }
 
-	CLEARSCREEN;
 	*rowChosen = row;
 	*colChosen = col;
 	return choice;
@@ -1704,7 +1703,6 @@ void getStatistics(profile *currentUser){
 	Pre-condition: *currentUser has all members initialized
 */
 void viewStatistics(profile *currentUser){
-	int choice = 0, quit = 0;
     int i, j, k, b, c;
     int time, hours, minutes, seconds;
     FILE *recentgames;
@@ -1727,9 +1725,10 @@ void viewStatistics(profile *currentUser){
     printf("  |             |            |   \n");
     printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n\n");
     
+    printf("Press any key to view recent games...");
+    getch();
+    
     iSetColor(I_COLOR_CYAN);
-    printf("RECENT GAMES!                    \n");
-	printf("*******************************\n\n");
 	iSetColor(I_COLOR_WHITE);
     for(i = 0; i < 3; i++) {
         recentgames = fopen(currentUser->recentgame[i].path, "r");
@@ -1756,6 +1755,9 @@ void viewStatistics(profile *currentUser){
 		if(strcmp(currentUser->recentgame[i].outcome, "0") == 0){
 			printf(" ");
 		} else{
+			CLEARSCREEN;
+		    printf("RECENT GAMES!                    \n");
+			printf("*******************************\n\n");
 			printf("\n#%d | ", i+1);
 			printf("\nGAME %s ", currentUser->recentgame[i].outcome);
 			printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
@@ -1784,14 +1786,9 @@ void viewStatistics(profile *currentUser){
 			}
 			iSetColor(I_COLOR_WHITE);
 		}
+		printf("\nPress any key to continue...\n");
+		getch();
     }
-    
-	while(!quit){
-		choice = getch();
-        if(choice == 27){ // escape
-            quit = 1;
-		}
-	}
 }
 
 /* profile */

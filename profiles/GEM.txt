@@ -1,6 +1,6 @@
 GEM
 1
-0
+1
 1
 1
 snapshots/GEM_snapshot0.txt
