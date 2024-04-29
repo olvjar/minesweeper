@@ -1703,35 +1703,49 @@ void getStatistics(profile *currentUser){
 	Pre-condition: *currentUser has all members initialized
 */
 void viewStatistics(profile *currentUser){
-    int i, j, k, b, c;
+    int i, j, k, b, c, l, cont = 1, selection = 0;
     int time, hours, minutes, seconds;
     FILE *recentgames;
-	
-	CLEARSCREEN;
 	getStatistics(currentUser);
-	
-	printf("Press [ESC] to go back\n\n");
-	iSetColor(I_COLOR_CYAN);
-    printf("PLAYER %-20s\n", currentUser->name);
-   	printf("*******************************\n\n");
-    iSetColor(I_COLOR_WHITE);
+    
+	while(cont){
+		CLEARSCREEN;
+		printf("\n");
+    	iSetColor(I_COLOR_CYAN);
+    	printf("PLAYER %-20s\n", currentUser->name);
+   		printf("*******************************\n\n");
+    	iSetColor(I_COLOR_WHITE);
 
-    printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
-    printf("  |   CLASSIC   |   CUSTOM   |   \n");
-    printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
-    printf("  |             |            |   \n");
-    printf("  |   WON: %d    |  WON: %d    |   \n", currentUser->games_won_classic, currentUser->games_won_custom);
-    printf("  |  LOST: %d    | LOST: %d    |   \n", currentUser->games_lost_classic, currentUser->games_lost_custom);
-    printf("  |             |            |   \n");
-    printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n\n");
+		printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
+		printf("  |   CLASSIC   |   CUSTOM   |   \n");
+		printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n");
+		printf("  |             |            |   \n");
+		printf("  |   WON: %d    |  WON: %d    |   \n", currentUser->games_won_classic, currentUser->games_won_custom);
+		printf("  |  LOST: %d    | LOST: %d    |   \n", currentUser->games_lost_classic, currentUser->games_lost_custom);
+		printf("  |             |            |   \n");
+		printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n\n");
+		
+		for(i = 0; i < 2; i++){
+			if (i == selection){
+				if (i == 0) printf(" > VIEW recent games\n");
+				if (i == 1) printf(" > RETURN to main menu\n");
+			} else {
+				if (i == 0) printf("   VIEW recent games\n");
+				if (i == 1) printf("   RETURN to main menu\n");
+			}
+		}
+		selection = controlsMenu(&cont, selection, 2);
+	}
     
-    printf("Press any key to view recent games...");
-    getch();
-    
-    iSetColor(I_COLOR_CYAN);
-	iSetColor(I_COLOR_WHITE);
-    for(i = 0; i < 3; i++) {
-        recentgames = fopen(currentUser->recentgame[i].path, "r");
+	if (selection == 1){
+		return;
+	} else{
+
+    for(i = 0; i < 3 && i > -1;) {
+		cont = 1;
+		selection = 0;
+		
+		recentgames = fopen(currentUser->recentgame[i].path, "r");
 
         fscanf(recentgames, "%s", currentUser->recentgame[i].outcome);
 		fscanf(recentgames, "%d", &currentUser->recentgame[i].time);
@@ -1751,13 +1765,17 @@ void viewStatistics(profile *currentUser){
 
         fclose(recentgames);
 
+		while (cont){
 
 		if(strcmp(currentUser->recentgame[i].outcome, "0") == 0){
 			printf(" ");
 		} else{
+
 			CLEARSCREEN;
+			iSetColor(I_COLOR_CYAN);
 		    printf("RECENT GAMES!                    \n");
-			printf("*******************************\n\n");
+			printf("*******************************\n");	
+			iSetColor(I_COLOR_WHITE);
 			printf("\n#%d | ", i+1);
 			printf("\nGAME %s ", currentUser->recentgame[i].outcome);
 			printf("[%02d:%02d:%02d]\n", hours, minutes, seconds);
@@ -1785,10 +1803,26 @@ void viewStatistics(profile *currentUser){
 			printf("\n");
 			}
 			iSetColor(I_COLOR_WHITE);
+
+			for(l = 0; l < 3; l++){
+			if (l == selection){
+				if (l == 0) printf(" > NEXT game\n");
+				if (l == 1) printf(" > PREVIOUS game\n");
+				if (l == 2) printf(" > RETURN to main menu\n");
+			} else {
+				if (l == 0) printf("   NEXT game\n");
+				if (l == 1) printf("   PREVIOUS game\n");
+				if (l == 2) printf("   RETURN to main menu\n");
+			}
 		}
-		printf("\nPress any key to continue...\n");
-		getch();
+		selection = controlsMenu(&cont, selection, 3);
+		}
+		}
+		if (selection == 0) i++;
+		if (selection == 1) i--;
+		if (selection == 2) i = 4;
     }
+	}
 }
 
 /* profile */
