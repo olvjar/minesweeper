@@ -19,7 +19,8 @@ A collaborative university machine project turned small passion project. This wa
 
 No longer bounded by restrictions, we are revamping the project with these goals in mind:
 
-- [ ] Key inputs for flag and inspecting on gameplay and level editing
+- [X] Key inputs for flag and inspecting on gameplay
+- [ ] Key inputs for level editing
 - [ ] Arrow keys for selecting profiles and custom levels
 - [ ] Persistent game timer
 - [ ] New leaderboard
