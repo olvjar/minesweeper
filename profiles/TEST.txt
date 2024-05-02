@@ -1,8 +1,0 @@
-TEST
-0
-2
-0
-0
-snapshots/TEST_snapshot0.txt
-snapshots/TEST_snapshot1.txt
-snapshots/TEST_snapshot2.txt

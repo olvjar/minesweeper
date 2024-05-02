@@ -1725,16 +1725,31 @@ void viewStatistics(profile *currentUser){
 		printf("  |             |            |   \n");
 		printf("  xxxxxxxxxxxxxxxxxxxxxxxxxxxx   \n\n");
 		
-		for(i = 0; i < 2; i++){
-			if (i == selection){
-				if (i == 0) printf(" > VIEW recent games\n");
-				if (i == 1) printf(" > RETURN to main menu\n");
-			} else {
-				if (i == 0) printf("   VIEW recent games\n");
-				if (i == 1) printf("   RETURN to main menu\n");
-			}
+
+		recentgames = fopen(currentUser->recentgame[0].path, "r");
+
+        fscanf(recentgames, "%s", currentUser->recentgame[0].outcome);
+
+        fclose(recentgames);
+
+		if (strcmp(currentUser->recentgame[0].outcome, "0") == 0) {
+			printf("You currently have no recent games.\n");
+			printf("Press any key to return to menu...\n");
+			getch();
+			return;
 		}
-		selection = controlsMenu(&cont, selection, 2);
+		else {
+			for(i = 0; i < 2; i++){
+				if (i == selection){
+					if (i == 0) printf(" > VIEW recent games\n");
+					if (i == 1) printf(" > RETURN to main menu\n");
+				} else {
+					if (i == 0) printf("   VIEW recent games\n");
+					if (i == 1) printf("   RETURN to main menu\n");
+				}
+			}
+			selection = controlsMenu(&cont, selection, 2);
+		}
 	}
     
 	if (selection == 1){
@@ -1768,7 +1783,13 @@ void viewStatistics(profile *currentUser){
 		while (cont){
 
 		if(strcmp(currentUser->recentgame[i].outcome, "0") == 0){
-			printf(" ");
+			CLEARSCREEN;
+			iSetColor(I_COLOR_CYAN);
+		    printf("RECENT GAMES!                    \n");
+			printf("*******************************\n");	
+			iSetColor(I_COLOR_WHITE);
+			printf("\n#%d | ", i+1);
+			printf("\nGAME %s \n", currentUser->recentgame[i].outcome);
 		} else{
 
 			CLEARSCREEN;
@@ -1802,25 +1823,62 @@ void viewStatistics(profile *currentUser){
 				}
 			printf("\n");
 			}
+			printf("\n");
 			iSetColor(I_COLOR_WHITE);
-
-			for(l = 0; l < 3; l++){
-			if (l == selection){
-				if (l == 0) printf(" > NEXT game\n");
-				if (l == 1) printf(" > PREVIOUS game\n");
-				if (l == 2) printf(" > RETURN to main menu\n");
-			} else {
-				if (l == 0) printf("   NEXT game\n");
-				if (l == 1) printf("   PREVIOUS game\n");
-				if (l == 2) printf("   RETURN to main menu\n");
 			}
+
+			if (i == 1) { // second game
+				for(l = 0; l < 3; l++){
+
+				if (l == selection){
+					if (l == 0) printf(" > NEXT game\n");
+					if (l == 1) printf(" > PREVIOUS game\n");
+					if (l == 2) printf(" > RETURN to main menu\n");
+				} else {
+					if (l == 0) printf("   NEXT game\n");
+					if (l == 1) printf("   PREVIOUS game\n");
+					if (l == 2) printf("   RETURN to main menu\n");
+				}
+				}
+				selection = controlsMenu(&cont, selection, 3);
+			}
+
+			if (i == 0) { // first game
+				for(l = 0; l < 2; l++){
+
+				if (l == selection){
+					if (l == 0) printf(" > NEXT game\n");
+					if (l == 1) printf(" > RETURN to main menu\n");
+				} else {
+					if (l == 0) printf("   NEXT game\n");
+					if (l == 1) printf("   RETURN to main menu\n");
+				}
+				}
+				selection = controlsMenu(&cont, selection, 3);
+			}
+
+			if (i == 2) { // third game
+				for(l = 0; l < 2; l++){
+
+				if (l == selection){
+					if (l == 0) printf(" > PREVIOUS game\n");
+					if (l == 1) printf(" > RETURN to main menu\n");
+				} else {
+					if (l == 0) printf("   PREVIOUS game\n");
+					if (l == 1) printf("   RETURN to main menu\n");
+				}
+				}
+				selection = controlsMenu(&cont, selection, 3);
+			}
+			
 		}
-		selection = controlsMenu(&cont, selection, 3);
-		}
-		}
-		if (selection == 0) i++;
-		if (selection == 1) i--;
-		if (selection == 2) i = 4;
+		if (selection == 0 && i == 1) i++;
+		else if (selection == 1 && i == 1) i--;
+		else if (selection == 2 && i == 1) i = 4;
+		else if (selection == 0 && i == 0) i++;
+		else if (selection == 1 && i == 0) i = 4;
+		else if (selection == 0 && i == 2) i--;
+		else if (selection == 1 && i == 2) i = 4;
     }
 	}
 }
@@ -2775,8 +2833,7 @@ int main(){
 			default:
 				printf("Invalid input. Try again.\n");
 			}
-		
-		delay(1300);
+		delay(1000);
 	}
 }
 
