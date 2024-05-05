@@ -23,9 +23,9 @@ No longer bounded by restrictions, we are revamping the project with these goals
 - [ ] Key inputs for level editing
 - [ ] Arrow keys for selecting profiles and custom levels
 - [ ] Persistent game timer
-- [ ] New leaderboard
+- [ ] New leaderboard system
 - [ ] Rewriting more efficient modules
-- [ ] Make instructions page
+- [ ] Make How to Play page
 - [ ] Make consistent instructions for each page
 
 ## Documentation
@@ -49,12 +49,8 @@ cd minesweeper
 To run the game:
 
 ```
-gcc -Wall -std=c99 main.c -o main
+gcc -Wall main.c -o main
 ```
-
-### How to play
-
-> wip
 
 ## License
 
