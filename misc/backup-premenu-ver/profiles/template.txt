@@ -1,8 +1,0 @@
-user
-games_won_classic
-games_lost_classic
-games_won_custom
-games_lost_custom
-snapshots/user_snapshot0.txt
-snapshots/user_snapshot1.txt
-snapshots/user_snapshot2.txt

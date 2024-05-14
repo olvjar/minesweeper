@@ -1,8 +1,0 @@
-GEM
-1
-1
-1
-1
-snapshots/GEM_snapshot0.txt
-snapshots/GEM_snapshot1.txt
-snapshots/GEM_snapshot2.txt

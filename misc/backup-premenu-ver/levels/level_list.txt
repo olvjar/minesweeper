@@ -1,4 +1,0 @@
-3
-gem.txt
-fawrist.txt
-gemmy.txt

@@ -1,8 +1,0 @@
-MOLLYAGAIN
-0
-1
-0
-0
-snapshots/MOLLYAGAIN_snapshot0.txt
-snapshots/MOLLYAGAIN_snapshot1.txt
-snapshots/MOLLYAGAIN_snapshot2.txt
