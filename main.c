@@ -58,8 +58,8 @@ struct recent_games{
 	char outcome[50];
 	char mode[50];
 	int time;
-    int rows;
-    int cols;
+	int rows;
+	int cols;
 	char snapshot[10][15];
 };
 
